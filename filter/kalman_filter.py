@@ -1,0 +1,146 @@
+import numpy as np
+
+class KalmanFilter2D:
+    """
+    A 2D Kalman filter that tracks a scalar value and its rate of change.
+    """
+    def __init__(self, initial_value, initial_rate, initial_variance, dt, process_noise, measurement_noise):
+        self.state = np.array([[initial_value], [initial_rate]])  # x = [value; rate]
+        self.P = np.array([[initial_variance, 0], [0, initial_variance]])  # Covariance
+
+        self.dt = dt
+        self.Q = np.array([[process_noise, 0], [0, process_noise]])  # Process noise
+        self.R = measurement_noise  # Measurement noise (scalar)
+        self.H = np.array([[1, 0]])  # Measurement matrix
+
+    def predict(self):
+        # State transition matrix
+        F = np.array([
+            [1, self.dt],
+            [0, 1]
+        ])
+        # Predict state
+        self.state = F @ self.state
+        # Predict covariance
+        self.P = F @ self.P @ F.T + self.Q
+
+    def update(self, measurement):
+        # Innovation
+        y = np.array([[measurement]]) - self.H @ self.state
+
+        # Innovation covariance
+        S = self.H @ self.P @ self.H.T + self.R
+
+        # Kalman gain
+        K = self.P @ self.H.T / S  # Since S is scalar
+
+        # Update state
+        self.state += K @ y
+
+        # Update covariance
+        I = np.eye(2)
+        self.P = (I - K @ self.H) @ self.P
+
+    def get_type(self):
+        return "2D"
+    
+    def get_value(self):
+        return self.state[0, 0]
+
+    def get_rate(self):
+        return self.state[1, 0]
+
+    def get_covariance(self):
+        return self.P
+    
+    #  Computes a confidence score based on the variance of the measured state.
+    def compute_confidence(self) -> float:
+        cov_matrix = self.P
+        if cov_matrix.shape[0] < 1 or cov_matrix.shape[1] < 1:
+            raise ValueError("Covariance matrix is empty or malformed.")
+
+        variance = cov_matrix[0, 0]
+        confidence = 1.0 / (1.0 + variance)  # Simple inverse function
+        return max(0.0, min(1.0, confidence)) 
+
+    
+
+
+import numpy as np
+
+class KalmanFilter3D:
+    """
+    A 3D Kalman filter that tracks a scalar value, its rate, and acceleration.
+    State vector: [value; rate; acceleration]
+    """
+
+    def __init__(self, initial_value, initial_rate, initial_acceleration,
+                 initial_variance, dt, process_noise, measurement_noise):
+        self.dt = dt
+        dt2 = 0.5 * dt ** 2
+
+        # State vector: [value, rate, acceleration]
+        self.state = np.array([[initial_value],
+                               [initial_rate],
+                               [initial_acceleration]])
+
+        # Covariance matrix (uncertainty in state estimate)
+        self.P = np.eye(3) * initial_variance
+
+        # Process noise covariance
+        self.Q = np.eye(3) * process_noise
+
+        # Measurement matrix (we only measure the value)
+        self.H = np.array([[1, 0, 0]])
+
+        # Measurement noise (scalar)
+        self.R = measurement_noise
+
+        # Identity matrix
+        self.I = np.eye(3)
+
+        # State transition matrix (constant acceleration model)
+        self.F = np.array([
+            [1, dt, dt2],
+            [0, 1, dt],
+            [0, 0, 1]
+        ])
+
+    def predict(self):
+        # Predict state
+        self.state = self.F @ self.state
+
+        # Predict covariance
+        self.P = self.F @ self.P @ self.F.T + self.Q
+
+    def update(self, measurement):
+        # Innovation
+        y = np.array([[measurement]]) - self.H @ self.state
+
+        # Innovation covariance
+        S = self.H @ self.P @ self.H.T + self.R
+
+        # Kalman gain
+        K = self.P @ self.H.T / S  # S is scalar
+
+        # Update state
+        self.state += K @ y
+
+        # Update covariance
+        self.P = (self.I - K @ self.H) @ self.P
+
+    def get_type(self):
+        return "3D"
+
+    def get_value(self):
+        return self.state[0, 0]
+
+    def get_rate(self):
+        return self.state[1, 0]
+
+    def get_acceleration(self):
+        return self.state[2, 0]
+
+    def get_covariance(self):
+        return self.P
+

@@ -1,0 +1,4 @@
+pyzmq>=25.1.0
+numpy>=1.25.0
+jsonschema>=4.20.0
+pytest>=8.0.0
