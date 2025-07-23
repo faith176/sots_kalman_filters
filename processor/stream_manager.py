@@ -64,20 +64,20 @@ class StreamManager:
 
         confidence = compute_confidence(kf.get_covariance())
         filtered_event = {
-            "sensor_id": sensor_id,
+            "streamId": sensor_id,
             "timestamp": timestamp,
-            "filtered_measurement": kf.get_value(),
+            "filteredMeasurement": kf.get_value(),
             "quality": {
                 "imputed": False,
                 "confidence": confidence
             },
-            "stream_info": {
-                "stream_type": meta.get("stream_type", "unspecified"),
+            "streamInfo": {
+                "streamType": meta.get("stream_type", "unspecified"),
                 "unit": meta.get("units", "unspecified"),
-                "filter_source": kf.get_type(),
-                "filter_version": "1.0"
+                "filterSource": kf.get_type()
             }
         }
+
         validate_event(filtered_event)
         self.publisher.publish(sensor_id, filtered_event)
         print(f"[STREAM MANAGER] Published: {filtered_event}")

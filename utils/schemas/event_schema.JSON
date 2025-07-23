@@ -2,15 +2,15 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "FilteredEvent",
   "type": "object",
-  "required": ["sensor_id", "timestamp", "filtered_measurement", "quality", "stream_info"],
+  "required": ["streamId", "timestamp", "filteredMeasurement", "quality", "streamInfo"],
   "properties": {
-    "sensor_id": {
+    "streamId": {
       "type": "string"
     },
     "timestamp": {
       "type": "number"
     },
-    "filtered_measurement": {
+    "filteredMeasurement": {
       "type": "number"
     },
     "quality": {
@@ -25,16 +25,15 @@
       },
       "required": ["imputed", "confidence"]
     },
-    "stream_info": {
+    "streamInfo": {
       "type": "object",
       "properties": {
-        "stream_type": { "type": "string" },
+        "streamType": { "type": "string" },
         "unit": { "type": "string" },
-        "filter_source": { "type": "string" },
-        "filter_version": { "type": "string" },
+        "filterSource": { "type": "string" },
         "location": { "type": "string" }
       },
-      "required": ["stream_type", "unit", "filter_source"]
+      "required": ["streamType", "unit", "filterSource"]
     }
   },
   "additionalProperties": false
