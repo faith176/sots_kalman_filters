@@ -4,8 +4,9 @@ import numpy as np
 from messaging.zmq_setup import ZMQPublisher
 
 class SimulatedSensorStream:
-    def __init__(self, sensor_id="temp-sensor-001"):
+    def __init__(self, sensor_id="temp-sensor-001", endpoint = "tcp://*:5555"):
         self.sensor_id = sensor_id
+        self.publisher = ZMQPublisher(endpoint=endpoint)
         self.current_value = 20
         self.running = False
 
@@ -20,30 +21,30 @@ class SimulatedSensorStream:
             "value": self.get_next_value()
         }
     
-    def run(self, publisher, interval):
+    def run(self, interval):
         self.running = True
         print(f"[SIMULATOR] Simulating sensor '{self.sensor_id}' every {interval}s")
         while self.running:
             event = self.get_next_event()
-            publisher.publish(self.sensor_id, event)
+            self.publisher.publish(self.sensor_id, event)
             print(f"[SIMULATOR] Sent: {event}")
             time.sleep(interval)
 
     def stop(self):
         self.running = False
+        self.publisher.close()
 
 
-def start(endpoint, sensor_id, interval):
-    publisher = ZMQPublisher(endpoint=endpoint)
+def start(sensor_id, interval):
     stream = SimulatedSensorStream(sensor_id=sensor_id)
-    thread = threading.Thread(target=stream.run, args=(publisher, interval), daemon=True)
+    thread = threading.Thread(target=stream.run, args=(interval,), daemon=True)
     thread.start()
-    return stream, thread, publisher
+    return stream, thread
 
 
 if __name__ == "__main__":
     # Start simulator in background thread
-    sensor, sim_thread, publisher = start("tcp://*:5555", "temp-sensor-001", 5.0)
+    sensor, sim_thread = start("temp-sensor-001", 5.0)
     try:
         while True:
             time.sleep(1)
