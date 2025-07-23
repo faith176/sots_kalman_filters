@@ -8,24 +8,24 @@ def load_filters_from_config(config_path):
 
     filters = {}
     for sensor in sensor_configs:
-        fcfg = sensor["filter"]
-        if fcfg["type"] == "2D":
+        sample = sensor["filter"]
+        if sample["type"] == "2D":
             filters[sensor["sensor_id"]] = KalmanFilter2D(
-                fcfg["initial_value"],
-                fcfg["initial_rate"],
-                fcfg["initial_variance"],
-                fcfg["dt"],
-                fcfg["process_noise"],
-                fcfg["measurement_noise"]
+                sample["initial_value"],
+                sample["initial_rate"],
+                sample["initial_variance"],
+                sample["dt"],
+                sample["process_noise"],
+                sample["measurement_noise"]
             )
-        elif fcfg["type"] == "3D":
+        elif sample["type"] == "3D":
             filters[sensor["sensor_id"]] = KalmanFilter3D(
-                fcfg["initial_value"],
-                fcfg["initial_rate"],
-                fcfg["initial_acceleration"],
-                fcfg["initial_variance"],
-                fcfg["dt"],
-                fcfg["process_noise"],
-                fcfg["measurement_noise"]
+                sample["initial_value"],
+                sample["initial_rate"],
+                sample["initial_acceleration"],
+                sample["initial_variance"],
+                sample["dt"],
+                sample["process_noise"],
+                sample["measurement_noise"]
             )
     return filters
