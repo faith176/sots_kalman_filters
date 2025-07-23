@@ -1,7 +1,7 @@
 import time
 import threading
 import pytest
-from publish.zmq_setup import ZMQPublisher, ZMQSubscriber
+from messaging.zmq_setup import ZMQPublisher, ZMQSubscriber
 
 @pytest.fixture
 def zmq_setup():

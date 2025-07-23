@@ -1,10 +1,13 @@
 import numpy as np
 
 class KalmanFilter2D:
-    """
-    A 2D Kalman filter that tracks a scalar value and its rate of change.
-    """
-    def __init__(self, initial_value, initial_rate, initial_variance, dt, process_noise, measurement_noise):
+    def __init__(self,
+                 initial_value=0.0,
+                 initial_rate=0.0,
+                 initial_variance=1.0,
+                 dt=1.0,
+                 process_noise=0.01,
+                 measurement_noise=0.1):
         self.state = np.array([[initial_value], [initial_rate]])  # x = [value; rate]
         self.P = np.array([[initial_variance, 0], [0, initial_variance]])  # Covariance
 
@@ -63,19 +66,17 @@ class KalmanFilter2D:
         confidence = 1.0 / (1.0 + variance)  # Simple inverse function
         return max(0.0, min(1.0, confidence)) 
 
-    
 
-
-import numpy as np
 
 class KalmanFilter3D:
-    """
-    A 3D Kalman filter that tracks a scalar value, its rate, and acceleration.
-    State vector: [value; rate; acceleration]
-    """
-
-    def __init__(self, initial_value, initial_rate, initial_acceleration,
-                 initial_variance, dt, process_noise, measurement_noise):
+    def __init__(self,
+                 initial_value=0.0,
+                 initial_rate=0.0,
+                 initial_acceleration=0.0,
+                 initial_variance=1.0,
+                 dt=1.0,
+                 process_noise=0.01,
+                 measurement_noise=0.1):
         self.dt = dt
         dt2 = 0.5 * dt ** 2
 

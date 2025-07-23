@@ -3,7 +3,7 @@ import zmq
 from utils.schema_validator import validate_config, validate_event
 from utils.config_loader import load_filters_from_config
 from filter.confidence import compute_confidence
-from publish.zmq_setup import ZMQPublisher, ZMQSubscriber
+from messaging.zmq_setup import ZMQPublisher, ZMQSubscriber
 
 class StreamManager:
     def __init__(self, config_path, endpoint="tcp://*:7777"):

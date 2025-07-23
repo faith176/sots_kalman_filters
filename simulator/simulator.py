@@ -1,20 +1,17 @@
 import threading
 import time
 import numpy as np
-from publish.zmq_setup import ZMQPublisher
+from messaging.zmq_setup import ZMQPublisher
 
 class SimulatedSensorStream:
-    def __init__(self, sensor_id="sensor-A", amplitude=1.0, noise_std=0.1):
+    def __init__(self, sensor_id="temp-sensor-001"):
         self.sensor_id = sensor_id
-        self.amplitude = amplitude
-        self.noise_std = noise_std
-        self.t = 0.0
+        self.current_value = 20
         self.running = False
 
     def get_next_value(self):
-        value = self.amplitude * np.sin(self.t) + np.random.normal(0, self.noise_std)
-        self.t += 0.1
-        return value
+        self.current_value += np.random.uniform(0.05, 0.05) + np.random.normal(0, 0.1)
+        return self.current_value
 
     def get_next_event(self):
         return {
@@ -36,9 +33,22 @@ class SimulatedSensorStream:
         self.running = False
 
 
-def start(endpoint: str, sensor_id: str, interval: float):
+def start(endpoint, sensor_id, interval):
     publisher = ZMQPublisher(endpoint=endpoint)
     stream = SimulatedSensorStream(sensor_id=sensor_id)
     thread = threading.Thread(target=stream.run, args=(publisher, interval), daemon=True)
     thread.start()
     return stream, thread, publisher
+
+
+if __name__ == "__main__":
+    # Start simulator in background thread
+    sensor, sim_thread, publisher = start("tcp://*:5555", "temp-sensor-001", 5.0)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("[SIMULATOR] Shutting down...")
+        sensor.stop()
+        sim_thread.join()
+        print("[SIMULATOR] Fully exited.")
