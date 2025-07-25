@@ -9,7 +9,7 @@ class ZMQPublisher:
 
     def publish(self, topic: str, data: dict):
         message = json.dumps(data)
-        self.socket.send_string(f"{topic} {message}")
+        self.socket.send_string(f"{topic}|{message}")
 
     def close(self):
         self.socket.close()
@@ -24,7 +24,7 @@ class ZMQSubscriber:
         self.socket.setsockopt_string(zmq.SUBSCRIBE, topic_filter)
 
     def receive(self):
-        topic, message = self.socket.recv_string().split(" ", 1)
+        topic, message = self.socket.recv_string().split("|", 1)
         data = json.loads(message)
         return topic, data
 

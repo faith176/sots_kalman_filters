@@ -1,4 +1,6 @@
 # Add logic for tracking when timestamps are missing and need to be imputed
+import threading
+import time
 import zmq
 from utils.schema_validator import validate_config, validate_event
 from utils.config_loader import load_filters_from_config
@@ -101,3 +103,18 @@ class StreamManager:
         for subscriber in self.subscribers.values():
             subscriber.close()
         self.publisher.close()
+
+
+if __name__ == "__main__":
+    stream_manager = StreamManager("config/config.json")
+    stream_thread = threading.Thread(target=stream_manager.start)
+    stream_thread.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("[STREAM MANAGER] Shutting down...")
+        stream_manager.stop()
+        stream_thread.join()
+        print("[STREAM MANAGER] Fully exited.")

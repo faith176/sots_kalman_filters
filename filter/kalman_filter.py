@@ -8,7 +8,7 @@ class KalmanFilter2D:
                  dt=1.0,
                  process_noise=0.01,
                  measurement_noise=0.1):
-        self.state = np.array([[initial_value], [initial_rate]])  # x = [value; rate]
+        self.state = np.array([[initial_value], [initial_rate]])  # State vector: [value, rate]
         self.P = np.array([[initial_variance, 0], [0, initial_variance]])  # Covariance
 
         self.dt = dt
