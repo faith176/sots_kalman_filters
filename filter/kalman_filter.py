@@ -13,19 +13,23 @@ class KalmanFilter2D:
 
         self.dt = dt
         self.Q = np.array([[process_noise, 0], [0, process_noise]])  # Process noise
-        self.R = measurement_noise  # Measurement noise (scalar)
+        self.R = measurement_noise  # Measurement noise (scalar, since we only update using one value)
         self.H = np.array([[1, 0]])  # Measurement matrix
+        self.I = np.eye(2) # Identity matrix
+
+        # State transition matrix
+        self.F = np.array([
+                [1, self.dt],
+                [0, 1]
+            ])
+
 
     def predict(self):
-        # State transition matrix
-        F = np.array([
-            [1, self.dt],
-            [0, 1]
-        ])
         # Predict state
-        self.state = F @ self.state
+        self.state = self.F @ self.state
         # Predict covariance
-        self.P = F @ self.P @ F.T + self.Q
+        self.P = self.F @ self.P @ self.F.T + self.Q
+
 
     def update(self, measurement):
         # Innovation
@@ -35,14 +39,13 @@ class KalmanFilter2D:
         S = self.H @ self.P @ self.H.T + self.R
 
         # Kalman gain
-        K = self.P @ self.H.T / S  # Since S is scalar
+        K = self.P @ self.H.T / S
 
         # Update state
         self.state += K @ y
 
         # Update covariance
-        I = np.eye(2)
-        self.P = (I - K @ self.H) @ self.P
+        self.P = (self.I - K @ self.H) @ self.P
 
     def get_type(self):
         return "2D"
@@ -74,23 +77,13 @@ class KalmanFilter3D:
         self.state = np.array([[initial_value],
                                [initial_rate],
                                [initial_acceleration]])
+        self.P = np.eye(3) * initial_variance  # Covariance matrix
+        self.Q = np.eye(3) * process_noise # Process noise
+        self.H = np.array([[1, 0, 0]]) # Measurement matrix
+        self.R = measurement_noise # Measurement noise (scalar, since we only update using one value)        
+        self.I = np.eye(3) # Identity matrix
 
-        # Covariance matrix (uncertainty in state estimate)
-        self.P = np.eye(3) * initial_variance
-
-        # Process noise covariance
-        self.Q = np.eye(3) * process_noise
-
-        # Measurement matrix (we only measure the value)
-        self.H = np.array([[1, 0, 0]])
-
-        # Measurement noise (scalar)
-        self.R = measurement_noise
-
-        # Identity matrix
-        self.I = np.eye(3)
-
-        # State transition matrix (constant acceleration model)
+        # State transition matrix
         self.F = np.array([
             [1, dt, dt2],
             [0, 1, dt],
@@ -112,7 +105,7 @@ class KalmanFilter3D:
         S = self.H @ self.P @ self.H.T + self.R
 
         # Kalman gain
-        K = self.P @ self.H.T / S  # S is scalar
+        K = self.P @ self.H.T / S 
 
         # Update state
         self.state += K @ y
