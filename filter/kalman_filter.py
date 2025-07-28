@@ -1,6 +1,6 @@
 import numpy as np
 
-class KalmanFilter2D:
+class KalmanFilter2D: # constant velocity model
     def __init__(self,
                  initial_value=0.0,
                  initial_rate=0.0,
@@ -61,7 +61,7 @@ class KalmanFilter2D:
 
 
 
-class KalmanFilter3D:
+class KalmanFilter3D: # constant acceleration model
     def __init__(self,
                  initial_value=0.0,
                  initial_rate=0.0,
