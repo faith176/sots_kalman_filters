@@ -57,7 +57,7 @@ class StreamManager:
         print(f"[STREAM MANAGER] Received from {sensor_id}: {value} at timestamp {timestamp}")
 
         if sensor_id not in self.filters:
-            print(f"[ERROR] No filter configured for sensor: {sensor_id}")
+            print(f"[ERROR] No filter configured for sensor: {sensor_id}, please adjust config.json")
             return
 
         kf = self.filters[sensor_id]

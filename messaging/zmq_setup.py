@@ -7,14 +7,13 @@ class ZMQPublisher:
         self.address = endpoint
         self.socket.bind(self.address)
 
-    def publish(self, topic: str, data: dict):
+    def publish(self, topic, data, seperator = "|"):
         message = json.dumps(data)
-        self.socket.send_string(f"{topic}|{message}")
+        self.socket.send_string(f"{topic}{seperator}{message}")
 
     def close(self):
         self.socket.close()
         self.context.term()
-
 
 class ZMQSubscriber:
     def __init__(self, endpoint="tcp://localhost:5556", topic_filter=""):
@@ -23,8 +22,8 @@ class ZMQSubscriber:
         self.socket.connect(endpoint)
         self.socket.setsockopt_string(zmq.SUBSCRIBE, topic_filter)
 
-    def receive(self):
-        topic, message = self.socket.recv_string().split("|", 1)
+    def receive(self, seperator="|"):
+        topic, message = self.socket.recv_string().split(seperator, 1)
         data = json.loads(message)
         return topic, data
 

@@ -1,4 +1,3 @@
-import os
 from utils.schema_validator import validate_config
 from filter.kalman_filter import KalmanFilter2D, KalmanFilter3D
 
