@@ -27,7 +27,7 @@ class Client():
         self._snapshot.connect("tcp://localhost:5556")
         self._subscriber = ctx.socket(zmq.SUB)
         self._subscriber.linger = 0
-        self._subscriber.subscribe("")
+        # self._subscriber.subscribe("") # DO NOT SUBSCRIBE TO EVERYTHING, USE REGISTER FUNCTIONS
         self._subscriber.connect("tcp://localhost:5557")
         self._publisher = ctx.socket(zmq.PUSH)
         self._publisher.linger = 0

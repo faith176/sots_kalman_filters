@@ -116,7 +116,6 @@ class StreamManager:
 
         topic = f"CEP.{stream_id}"
         self.client.send_event(filtered_event, topic=topic)
-        logging.debug(f"[StreamManager] Published filtered event to '{topic}': {filtered_event}")
 
     def handle_command(self, topic, msg):
         logging.info(f"[StreamManager] Received command: {msg}")
@@ -126,7 +125,6 @@ class StreamManager:
         logging.info(f"[StreamManager] Received config update: {msg}")
         # TODO: Handle live config updates
 
-    # -- Lifecycle Management --
 
     def run(self):
         self.client.join()
@@ -143,7 +141,7 @@ class StreamManager:
         if not self.running:
             self.thread = threading.Thread(target=self.run, daemon=True)
             self.thread.start()
-            logging.info("[StreamManager] Started in background thread.")
+            logging.info("[StreamManager] Started")
 
     def stop(self):
         logging.info("[StreamManager] Stopping...")
@@ -154,7 +152,6 @@ class StreamManager:
             self.thread.join()
         logging.info("[StreamManager] Fully stopped.")
 
-# --- Main Entry ---
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
@@ -168,125 +165,9 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("[MAIN] Caught Ctrl+C. Shutting down StreamManager...")
+        print("[MAIN] Shutting down StreamManager...")
         manager.stop()
         print("[MAIN] StreamManager fully exited.")
 
 if __name__ == "__main__":
     main()
-
-
-# class StreamManager:
-#     def __init__(self, config_path):
-#         self.config_path = config_path
-#         self.filters = load_filters_from_config(config_path)
-#         self.client = StreamClient(alias="streammanager")
-#         self.client.on_event_received(self.handle_received_event)
-
-#         self.sensor_metadata = {}
-#         self.last_seen = {}
-#         self.datastreams = {}
-
-#         # Ensure StreamManager subscribes to all *.data topics from the start
-#         self.client._subscriber.setsockopt_string(zmq.SUBSCRIBE, "data.")
-#         print("[STREAM MANAGER] Subscribed to all topics ending with '.data'")
-
-#         for sensor_id in self.filters:
-#             self.last_seen[sensor_id] = 0
-
-#         print("[STREAM MANAGER] Initialized")
-
-#     def register_stream(self, sensor_id, stream):
-#         self.datastreams[sensor_id] = stream
-#         self.sensor_metadata[sensor_id] = {
-#             "units": getattr(stream, "units", "unknown"),
-#             "stream_type": getattr(stream, "stream_type", "unspecified"),
-#             "sampling_interval_sec": getattr(stream, "interval", 1),
-#         }
-
-#         stream.start(interval=self.sensor_metadata[sensor_id]["sampling_interval_sec"])
-#         print(f"[STREAM MANAGER] Registered and started stream: {stream.get_display_name()}")
-
-#     def deregister_stream(self, sensor_id):
-#         stream = self.datastreams.pop(sensor_id, None)
-#         if stream:
-#             stream.stop()
-#             print(f"[STREAM MANAGER] Deregistered and stopped stream: {sensor_id}")
-
-#     def _process_event(self, event, sender_alias):
-#         sensor_id = event["sensor_id"]
-#         alias = event.get("origin", sender_alias)  # fallback in case 'origin' missing
-#         value = event["value"]
-#         timestamp = event["timestamp"]
-#         self.last_seen[sensor_id] = timestamp
-#         meta = self.sensor_metadata.get(sensor_id, {})
-
-#         print(f"[STREAM MANAGER] Received from {sensor_id}: {value} at timestamp {timestamp}")
-
-#         if sensor_id not in self.filters:
-#             print(f"[ERROR] No filter configured for sensor: {sensor_id}, please adjust config.")
-#             return
-
-#         kf = self.filters[sensor_id]
-#         kf.predict()
-#         kf.update(value)
-
-#         confidence = compute_confidence(kf.get_covariance())
-#         filtered_event = {
-#             "origin_alias": alias,
-#             "streamId": sensor_id,
-#             "timestamp": timestamp,
-#             "filteredMeasurement": kf.get_value(),
-#             "quality": {
-#                 "imputed": False,
-#                 "confidence": confidence
-#             },
-#             "streamInfo": {
-#                 "streamType": meta.get("stream_type", "unspecified"),
-#                 "unit": meta.get("units", "unspecified"),
-#                 "filterSource": kf.get_type()
-#             }
-#         }
-
-#         validate_event(filtered_event)
-#         topic = f"streammanager.{sender_alias}"
-#         self.client.send_event(filtered_event, topic=topic)
-#         print(f"[STREAM MANAGER] Published filtered event on topic '{topic}': {filtered_event}")
-
-#     def handle_received_event(self, topic, event):
-#         try:
-#             if topic.endswith(".data"):
-#                 sender_alias = topic.rsplit(".", 1)[0]
-#                 self._process_event(event, sender_alias)
-#         except Exception as e:
-#             print(f"[STREAM MANAGER] Failed to process event from topic '{topic}': {e}")
-
-#     def start(self):
-#         print("[STREAM MANAGER] Running and listening for events...")
-#         self.client.subscribe()
-
-#     def stop(self):
-#         for stream in self.datastreams.values():
-#             stream.stop()
-#         print("[STREAM MANAGER] All streams stopped.")
-#         if self.client:
-#             self.client.stop()
-#             print("[STREAM MANAGER] Client connection closed.")
-
-# def main():
-#     stream_manager = StreamManager(config_path="config/config.json")
-#     stream_thread = threading.Thread(target=stream_manager.start, daemon=True)
-#     stream_thread.start()
-
-#     try:
-#         while True:
-#             time.sleep(1)
-#     except KeyboardInterrupt:
-#         print("[MAIN] Shutting down StreamManager...")
-#         stream_manager.stop()
-#         stream_thread.join()
-#         print("[MAIN] StreamManager fully exited.")
-
-# if __name__ == "__main__":
-#     main()
-
