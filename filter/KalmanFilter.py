@@ -1,5 +1,5 @@
 import numpy as np
-from filter.filter_base import Filter
+from filter.Filter import Filter
 
 class KalmanFilter2D(Filter): # constant velocity model
     def __init__(self,

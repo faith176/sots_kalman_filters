@@ -1,0 +1,8 @@
+{
+  "temp-sensor-001": {
+    "stream_type": "temperature",
+    "units": "Celsius",
+    "interval_sec": 2,
+    "filter_template": "kf1"
+  }
+}
