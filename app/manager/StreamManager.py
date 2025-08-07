@@ -14,13 +14,11 @@ class StreamManager:
 
         # Subscribe to all relevant topics
         self.client.subscribe_to("data.")
-        self.client.subscribe_to("command.")
-        self.client.subscribe_to("config.")
+        self.client.subscribe_to("command")
 
         # Register handlers
         self.client.register_handler("data", self.handle_data)
         self.client.register_handler("command", self.handle_command)
-        self.client.register_handler("config", self.handle_config)
 
         # Internal state
         self.filter_templates = load_filter_templates(filter_config_path)
@@ -47,19 +45,10 @@ class StreamManager:
         self.filter_templates[template_id] = params
         logging.info(f"[StreamManager] Registered new filter template '{template_id}'")
 
-    def register_filter_for_stream(self, stream_id, template_id):
-        if template_id not in self.filter_templates:
-            logging.error(f"[StreamManager] Cannot assign unknown filter template '{template_id}'")
-            return
-        self.stream_filters[stream_id] = instantiate_filter(self.filter_templates[template_id])
-        logging.info(f"[StreamManager] Assigned filter '{template_id}' to stream '{stream_id}'")
+    def deregister_filter_template(self, template_id):
+        self.filter_templates.pop(template_id, None)
+        logging.info(f"[StreamManager] Removed filter '{template_id}'")
 
-    def deregister_filter_for_stream(self, stream_id):
-        if stream_id in self.stream_filters:
-            del self.stream_filters[stream_id]
-            logging.info(f"[StreamManager] Deregistered filter from stream '{stream_id}'")
-        else:
-            logging.warning(f"[StreamManager] No filter to remove for stream '{stream_id}'")
 
     # -- Stream Registration --
 
@@ -67,12 +56,29 @@ class StreamManager:
         self.stream_metadata[stream_id] = metadata
         logging.info(f"[StreamManager] Registered new stream '{stream_id}'")
         if "filter_template" in metadata:
-            self.register_filter_for_stream(stream_id, metadata["filter_template"])
+            self.assign_filter_to_stream(stream_id, metadata["filter_template"])
 
     def deregister_stream(self, stream_id):
         self.stream_metadata.pop(stream_id, None)
-        self.deregister_filter_for_stream(stream_id)
+        self.unassign_filter_to_stream(stream_id)
         logging.info(f"[StreamManager] Removed stream '{stream_id}'")
+
+
+    # -- Assigning Filter to Stream Registration --
+
+    def assign_filter_to_stream(self, stream_id, template_id):
+        if template_id not in self.filter_templates:
+            logging.error(f"[StreamManager] Cannot assign unknown filter template '{template_id}'")
+            return
+        self.stream_filters[stream_id] = instantiate_filter(self.filter_templates[template_id])
+        logging.info(f"[StreamManager] Assigned filter '{template_id}' to stream '{stream_id}'")
+
+    def unassign_filter_to_stream(self, stream_id):
+        if stream_id in self.stream_filters:
+            del self.stream_filters[stream_id]
+            logging.info(f"[StreamManager] Deregistered filter from stream '{stream_id}'")
+        else:
+            logging.warning(f"[StreamManager] No filter to remove for stream '{stream_id}'")
 
     # -- Event Handlers --
 
@@ -165,9 +171,9 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("[MAIN] Shutting down StreamManager...")
+        logging.info("[MAIN] Shutting down StreamManager...")
         manager.stop()
-        print("[MAIN] StreamManager fully exited.")
+        logging.info("[MAIN] StreamManager fully exited.")
 
 if __name__ == "__main__":
     main()

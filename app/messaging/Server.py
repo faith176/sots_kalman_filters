@@ -57,7 +57,7 @@ class Server():
                 logging.debug("Publishing update")
                 self._publisher.send_multipart(message) # UPDATED from .send()
             
-            # snapshot requests by joining clients
+            # snapshot requests by joining clients # UPDATED from .recv()
             if self._snapshot in items:
                 message = self._snapshot.recv_multipart()
                 identity = message[0]

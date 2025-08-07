@@ -37,13 +37,13 @@ class SimulatedDatastream(DataStream):
         logging.info(f"[{self.name}] ACK received on '{topic}': {msg}")
 
     def run(self):
-        print(f"[SIMULATOR] Started '{self.get_name()}' (every {self.interval}s)")
+        logging.info(f"[SIMULATOR] Started '{self.get_name()}' (every {self.interval}s)")
         while self.running:
             event = self.get_next_event()
             self.client.send_event(event)
-            print(f"[SIMULATOR] Sent: {event}")
+            logging.info(f"[SIMULATOR] Sent: {event}")
             time.sleep(self.interval)
-        print(f"[SIMULATOR] Stopped '{self.get_name()}'")
+        logging.info(f"[SIMULATOR] Stopped '{self.get_name()}'")
 
     def start(self, interval=5.0):
         if self.running:
@@ -72,9 +72,9 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("[MAIN] Shutting down simulated sensor...")
+        logging.info("[MAIN] Shutting down simulated sensor...")
         stream.stop()
-        print("[MAIN] Simulator fully exited.")
+        logging.info("[MAIN] Simulator fully exited.")
 
 if __name__ == "__main__":
     main()
