@@ -1,5 +1,5 @@
 # Uncertainty-Aware Stream Processing for Systems of Digital Twins
-![Unit tests](https://github.com/faith176/sots_kalman_filters/actions/workflows/unit-tests.yml/badge.svg)
+![Unit tests](https://github.com/faith176/sots_kalman_filters/actions/workflows/unit-tests.yml/badge.svg?branch=master)
 
 
 Update project requirements.txt with <pipreqs . --force> at root folder
