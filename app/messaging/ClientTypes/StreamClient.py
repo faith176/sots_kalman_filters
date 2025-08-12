@@ -57,8 +57,6 @@ class StreamClient(Client):
                 logging.error(f"[StreamClient:{self.name}] JSON error: {e}")
                 return
 
-            # print(f"[StreamClient:{self.name}] Received on '{topic}': {event}")
-
             try:
                 prefix = topic.split(".", 1)[0] # e.g., 'data', 'command'
             except IndexError:

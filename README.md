@@ -1,6 +1,8 @@
 # Uncertainty-Aware Stream Processing for Systems of Digital Twins
 
 
+Update project requirements.txt with <pipreqs . --force> at root folder
+
 ## Project Overview
 - TODO...
 

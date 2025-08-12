@@ -20,7 +20,7 @@ class StreamManager:
         self.client.register_handler("data", self.handle_data)
         self.client.register_handler("command", self.handle_command)
 
-        # Internal state
+        # State
         self.filter_templates = load_filter_templates(filter_config_path)
         self.stream_metadata = load_stream_metadata(stream_config_path)
         self.stream_filters = {}
@@ -126,10 +126,6 @@ class StreamManager:
     def handle_command(self, topic, msg):
         logging.info(f"[StreamManager] Received command: {msg}")
         # TODO: Implement command logic
-
-    def handle_config(self, topic, msg):
-        logging.info(f"[StreamManager] Received config update: {msg}")
-        # TODO: Handle live config updates
 
 
     def run(self):
