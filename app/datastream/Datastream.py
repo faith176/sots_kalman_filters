@@ -9,8 +9,7 @@ class DataStream:
         self.stream_id = stream_id
         self.metadata = self._extract_metadata(metadata)
 
-
-        self.history = deque(maxlen=history_len) # base event 
+        self.history = deque(maxlen=history_len) # values 
         self.processed_history = deque(maxlen=history_len) # formatted event
         self._sequence_counter = 0
 
@@ -21,10 +20,11 @@ class DataStream:
     # Kalman Filter Steps
     def process_event(self, value) -> Dict[str, Any]:
         self.history.append(value)
+        
         # Predict first
         estimate, confidence, std_dev = None, None, None
         if self.filter:
-            self.filter.predict()  # advance the internal state
+            self.filter.predict()
 
         has_measurement = value is not None
 
@@ -114,23 +114,6 @@ class DataStream:
 
 
     # Refresh Logic
-    # def refresh_metadata(self, new_metadata: dict, new_filter_entry: dict, force_reinit: bool = False):
-    #     updated_metadata = self._extract_metadata(new_metadata)
-    #     if updated_metadata != self.metadata:
-    #         logging.info(f"[DataStream:{self.stream_id}] Metadata updated.")
-    #         self.metadata = updated_metadata
-
-    #         # If a new filter entry is provided, also update the metadata template name
-    #         if new_filter_entry and new_filter_entry.get("type"):
-    #             self.metadata["filter_template"] = new_filter_entry["type"]
-
-    #         # Delegate to refresh_filter with caller's intent
-    #         self.refresh_filter(new_filter_entry, force_reinit=force_reinit)
-    #     else:
-    #         logging.debug(f"[DataStream:{self.stream_id}] Metadata unchanged; no refresh performed.")
-
-
-
     def refresh_metadata(self, new_metadata: dict, force_reinit: bool = False) -> None:
         updated = self._extract_metadata(new_metadata)
 

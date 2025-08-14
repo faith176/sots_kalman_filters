@@ -40,7 +40,6 @@ class StreamClient(Client):
             logging.warning(f"[StreamClient:{self.name}] No handler registered for prefix '{prefix}'")
 
 
-
     def subscriberAction(self):
         try:
             parts = self._subscriber.recv_multipart(zmq.NOBLOCK)

@@ -4,16 +4,9 @@ from collections import deque
 import pytest
 
 class DummyFilter:
-    """
-    Super-simple filter:
-    - state starts at initial (default 0.0).
-    - predict(): state += 1.0 (just to be clearly visible in tests)
-    - update(z): state = z; returns (estimate, confidence, std_dev)
-    - get_prediction(): returns (state, 0.5, 0.0)
-    """
     def __init__(self, initial=0.0):
         self.state = float(initial)
-        self.P = None  # not used by DataStream, but could exist
+        self.P = None
 
     def predict(self):
         self.state += 1.0
@@ -49,11 +42,8 @@ class FakeFilterRegistry:
         return dict(self._params.get(filter_type, {}))
 
 
-# ---- System under test -------------------------------------------------------
+# ---- test -------------------------------------------------------
 from datastream.Datastream import DataStream
-
-
-# ---- Tests -------------------------------------------------------------------
 
 def test_process_event_with_measurement_no_imputation(monkeypatch):
     registry = FakeFilterRegistry()

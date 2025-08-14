@@ -60,23 +60,8 @@ class StreamManager:
         self.streams.pop(stream_id, None)
         logging.info(f"[StreamManager] Deregistered stream '{stream_id}'")
 
-    def assign_filter_to_stream(self, stream_id: str, template_id: str):
-        if stream_id not in self.streams:
-            logging.warning(f"[StreamManager] Unknown stream '{stream_id}'")
-            return
-        filter_entry = self.filter_registry.get(template_id)
-        if not filter_entry:
-            logging.warning(f"[StreamManager] Unknown filter template '{template_id}'")
-            return
-        metadata = self.stream_registry.get(stream_id)
-        self.streams[stream_id].refresh_metadata(metadata, filter_entry)
-        logging.info(f"[StreamManager] Reassigned filter '{template_id}' to stream '{stream_id}'")
 
-    def unassign_filter_from_stream(self, stream_id: str):
-        if stream_id in self.streams:
-            metadata = self.stream_registry.get(stream_id)
-            self.streams[stream_id].refresh_metadata(metadata, None)
-            logging.info(f"[StreamManager] Unassigned filter from stream '{stream_id}'")
+    # ADD ASSIGN AND UNASSIGN FILTER FROM STREAM FUNCTIONS
 
     # --- Event Handlers ---
     def handle_data(self, topic, msg):
@@ -88,7 +73,7 @@ class StreamManager:
             return
 
         result = self.streams[stream_id].process_event(value)
-        self.client.send_event(result, topic=f"CEP.{stream_id}")
+        self.client.send_event(result, topic=f"cep.{stream_id}")
 
     def handle_command(self, topic, msg):
         logging.info(f"[StreamManager] Received command: {msg}")
