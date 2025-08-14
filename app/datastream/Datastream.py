@@ -114,51 +114,89 @@ class DataStream:
 
 
     # Refresh Logic
-    def refresh_metadata(self, new_metadata: dict, new_filter_entry: dict):
-        updated_metadata = self._extract_metadata(new_metadata)
-        if updated_metadata != self.metadata:
-            logging.info(f"[DataStream:{self.stream_id}] Metadata updated.")
-            self.metadata = updated_metadata
-            self.refresh_filter(new_filter_entry, force_reinit=True)
+    # def refresh_metadata(self, new_metadata: dict, new_filter_entry: dict, force_reinit: bool = False):
+    #     updated_metadata = self._extract_metadata(new_metadata)
+    #     if updated_metadata != self.metadata:
+    #         logging.info(f"[DataStream:{self.stream_id}] Metadata updated.")
+    #         self.metadata = updated_metadata
 
-    def refresh_filter(self, filter_entry: dict, force_reinit: bool = False):
-        if not filter_entry:
-            logging.warning(f"[DataStream:{self.stream_id}] No filter entry provided.")
+    #         # If a new filter entry is provided, also update the metadata template name
+    #         if new_filter_entry and new_filter_entry.get("type"):
+    #             self.metadata["filter_template"] = new_filter_entry["type"]
+
+    #         # Delegate to refresh_filter with caller's intent
+    #         self.refresh_filter(new_filter_entry, force_reinit=force_reinit)
+    #     else:
+    #         logging.debug(f"[DataStream:{self.stream_id}] Metadata unchanged; no refresh performed.")
+
+
+
+    def refresh_metadata(self, new_metadata: dict, force_reinit: bool = False) -> None:
+        updated = self._extract_metadata(new_metadata)
+
+        if updated == self.metadata:
+            logging.debug(f"[DataStream:{self.stream_id}] Metadata unchanged")
             return
 
-        new_type = filter_entry.get("type")
-        if not new_type:
-            logging.warning(f"[DataStream:{self.stream_id}] No filter type specified.")
+        old_template = self.metadata.get("filter_template")
+        new_template = updated.get("filter_template")
+
+        # Apply all non-filter metadata immediately
+        self.metadata = updated
+        logging.info(f"[DataStream:{self.stream_id}] Metadata updated.")
+
+        # If template is unchanged, nothing else to do
+        if new_template == old_template:
             return
 
+        # Try to swap filter; on failure, revert template name to reflect reality
+        if not self.refresh_filter(new_template, force_reinit=force_reinit):
+            logging.error(
+                f"[DataStream:{self.stream_id}] Could not apply filter_template '{new_template}'; "
+                f"keeping existing filter '{old_template}'."
+            )
+            self.metadata["filter_template"] = old_template
+        print(self.metadata)
+        print(self.processed_history)
+
+
+    def refresh_filter(self, filter_type: str, force_reinit: bool = False) -> bool:
+        new_type = filter_type.strip()
         new_constructor = self.filter_registry.get_constructor(new_type)
-        new_params = self.filter_registry.get_params(new_type)
-
         if new_constructor is None:
             logging.error(f"[DataStream:{self.stream_id}] Constructor not found for filter type '{new_type}'.")
-            return
+            return False
 
+        new_params = self.filter_registry.get_params(new_type)
         old_entry = self._last_filter_entry or {}
-        needs_update = (
-            force_reinit or
-            old_entry.get("type") != new_type or
-            old_entry.get("params") != new_params
-        )
+        old_type = old_entry.get("type")
 
-        if needs_update:
-            logging.info(f"[DataStream:{self.stream_id}] Reinitializing filter due to change.")
+        # snapshot only if replaying
+        original_history = list(self.history) if force_reinit else None
+
+        try:
             self.filter = new_constructor(**new_params)
-            self._last_filter_entry = {
-                "type": new_type,
-                "params": new_params
-            }
+        except Exception as e:
+            logging.exception(f"[DataStream:{self.stream_id}] Failed to initialize filter '{new_type}': {e}")
+            if old_type:
+                self.metadata["filter_template"] = old_type
+            return False
 
-            # Replay history
-            original_history = list(self.history)
-            self.history.clear()
-            self.processed_history.clear()
+        self._last_filter_entry = {"type": new_type, "params": new_params}
+        self.metadata["filter_template"] = new_type
 
+        self.history.clear()
+        self.processed_history.clear()
+
+        if force_reinit and original_history is not None:
+            logging.info(f"[DataStream:{self.stream_id}] Reinitializing filter and REPLAYING history.")
             for value in original_history:
                 self.process_event(value)
+        else:
+            logging.info(f"[DataStream:{self.stream_id}] Reinitializing filter and RESETTING history (no replay).")
 
-            logging.debug(f"[DataStream:{self.stream_id}] Filter updated: {old_entry} → {self._last_filter_entry}")
+        logging.debug(
+            f"[DataStream:{self.stream_id}] Filter updated: {old_type} → {new_type}; "
+            f"force_reinit={force_reinit}"
+        )
+        return True
