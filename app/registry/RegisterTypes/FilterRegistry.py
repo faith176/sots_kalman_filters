@@ -8,9 +8,6 @@ FILTER_TYPE_MAP = {
 }
 
 class FilterRegistry(Registry):
-    def validate(self, item_data: dict) -> bool:
-        return "class" in item_data and "params" in item_data
-
     def get_constructor(self, filter_name: str):
         entry = self.get(filter_name)
         if not entry:
@@ -24,3 +21,48 @@ class FilterRegistry(Registry):
             logging.warning(f"[FilterRegistry] No filter entry found for '{filter_name}'")
             return {}
         return entry.get("params")
+    
+    def validate(self, item_data: dict) -> bool:
+        errors = []
+
+        if not isinstance(item_data, dict):
+            errors.append("Item is not an object/dict.")
+            return False, errors
+
+        # Required
+        for key in ("type", "params"):
+            if key not in item_data:
+                errors.append(f"Missing required top-level key: '{key}'.")
+
+        if errors:
+            return False, errors
+
+        # type
+        kf_type = item_data["type"]
+        if kf_type not in {"KalmanFilter2D", "KalmanFilter3D"}:
+            errors.append("Field type not defined")
+
+        # params
+        params = item_data["params"]
+        if not isinstance(params, dict):
+            errors.append("Field params must be an object/dict.")
+            return False, errors
+
+        # Required params
+        base_required = {
+            "initial_value",
+            "initial_rate",
+            "initial_variance",
+            "dt",
+            "process_noise",
+            "measurement_noise",
+        }
+        required = set(base_required)
+        if kf_type == "KalmanFilter3D":
+            required.add("initial_acceleration")
+
+        for req in sorted(required):
+            if req not in params:
+                errors.append(f"Missing required param: '{req}'.")
+
+        return len(errors) == 0, errors

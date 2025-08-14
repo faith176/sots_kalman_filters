@@ -35,23 +35,25 @@ class StreamManager:
 
     # --- Filter Management ---
     def register_filter_template(self, template_id: str, filter_entry: dict):
-        if self.filter_registry.validate(filter_entry):
+        validation_result, errors = self.filter_registry.validate(filter_entry)
+        if validation_result:
             self.filter_registry.update(template_id, filter_entry)
         else:
-            logging.error(f"[StreamManager] Invalid filter template '{template_id}'")
+            logging.error(f"[StreamManager] Invalid filter template '{template_id}. \nErrors: {errors}'")
 
     def deregister_filter_template(self, template_id: str):
         self.filter_registry.remove(template_id)
 
     # --- Stream Management ---
     def register_stream(self, stream_id: str, metadata: dict):
-        if self.stream_registry.validate(metadata):
+        validation_result, errors = self.stream_registry.validate(metadata)
+        if validation_result:
             self.stream_registry.update(stream_id, metadata)
             template_id = metadata.get("filter_template")
             filter_entry = self.filter_registry.get(template_id) if template_id else None
             self.streams[stream_id] = DataStream(stream_id, metadata, filter_entry, self.filter_registry)
         else:
-            logging.error(f"[StreamManager] Invalid stream metadata for '{stream_id}'")
+            logging.error(f"[StreamManager] Invalid stream metadata for '{stream_id}. \nErrors: {errors}'")
 
     def deregister_stream(self, stream_id: str):
         self.stream_registry.remove(stream_id)
@@ -90,9 +92,9 @@ class StreamManager:
 
     def handle_command(self, topic, msg):
         logging.info(f"[StreamManager] Received command: {msg}")
-        # TODO: Add dynamic command handling (assign filter, update metadata etc.)
+        # TODO
 
-    # --- Lifecycle ---
+
     def run(self):
         self.running = True
         logging.info("[StreamManager] Running...")
@@ -119,7 +121,7 @@ class StreamManager:
             self.thread.join()
         logging.info("[StreamManager] Fully stopped.")
 
-# --- Entrypoint ---
+# --- Main ---
 def main():
     logging.basicConfig(level=logging.DEBUG)
     manager = StreamManager()

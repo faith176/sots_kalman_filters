@@ -1,6 +1,6 @@
 {
   "kf1": {
-    "type": "2D",
+    "type": "KalmanFilter2D",
     "params": {
       "initial_value": 20.0,
       "initial_rate": 0.0,
@@ -11,7 +11,7 @@
     }
   },
   "kf2": {
-    "type": "3D",
+    "type": "KalmanFilter3D",
     "params": {
       "initial_value": 50.0,
       "initial_rate": 0.0,

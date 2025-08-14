@@ -37,7 +37,4 @@ class Registry(ABC):
 
     @abstractmethod
     def validate(self, item_data: dict) -> bool:
-        """
-        Optionally enforce validation per subclass.
-        """
         pass
