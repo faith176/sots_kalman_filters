@@ -2,9 +2,10 @@ import logging
 import threading
 import time
 
-from utils.config_loader import instantiate_filter, load_filter_templates, load_stream_metadata
-from filter.Confidence import compute_confidence
+from datastream.Datastream import DataStream
 from messaging.ClientTypes.StreamClient import StreamClient
+from registry.RegisterTypes.FilterRegistry import FilterRegistry
+from registry.RegisterTypes.StreamRegistry  import StreamRegistry
 
 class StreamManager:
     def __init__(self, filter_config_path="config/filters.json", stream_config_path="config/streams.json"):
@@ -12,130 +13,94 @@ class StreamManager:
         self.running = False
         self.thread = None
 
-        # Subscribe to all relevant topics
+        self.filter_registry = FilterRegistry(filter_config_path)
+        self.stream_registry = StreamRegistry(stream_config_path)
+        self.streams = {}
+
+        # Setup messaging
         self.client.subscribe_to("data.")
         self.client.subscribe_to("command")
-
-        # Register handlers
         self.client.register_handler("data", self.handle_data)
         self.client.register_handler("command", self.handle_command)
 
-        # State
-        self.filter_templates = load_filter_templates(filter_config_path)
-        self.stream_metadata = load_stream_metadata(stream_config_path)
-        self.stream_filters = {}
+        # Initialize DataStreams
+        self._initialize_streams()
 
-        # Initialize any streams with pre-assigned filters
-        self._initialize_filters()
+    def _initialize_streams(self):
+        for stream_id, metadata in self.stream_registry.get_all().items():
+            template_id = metadata.get("filter_template")
+            filter_entry = self.filter_registry.get(template_id) if template_id else None
+            self.streams[stream_id] = DataStream(stream_id, metadata, filter_entry, self.filter_registry)
+            logging.info(f"[StreamManager] Initialized stream '{stream_id}' with template '{template_id}'")
 
-    def _initialize_filters(self):
-        for stream_id, meta in self.stream_metadata.items():
-            template_id = meta.get("filter_template")
-            if template_id and template_id in self.filter_templates:
-                self.stream_filters[stream_id] = instantiate_filter(self.filter_templates[template_id])
-                logging.info(f"[StreamManager] Initialized stream '{stream_id}' with filter '{template_id}'")
-            elif template_id:
-                logging.warning(f"[StreamManager] Template '{template_id}' for stream '{stream_id}' not found. Awaiting dynamic assignment.")
-            else:
-                logging.info(f"[StreamManager] Stream '{stream_id}' initialized with no filter.")
-
-    # -- Filter Registration --
-
-    def register_filter_template(self, template_id, params):
-        self.filter_templates[template_id] = params
-        logging.info(f"[StreamManager] Registered new filter template '{template_id}'")
-
-    def deregister_filter_template(self, template_id):
-        self.filter_templates.pop(template_id, None)
-        logging.info(f"[StreamManager] Removed filter '{template_id}'")
-
-
-    # -- Stream Registration --
-
-    def register_stream(self, stream_id, metadata: dict):
-        self.stream_metadata[stream_id] = metadata
-        logging.info(f"[StreamManager] Registered new stream '{stream_id}'")
-        if "filter_template" in metadata:
-            self.assign_filter_to_stream(stream_id, metadata["filter_template"])
-
-    def deregister_stream(self, stream_id):
-        self.stream_metadata.pop(stream_id, None)
-        self.unassign_filter_to_stream(stream_id)
-        logging.info(f"[StreamManager] Removed stream '{stream_id}'")
-
-
-    # -- Assigning Filter to Stream Registration --
-
-    def assign_filter_to_stream(self, stream_id, template_id):
-        if template_id not in self.filter_templates:
-            logging.error(f"[StreamManager] Cannot assign unknown filter template '{template_id}'")
-            return
-        self.stream_filters[stream_id] = instantiate_filter(self.filter_templates[template_id])
-        logging.info(f"[StreamManager] Assigned filter '{template_id}' to stream '{stream_id}'")
-
-    def unassign_filter_to_stream(self, stream_id):
-        if stream_id in self.stream_filters:
-            del self.stream_filters[stream_id]
-            logging.info(f"[StreamManager] Deregistered filter from stream '{stream_id}'")
+    # --- Filter Management ---
+    def register_filter_template(self, template_id: str, filter_entry: dict):
+        if self.filter_registry.validate(filter_entry):
+            self.filter_registry.update(template_id, filter_entry)
         else:
-            logging.warning(f"[StreamManager] No filter to remove for stream '{stream_id}'")
+            logging.error(f"[StreamManager] Invalid filter template '{template_id}'")
 
-    # -- Event Handlers --
+    def deregister_filter_template(self, template_id: str):
+        self.filter_registry.remove(template_id)
 
+    # --- Stream Management ---
+    def register_stream(self, stream_id: str, metadata: dict):
+        if self.stream_registry.validate(metadata):
+            self.stream_registry.update(stream_id, metadata)
+            template_id = metadata.get("filter_template")
+            filter_entry = self.filter_registry.get(template_id) if template_id else None
+            self.streams[stream_id] = DataStream(stream_id, metadata, filter_entry, self.filter_registry)
+        else:
+            logging.error(f"[StreamManager] Invalid stream metadata for '{stream_id}'")
+
+    def deregister_stream(self, stream_id: str):
+        self.stream_registry.remove(stream_id)
+        self.streams.pop(stream_id, None)
+        logging.info(f"[StreamManager] Deregistered stream '{stream_id}'")
+
+    def assign_filter_to_stream(self, stream_id: str, template_id: str):
+        if stream_id not in self.streams:
+            logging.warning(f"[StreamManager] Unknown stream '{stream_id}'")
+            return
+        filter_entry = self.filter_registry.get(template_id)
+        if not filter_entry:
+            logging.warning(f"[StreamManager] Unknown filter template '{template_id}'")
+            return
+        metadata = self.stream_registry.get(stream_id)
+        self.streams[stream_id].refresh_metadata(metadata, filter_entry)
+        logging.info(f"[StreamManager] Reassigned filter '{template_id}' to stream '{stream_id}'")
+
+    def unassign_filter_from_stream(self, stream_id: str):
+        if stream_id in self.streams:
+            metadata = self.stream_registry.get(stream_id)
+            self.streams[stream_id].refresh_metadata(metadata, None)
+            logging.info(f"[StreamManager] Unassigned filter from stream '{stream_id}'")
+
+    # --- Event Handlers ---
     def handle_data(self, topic, msg):
-        name = topic.split("data.")[1]
-        logging.info(f"[StreamManager] Received data from {name}: {msg}")
-
-        stream_id = msg.get("sensor_id")
-        if not stream_id or stream_id not in self.stream_metadata:
-            logging.warning(f"[StreamManager] Unknown or unregistered stream '{stream_id}'")
+        logging.info(f"[StreamManager] Received data from {topic}: {msg}")
+        stream_id = msg.get("stream_id")
+        value = msg.get("value")
+        if stream_id not in self.streams:
+            logging.warning(f"[StreamManager] Unregistered stream '{stream_id}'")
             return
 
-        kf = self.stream_filters.get(stream_id)
-        if not kf:
-            logging.warning(f"[StreamManager] No filter assigned to stream '{stream_id}'")
-            return
-
-        value = msg["value"]
-        timestamp = msg["timestamp"]
-
-        # Filter operations
-        kf.predict()
-        kf.update(value)
-
-        confidence = compute_confidence(kf.get_covariance())
-        filtered_event = {
-            "origin": "StreamManager",
-            "streamId": stream_id,
-            "timestamp": timestamp,
-            "filteredMeasurement": kf.get_value(),
-            "quality": {
-                "imputed": False,
-                "confidence": confidence
-            },
-            "streamInfo": {
-                "streamType": self.stream_metadata.get(stream_id, {}).get("stream_type", "unknown"),
-                "unit": self.stream_metadata.get(stream_id, {}).get("units", "unknown"),
-                "filterSource": kf.get_type()
-            }
-        }
-
-        topic = f"CEP.{stream_id}"
-        self.client.send_event(filtered_event, topic=topic)
+        result = self.streams[stream_id].process_event(value)
+        self.client.send_event(result, topic=f"CEP.{stream_id}")
 
     def handle_command(self, topic, msg):
         logging.info(f"[StreamManager] Received command: {msg}")
-        # TODO: Implement command logic
+        # TODO: Add dynamic command handling (assign filter, update metadata etc.)
 
-
+    # --- Lifecycle ---
     def run(self):
-        self.client.join()
         self.running = True
         logging.info("[StreamManager] Running...")
         try:
+            self.client.join()
             self.client.subscribe()
         except Exception as e:
-            logging.error(f"[StreamManager] Subscribe error: {e}")
+            logging.error(f"[StreamManager] Error: {e}")
         finally:
             self.running = False
 
@@ -154,22 +119,16 @@ class StreamManager:
             self.thread.join()
         logging.info("[StreamManager] Fully stopped.")
 
-
+# --- Entrypoint ---
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    manager = StreamManager(
-        filter_config_path="config/filters.json",
-        stream_config_path="config/streams.json"
-    )
+    manager = StreamManager()
     manager.start()
-
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        logging.info("[MAIN] Shutting down StreamManager...")
         manager.stop()
-        logging.info("[MAIN] StreamManager fully exited.")
 
 if __name__ == "__main__":
     main()

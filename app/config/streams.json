@@ -1,7 +1,8 @@
 {
   "temp-sensor-001": {
     "stream_type": "temperature",
-    "units": "Celsius",
+    "unit": "Celsius",
+    "datatype": "float",
     "interval_sec": 2,
     "filter_template": "kf1"
   }
