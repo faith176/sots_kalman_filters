@@ -1,10 +1,29 @@
 import json
 import logging
 import zmq
+from typing import Any, Callable, Dict, Mapping, Optional
 
 from messaging.Client import Client
 
 class StreamClient(Client):
+    """
+    ZeroMQ client specialized for sending events
+
+    - Publish JSON-serializable events to a topic (via PUB).
+    - Subscribe/unsubscribe to topic prefixes on the SUB socket.
+    - Route incoming messages to registered handlers based on the *prefix*
+      of the topic (e.g., "data.*", "command.*").
+    - Processes messages via `subscriberAction()`.
+
+    Conventions:
+    - Topics are strings like "data.sensor-123" or "command.sensor-123, where the prefix indicates the type of message being sent".
+    - Handlers should be functions assigned to handle different types of messages
+    """
+
+    name: str
+    subscriptions: set[str]
+    handlers: Dict[str, Callable[[str, Dict[str, Any]], None]]
+
     def __init__(self, name="default-stream"):
         super().__init__()
         self.name = name
@@ -44,7 +63,7 @@ class StreamClient(Client):
         try:
             parts = self._subscriber.recv_multipart(zmq.NOBLOCK)
             if len(parts) < 2:
-                logging.warning(f"[StreamClient:{self.name}] Malformed message: {parts}")
+                logging.warning(f"[StreamClient:{self.name}] unstructured message: {parts}")
                 return
 
             topic = parts[0].decode()

@@ -18,8 +18,8 @@ class StreamManager:
         self.streams = {}
 
         # Setup messaging
-        self.client.subscribe_to("data.")
-        self.client.subscribe_to("command")
+        self.client.subscribe_to("data")
+        self.client.subscribe_to("command.")
         self.client.register_handler("data", self.handle_data)
         self.client.register_handler("command", self.handle_command)
 
