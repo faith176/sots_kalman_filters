@@ -1,0 +1,5 @@
+partition,stream_id,timestamp,datatype,unit,value,observed_value,imputed_value,method,confidence,imputation_flag,extras,__topic__
+observed,temp-1,1758503347.6304617,float,C,19.679756691514932,19.679756691514932,,,,,{'ground_truth': 19.679756691514932},observed.temp-1
+imputed,temp-1,1758503347.6304617,float,C,19.679756691514932,19.679756691514932,,observed,1.0,False,{'ground_truth': 19.679756691514932},imputed.temp-1
+observed,humid-1,1758503347.6304617,float,%,61.65557662328874,61.65557662328874,,,,,{'ground_truth': 61.65557662328874},observed.humid-1
+imputed,humid-1,1758503347.6304617,float,%,61.65557662328874,61.65557662328874,,observed,1.0,False,{'ground_truth': 61.65557662328874},imputed.humid-1

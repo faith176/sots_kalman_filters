@@ -37,16 +37,17 @@ class Client():
         self._poller.register(self._subscriber, zmq.POLLIN)
 
     def join(self):
-        self._snapshot.send(b"request_snapshot")
-        while True:
-            try:
-                message = self._snapshot.recv()
-                logging.debug(message)
-            except:
-                return  # Interrupted
-            if message == b"finished_snapshot":
-                logging.debug("Received snapshot")
-                break  # Done
+        pass
+        # self._snapshot.send(b"request_snapshot")
+        # while True:
+        #     try:
+        #         message = self._snapshot.recv()
+        #         logging.debug(message)
+        #     except:
+        #         return  # Interrupted
+        #     if message == b"finished_snapshot":
+        #         logging.debug("Received snapshot")
+        #         break  # Done
 
     def subscribe(self):
         logging.debug("Receiving messages")

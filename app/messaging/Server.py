@@ -4,7 +4,7 @@ import logging
 
 import zmq
 
-from messaging.Memory import Memory
+from app.messaging.Memory import Memory
 
 
 __author__ = "Istvan David"
