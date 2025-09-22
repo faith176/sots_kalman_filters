@@ -1,4 +1,3 @@
-# app/messaging/EventStream.py
 import logging
 from app.schema.Event import Event, EventConsumer
 from app.messaging.StreamClient import StreamClient

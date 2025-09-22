@@ -1,4 +1,3 @@
-# app/messaging/StreamClient.py
 import logging
 import json
 import zmq
