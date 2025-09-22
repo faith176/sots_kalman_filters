@@ -3,7 +3,7 @@ import os
 from app.schema.Event import Event, EventConsumer
 
 
-class GlobalLogger(EventConsumer):
+class Logger(EventConsumer):
     def __init__(self, output_dir="app/data/logs", name="test"):
         filename = f"{name}.csv"
 
@@ -47,7 +47,6 @@ class GlobalLogger(EventConsumer):
         if self.writer is None:
             self._init_writer(event_with_partition)
 
-        # normalize row so all fields exist
         row = {field: event_with_partition.get(field) for field in self.writer.fieldnames}
 
         self.records.append(row)

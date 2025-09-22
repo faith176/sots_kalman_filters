@@ -41,15 +41,6 @@ This section explains the major classes, their responsibilities, and how they in
 ---
 
 ## Event Stream Layer
-
-### `EventStream`
-- **Purpose**: Partitions the event bus and places events into their appropriate category so consumers can filter what messages they receive.  
-- **Responsibilities**:
-  - Maintains partitions (`observed`, `imputed`, `cep`).
-  - Publishes events into a partition.
-  - Registers subscribers to partitions.
-  - Dispatches incoming messages to consumers.
-
   ### `EventStream`
 - **Purpose**: Partitions the event bus and places events into their appropriate category so consumers can filter what messages they receive.  
 
@@ -73,8 +64,8 @@ This section explains the major classes, their responsibilities, and how they in
   - When the observed data is NaN, the predicted value can be used
 
 
-- **CEP Partition (`cep`)**
-  - Holds events that have passed the CEP engine and have been added with details about
+- **CEP Partition (`matched`)**
+  - Holds events that have passed through the CEP engine and are annotated with details on patterns matched to that event
 
 
 ### `StreamClient`
@@ -143,7 +134,7 @@ This section explains the major classes, their responsibilities, and how they in
 
 ## Evaluation & Logging Layer
 
-### `GlobalLogger`
+### `Logger`
 - **Purpose**: Unified logger across all partitions.
 - **Responsibilities**:
   - Subscribes to all partitions.
@@ -156,12 +147,5 @@ This section explains the major classes, their responsibilities, and how they in
 1. **Simulated Stream** produce observed events.
 2. **EventStream** routes them into the observed partition.
 3. **Imputers** consume observed events, impute missing values, and publish to the imputed partition.
-4. **CEP** consumes from imputed, TODO
+4. **CEP** consumes from imputed, publish to matched
 5. **Logger** captures all events (observed, imputed, filtered).
-
-
----
-
-
-## UML
-add once finalized

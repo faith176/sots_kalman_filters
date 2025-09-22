@@ -8,7 +8,7 @@ class EventStream:
         self.partitions = {
             "observed": StreamClient("observed"),
             "imputed": StreamClient("imputed"),
-            "filtered": StreamClient("filtered"),
+            "matched": StreamClient("matched"),
         }
 
     def add_event(self, event: Event, partition: str, stream_id: str):

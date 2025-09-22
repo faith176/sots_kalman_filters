@@ -1,7 +1,7 @@
 from app.messaging.EventStream import EventStream
 from app.stream.StreamManager import StreamManager
 from app.imputation.ImputersManager import ImputerManager
-from app.logger.Logger import GlobalLogger
+from app.logger.Logger import Logger
 from app_examples.Main_Evaluation import evaluate_imputation 
 import logging
 
@@ -17,7 +17,7 @@ def main():
     imputer_manager = ImputerManager(event_stream, "app/configs/streams.json", "app/configs/filters.json")
     stream_manager.start()
 
-    logger = GlobalLogger()
+    logger = Logger()
     for partition in list(event_stream.partitions.keys()):
         event_stream.subscribe(logger, partition, "*") 
    
@@ -36,3 +36,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
