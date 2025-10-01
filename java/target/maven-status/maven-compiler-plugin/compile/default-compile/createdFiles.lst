@@ -1,8 +1,0 @@
-messaging\EventStream.class
-cep\EsperSetup.class
-messaging\Client.class
-messaging\StreamClient.class
-app\Main.class
-event\Event.class
-patterns\PatternLoader.class
-cep\CEPManager.class

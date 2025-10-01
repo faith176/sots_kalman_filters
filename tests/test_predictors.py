@@ -1,5 +1,5 @@
 import pytest
-from app.imputation.predictors.Predictor import KalmanFilter
+from app.core.reconstruction.predictors.predictorTypes.KalmanFilter import KalmanFilter
 
 def test_kalman_filter_stability():
     predictor = KalmanFilter()

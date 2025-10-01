@@ -1,0 +1,7 @@
+cep\EsperSetup.class
+messaging\Client.class
+app\Main.class
+event\Event.class
+runtime\EventStream.class
+patterns\PatternLoader.class
+logger\PatternLogger.class
