@@ -1,8 +1,8 @@
 /app/
 /cep/
-/event/
+/communication/
 /logger/
-/messaging/
 /patterns/
 /runtime/
+/schema/
 /META-INF/
