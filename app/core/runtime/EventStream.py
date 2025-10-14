@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Type
 from app.core.runtime.EventConsumer import EventConsumer
 from app.core.schema.Event import Event
@@ -22,6 +23,33 @@ class EventStream:
         self.client_type = client_type
         self._running = False
 
+        self.warmup(rounds=3, delay=0.05)
+        time.sleep(1)
+
+    def warmup(self, rounds: int = 3, delay: float = 0.05):
+        """
+        stabilize PUB/SUB connections, ensuring all subscribers are connected and filters registered
+        """
+        logging.info("[EVENTSTREAM] Performing warm-up broadcast for all partitions...")
+
+        dummy_event = {
+            "stream_id": "__warmup__",
+            "origin": "system",
+            "status": "warmup",
+            "timestamp": time.time(),
+        }
+
+        for i in range(rounds):
+            for partition in self.partitions.keys():
+                # Use a generic placeholder stream id so each partition client exists
+                client = self._get_client(partition, "__warmup__")
+                client.publish(dummy_event, "__warmup__")
+
+            time.sleep(delay)
+
+        logging.info("[EVENTSTREAM] Warm-up broadcast complete.")
+
+
     def _get_client(self, partition: str, stream_id: str) -> Client:
         if partition not in self.partitions:
             raise ValueError(f"Unknown partition: {partition}")
@@ -38,14 +66,13 @@ class EventStream:
         client = self._get_client(partition, stream_id)
         client.subscribe_to(stream_id, consumer)
 
-    def dispatch(self, timeout: int = 1000, once: bool = False):
+    def dispatch(self, timeout: int = 100):
         self._running = True
         while self._running:
             for partition_clients in self.partitions.values():
                 for client in partition_clients.values():
-                    client.dispatch(timeout=timeout)
-            if once:
-                break
+                    client.poll_once(timeout=timeout)
+            time.sleep(0.01)
 
     def stop(self):
         logging.info("[EVENTSTREAM] Stopping dispatch loop.")
