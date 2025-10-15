@@ -10,31 +10,28 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Logs all detected pattern matches (atomic or complex) to a CSV file.
- * Each record includes the pattern name, type, confidence, contributing subpatterns,
- * subpattern confidences, and a nested JSON-like structure of event IDs for traceability.
- */
 public class PatternLogger implements AutoCloseable {
     private final PrintWriter writer;
+    private final long experimentStart;  // 🔹 reference timestamp
 
     public PatternLogger(String runDir) throws IOException {
         Files.createDirectories(Paths.get(runDir));
         Path file = Paths.get(runDir, "patterns.csv");
         this.writer = new PrintWriter(new FileWriter(file.toFile(), false));
 
+        this.experimentStart = System.currentTimeMillis();  // 🔹 baseline for relative time
+
         writer.println("# Logger: PatternLogger | Started: " + new Date());
-        writer.println("fired_at,pattern_name,pattern_type,subpatterns,"
-                + "subpattern_confidences,num_subpatterns,num_events,confidence,nested_event_ids");
+        writer.println("fired_at,fired_offset_sec,pattern_name,pattern_type,"
+                + "subpatterns,subpattern_confidences,num_subpatterns,num_events,confidence,nested_event_ids");
     }
 
-    /**
-     * Logs a pattern match with nested event structure and subpattern confidences.
-     */
     public synchronized void log(Pattern record) {
-        String firedAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+        long now = System.currentTimeMillis();
+        double offsetSec = (now - experimentStart) / 1000.0;  // 🔹 relative time since experiment start
 
-        // Extract subpattern data
+        String firedAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(now));
+
         List<String> subpatternNames = new ArrayList<>();
         List<Double> subpatternConfidences = new ArrayList<>();
 
@@ -46,7 +43,6 @@ public class PatternLogger implements AutoCloseable {
             subpatternConfidences.add(record.getConfidence());
         }
 
-        // Nested event IDs (one bracketed group per subpattern)
         List<String> nestedEventGroups = record.getEventsNested().stream()
                 .map(inner -> inner.stream()
                         .map(Event::getEventId)
@@ -63,8 +59,9 @@ public class PatternLogger implements AutoCloseable {
         int numSub = record.countSubPatterns();
         int numEvents = record.countAllEvents();
 
-        writer.printf("%s,%s,%s,%s,%s,%d,%d,%.4f,%s%n",
+        writer.printf("%s,%.3f,%s,%s,%s,%s,%d,%d,%.4f,%s%n",
                 firedAt,
+                offsetSec, // 🔹 new field: relative offset (seconds)
                 record.getPatternName(),
                 record.getPatternType(),
                 subpatternField,

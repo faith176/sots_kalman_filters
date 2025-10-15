@@ -51,6 +51,7 @@ class Orchestrator:
     def start(self):
         # Start server
         self.server.run(in_thread=True)
+        time.sleep(3)
 
         # Start up bridge
         if self.bridge:
@@ -60,6 +61,7 @@ class Orchestrator:
                 **self.bridge_kwargs
             )
             self.cep_engine.start()
+        time.sleep(5)
 
         # Setup logger
         self.logger = CSVLogger(self.run_dir)
@@ -72,21 +74,40 @@ class Orchestrator:
             streams_config_path=self.streams_cfg,
             predictors_config_path=self.predictors_cfg,
         )
+        time.sleep(3)
         self.coordinator.start()
 
         try:
-            self.event_stream.dispatch(timeout=1000)
+            self.event_stream.dispatch(timeout=5)
         except KeyboardInterrupt:
             self.stop()
 
     def stop(self):
-        logging.info("[ORCHESTRATOR] Stopping pipeline")
-        if self.coordinator:
-            self.coordinator.stop()
-        if self.logger:
-            self.logger.close()
-        if self.cep_engine:
-            self.cep_engine.stop()
-        if self.server:
-            self.server.stop()
-        logging.info("[ORCHESTRATOR] Shutdown complete")
+        logging.info("[ExperimentOrchestrator] Stopping pipeline...")
+        try:
+            if self.coordinator:
+                self.coordinator.running = False
+                self.coordinator.stop()
+                time.sleep(1)
+
+            if self.event_stream:
+                self.event_stream.stop()
+
+            # --- Now it's safe to close logger
+            if self.logger:
+                logging.info("[ExperimentOrchestrator] Closing logger...")
+                try:
+                    self.logger.close(timeout=5)
+                except Exception as e:
+                    logging.warning(f"[ExperimentOrchestrator] Logger already closed: {e}")
+
+            if self.cep_engine:
+                self.cep_engine.stop()
+
+            if self.server:
+                self.server.stop()
+
+            logging.info("[ExperimentOrchestrator] All stopped.")
+        except Exception as e:
+            logging.exception(f"[ExperimentOrchestrator] Error during stop: {e}")
+
