@@ -35,3 +35,13 @@ ax.set_title("Selected Chicago Beach Sensors", fontsize=12, pad=10)
 # Save as PNG
 plt.savefig( "app_examples/experiment_example/data/beaches_map.png", dpi=300, bbox_inches="tight")
 plt.show()
+
+
+
+
+
+
+
+
+
+

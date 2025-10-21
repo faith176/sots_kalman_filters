@@ -1,0 +1,35 @@
+\begin{table*}[]
+\centering
+\setlength{\tabcolsep}{1em}
+\caption{Search statistics}
+\label{tab:numbers}
+\footnotesize
+\begin{tabular}{@{}lrrr@{\hspace{2pt}}lr@{}}
+\toprule
+\multicolumn{1}{c}{\textbf{Search round}} & \multicolumn{1}{c}{\textbf{All}} & \multicolumn{1}{c}{\textbf{Excluded}} & \multicolumn{2}{c}{\textbf{Included}} & \multicolumn{1}{c}{\textbf{Agreement}} \\ \midrule
+\textbf{Automated search} & & & & & \\
+\;\;\corner{} Duplicate removal & 317 & 121 & 196 &   &  \\
+\;\;\corner{} E0 & 196 & 71 & 125 &   &  \\
+\;\;\corner{} E1--E3 & 125 & 44 & \textbf{81} & & $IRA=0.88$ / $\kappa=0.734$ \\
+\textbf{Quality assessment} & & & & & \\
+\;\;\corner{} Q1 or Q2 insufficient & 81 & 22 & 59 &   &  \\
+\;\;\corner{} Q3 insufficient & 59 & 6 & 53 &   &  \\
+\;\;\corner{} Q4 insufficient & 53 & 0 & 53 &   &  \\
+\textbf{Subtotal} & \textbf{317} & \textbf{264} & \included{53} & \textbf{(16.72\%)} & \\
+\midrule
+\textbf{Snowballing} & & & & & \\
+\;\;\corner{} Backward & & & & & \\
+\;\;\;\;\corner{} Selection by reference & 1\,666 & 1\,521 & 145 & & \\
+\;\;\;\;\corner{} Selection by abstract & 145 & 132 & \textbf{13} & & \\
+\;\;\corner{} Forward & 586 & 561 & \textbf{25} & &  \\
+\;\;\corner{} Total abstracts screened & 731 & 693  & \textbf{38} & & $IRA=0.944$ / $\kappa=0.488$ \\
+\textbf{Quality assessment} & & & & & \\
+\;\;\corner{} Q1 or Q2 insufficient & 38 & 9 & 29 &   &  \\
+\;\;\corner{} Q3 insufficient & 29 & 2 & 27 &   &  \\
+\;\;\corner{} Q4 insufficient & 27 & 0 & \textbf{27} &  &  \\
+\textbf{Subtotal} & \textbf{2\,252} & \textbf{2\,225} & \included{27} & \textbf{(1.19\%)} & \\
+\midrule
+\textbf{Total} & \textbf{2\,569} & \textbf{2\,489} & \included{80} & \textbf{(3.11\%)} & \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -11,34 +11,35 @@ LOG = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 
 BEACHES = ["Calumet Beach", "Montrose Beach", "63rd Street Beach"]
-ATTRIBUTES = [
+ATTRIBUTES_KF = [
     ("Water Temperature", "C", "kf_water_temp"),
     ("Turbidity", "NTU", "kf_turbidity"),
     ("Wave Height", "m", "kf_wave_height"),
     ("Wave Period", "s", "kf_wave_period")
 ]
 
+ATTRIBUTES_PF = [
+    ("Water Temperature", "C", "pf_water_temp"),
+    ("Turbidity", "NTU", "pf_turbidity"),
+    ("Wave Height", "m", "pf_wave_height"),
+    ("Wave Period", "s", "pf_wave_period")
+]
+
+
 DATASETS = [
-    "mar_15",
-    "mar_30",
-    "mcar_15",
-    "mcar_30",
-    "mnar_15",
-    "mnar_30",
-    "structural_15",
+    "oracle",
+    "hybrid_10",
+    "hybrid_20",
+    "hybrid_30",
+    "structural_10",
+    "structural_20",
     "structural_30",
-    "oracle"
 ]
 
 
 class ExperimentBatchOrchestrator:
-    """
-    Runs multiple experiment configurations sequentially.
-    Each configuration has its own generated stream config and Orchestrator instance.
-    """
-
     def __init__(self, base_data_dir, log_dir, predictors_cfg, pattern_cfg,
-                 bridge_class=JavaCEPBridge, bridge_kwargs=None):
+                 bridge_class=JavaCEPBridge, bridge_kwargs=None, attributes=ATTRIBUTES_KF):
         self.base_data_dir = Path(base_data_dir)
         self.log_dir = Path(log_dir)
         self.predictors_cfg = predictors_cfg
@@ -50,14 +51,14 @@ class ExperimentBatchOrchestrator:
             "rebuild": False,
             "log_matches": "False"
         }
+        self.attributes = attributes
 
     def run_all(self):
-        # for dataset_name in DATASETS:
-        for dataset_name in ["mnar_30", "oracle"]:
+        for dataset_name in DATASETS:
             LOG.info(f"===== Starting Experiment: {dataset_name} =====")
 
             dataset_file = self.base_data_dir / f"{dataset_name}.csv"
-            streams_config_path = self._generate_streams_config(dataset_file)
+            streams_config_path = self._generate_streams_config(dataset_file, attributes=self.attributes)
 
             orch = ExperimentOrchestrator(
                 pattern_cfg=self.pattern_cfg,
@@ -81,14 +82,14 @@ class ExperimentBatchOrchestrator:
                 orch.stop()
 
             LOG.info(f"===== Completed Experiment: {dataset_name} =====")
-            time.sleep(10)  # cooldown before next run
+            time.sleep(15)  # cooldown before next run
 
-    def _generate_streams_config(self, dataset_file: Path):
+    def _generate_streams_config(self, dataset_file: Path, attributes: dict = ATTRIBUTES_KF):
         """Dynamically generate and write the streams config for one dataset."""
         cfg = {}
 
         for beach in BEACHES:
-            for col_name, unit, predictor in ATTRIBUTES:
+            for col_name, unit, predictor in attributes:
                 stream_id = f"{beach.replace(' ', '_')}_{col_name.replace(' ', '_')}"
                 cfg[stream_id] = {
                     "type": "experiment_stream",
@@ -118,6 +119,7 @@ def main():
         log_dir=f"data/logs/experiment_example/{timestamp}",
         predictors_cfg="app_examples/experiment_example/configs/predictors_experiment.json",
         pattern_cfg="patterns/experiments_patterns.json",
+        attributes = ATTRIBUTES_KF # change to particle filter when wanting to run that one instead
     )
     batch.run_all()
     

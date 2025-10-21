@@ -1,0 +1,327 @@
+
+% % Optional: custom length and bar height
+% \newlength{\maxlen}
+% \newcommand{\colheight}{0.25}  % Adjust bar thickness here if needed
+
+% % Total number of studies
+% \newcommand{\SoTSnumberofstudies}{80}
+
+% % Bar colors
+% \definecolor{barcolor}{HTML}{85d4ff}
+% \definecolor{subbarcolor}{HTML}{d8d8d8}
+% \definecolor{subsubbarcolor}{HTML}{d8d8d8}
+
+% % Data bar macros
+% \newcommand{\maindatabar}[2][\SoTSnumberofstudies]{%
+%     \databar[#1]{#2}{32}{barcolor}
+% }
+
+% \newcommand{\subdatabar}[2][\SoTSnumberofstudies]{%
+%     \databar[#1]{#2}{36}{subbarcolor}
+% }
+
+% \newcommand{\subsubdatabar}[2][\SoTSnumberofstudies]{%
+%     \databar[#1]{#2}{40}{subsubbarcolor}
+% }
+
+% \newcommand{\databar}[4][\SoTSnumberofstudies]{%
+%     \settowidth{\maxlen}{#3}%
+%     \addtolength{\maxlen}{\tabcolsep}%
+%     \ifthenelse{\equal{#1}{}}{%
+%         \FPeval{perc}{round(100.0 / \SoTSnumberofstudies * #2, 1)}%
+%     }%
+%     {%
+%         \FPeval{perc}{round(100.0 / #1 * #2, 1)}%
+%     }%
+%     \FPeval\result{round(\perc / 100 * \maxlen, 1)}%
+%     \rlap{\color{#4}\hspace*{-0.5\tabcolsep}\rule[\colheight\ht\strutbox]{\result pt}{1.2\ht\strutbox}}%
+%     \makebox[\dimexpr\maxlen-\tabcolsep][l]{#2 (\perc\%)}%
+% }
+
+% % Subcategory corner labels
+% \newcommand{\subcategory}{\;\corner{}}
+% \newcommand{\subsubcategory}{\;\;\corner{}}
+
+
+
+
+% From Prof
+%%%%%%%%%%%%%%%%%%% Basic commands for editing %%%%%%%%%%%%%%%%%%%
+\newcommand{\secref}[1]{Sec.~\ref{#1}}
+\newcommand{\figref}[1]{Fig.~\ref{#1}}
+\newcommand{\tabref}[1]{Tab.~\ref{#1}}
+\newcommand{\equref}[1]{Equation~\ref{#1}}
+\newcommand{\lstref}[1]{Listing~\ref{#1}}
+\newcommand{\appref}[1]{Appendix~\ref{#1}}
+
+%%%%%%%%%%%%%%%%%%% Frequently used annotations %%%%%%%%%%%%%%%%%%%
+
+\newcommand{\TODO}[1]{
+    \ifthenelse{\boolean{showannotations}}%
+    {\ifthenelse{\equal{#1}{}}{\textcolor{red}{TODO}}{\textcolor{red}{TODO:~{#1}}}}%
+    {}%
+}
+
+\newcommand{\assignedto}[1]{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\textbf{\noindent\ding{46}\textcolor{white}{~\colorbox{\assignementcolor}{Assigned to:}}~\textcolor{\assignementcolor}{#1}\\}%
+    }
+    {}
+}
+
+%%%%%%%%%%%%%%%%%%% Review commands %%%%%%%%%%%%%%%%%%%
+
+
+\makeatletter
+ \if@todonotes@disabled
+ \newcommand{\hlnote}[2]{#1}
+ \else
+ \newcommand{\hlnote}[2]{\todo{#2}\texthl{#1}}
+ \fi
+ \makeatother
+
+\newcommand{\rephrase}[1]{\textcolor{purple}{\uwave{#1}}} % please rephrase
+
+\renewcommand{\nb}[4]{
+    \fcolorbox{gray}{#2}{\bfseries\sffamily\scriptsize{#1}}
+	{\sf\small$\blacktriangleright$\textcolor{#4}{\textit{#3}}$\blacktriangleleft$}%
+}
+
+\newcommand\personmarker[2]{\noindent\nb{#1}{yellow}{#2}{VioletRed}}
+\newcommand\id[1]{\noindent\personmarker{ID}{#1}}
+\newcommand\xl[1]{\noindent\personmarker{XL}{#1}}
+
+\newcommand\re[2]{\noindent\nb{#1}{YellowOrange}{#2}{RubineRed}}
+
+%%%%%%%%%%%%%%%%%%% Revision commands %%%%%%%%%%%%%%%%%%%
+\newcommand{\reviewid}[1]{}
+
+\newcommand{\rem}[1]{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\textcolor{\oldtextcolor}{\st{#1}}}%
+    {}%
+}
+
+\newcommand\new[1]{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\textcolor{\newnewnewtextcolor}{{#1}}}%
+    {#1}%
+}
+
+\newcommand\add[1]{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\textcolor{\newnewtextcolor}{{#1}}}%
+    {#1}%
+}
+
+\newcommand\rep[2]{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\rem{#1}~\add{#2}}%
+    {#2}%
+}
+
+\newcommand\addblockbegin{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\color{\newtextcolor}}%
+    {}%
+}
+
+\newcommand\addblockend{%
+    \ifthenelse{\boolean{showannotations}}%
+    {\color{black}}%
+    {}%
+}
+
+\long\def\removeblock#1{%
+  \ifthenelse{\boolean{showannotations}}%
+    {\begingroup\color{red}#1\endgroup}%
+    {}%
+}
+
+
+%%%%%%%%%%%%%%%%%%% Preprint info commands %%%%%%%%%%%%%%%%%%%
+\newcommand{\placetextbox}[3]{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \setbox0=\hbox{#3}% Put <stuff> in a box
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(\LenToUnit{#1\paperwidth},\LenToUnit{#2\paperheight}){\vtop{{\null}\makebox[0pt][c]{#3}}}%
+  }%
+}%
+
+\newcommand{\preprintlabel}[2]{
+    \placetextbox{0.5}{0.99}{\colorbox{gray!10}{\textcolor{WildStrawberry}{\textbf{{#2}}}}}%
+
+    \placetextbox{0.5}{0.97}{\colorbox{gray!10}{\textcolor{WildStrawberry}{\textbf{Author pre-print. The final publication is available at: \url{https://doi.org/#1}.}}}}%
+    
+    \placetextbox{0.5}{0.05}{\colorbox{gray!10}{\textcolor{WildStrawberry}{\textbf{Author pre-print. The final publication is available at: \url{https://doi.org/#1}.}}}}%
+}
+
+\newcommand*{\affaddr}[1]{#1} % No op here. Customize it for different styles.
+\newcommand*{\affmark}[1][*]{\textsuperscript{#1}}
+
+
+\newcommand{\corner}{$\rotatebox[origin=c]{180}{$\Lsh$}$}
+
+\newcommand{\included}[1]{\textbf{$\rightarrow${#1}}}
+
+\newcommand{\hsep}{\par\noindent\rule{\linewidth}{0.5pt}}
+
+
+\newcounter{tempcounter}
+
+\newenvironment{contenum}[1][,]{%
+    \begin{enumerate}[#1]\setcounter{enumi}{\value{tempcounter}}}
+    {\end{enumerate}
+    \setcounter{tempcounter}{\value{enumi}}}
+
+\newenvironment{conclusionframe}[1]
+  {\mdfsetup{
+    frametitle={\colorbox{white}{\space#1\space}},
+    innertopmargin=2pt,
+    frametitleaboveskip=-\ht\strutbox,
+    frametitlealignment=\center
+    }
+  \begin{mdframed}[nobreak=true]%
+  }
+  {\end{mdframed}}
+
+\newenvironment{recoframe}[1]
+  {\mdfsetup{
+    frametitle={\colorbox{white}{\space#1\space}},
+    innertopmargin=-1pt,
+    frametitleaboveskip=-\ht\strutbox,
+    frametitlealignment=\center
+    }
+  \begin{mdframed}[nobreak=true]%
+  %\centering
+  }
+  {\end{mdframed}}
+
+
+\newenvironment{bottomlineframe}[0]
+  {\mdfsetup{
+    frametitleaboveskip=-\ht\strutbox,
+    frametitlealignment=\center
+    }
+  \begin{mdframed}[nobreak=true]%
+  %\centering
+  }
+  {\end{mdframed}}
+
+\newenvironment{definitionframe}[0]
+  {\mdfsetup{
+    frametitleaboveskip=-\ht\strutbox,
+    }
+  \begin{mdframed}[nobreak=true]%
+  \justifying
+  }
+  {\end{mdframed}}
+
+
+% \makeatletter
+%  \if@todonotes@disabled
+%  \newcommand{\hlnote}[2]{#1}
+%  \else
+%  \newcommand{\hlnote}[2]{\todo{#2}\texthl{#1}}
+%  \fi
+%  \makeatother
+
+\makeatletter
+ \if@todonotes@disabled
+ \newcommand{\approvednote}[1]{#1}
+ \else
+ \newcommand{\approvednote}[1]{\todo[color=green]{REVIEWED UNTIL HERE. Only change the TODOs I've left before this mark.}}
+ \fi
+ \makeatother
+
+\newcommand\xofy[3]{%
+    \FPeval{perc}{round(100.0 / #2 * #1, 1)}%
+    \ifthenelse{\equal{#3}{}}{%
+        {#1} of {#2} (\perc\%)%
+    }%
+    {%
+        {#1} of {#2} {#3} (\perc\%)%
+    }%
+}
+
+\newcommand\xofyp[2]{%
+    \FPeval{perc}{round(100.0 / #2 * #1, 1)}%
+    {#1} of {#2} -- \perc\%%
+}
+
+\newcommand\perc[2]{%
+    \FPeval{perc}{round(100.0 / #2 * #1, 1)}%
+    \perc%
+}
+
+\newcommand\percp[3]{%
+    \FPeval{perc}{round(100.0 / #2 * #1, 1)}%
+    \ifthenelse{\equal{#3}{}}{%
+        \perc\% ({#1} of {#2})%
+    }%
+    {%
+        \perc\% ({#1} of {#2} {#3})%
+    }%
+}
+
+
+\newcommand{\fullSupport}[1][0.9ex]{%
+  \harveyInternal[#1]{deepblue}{\harveyBallFull}
+}
+\newcommand{\partialSupport}[1][0.9ex]{%
+  \harveyInternal[#1]{lightblue}{\harveyBallFull}
+}
+\newcommand{\noSupport}{%
+  \harveyInternal{deepblue}{\harveyBallNone}
+}
+\newcommand{\harveyInternal}[3][0.9ex]{%
+  \def\harveyBallsSize{#1}%
+  \def\harveyBallsColor{#2}%
+  \def\harveyBallsLineColor{#2}%
+  #3
+}
+
+
+\newcommand{\rquestion}[1]{%
+%\phantom{}\\%
+\noindent\textbf{\textit{#1}}\\%
+}
+
+
+%%%%%%%%%%%%%%%%%%% TABLES WITH BARS
+%\newcommand{\colheight}{-.05}
+%\newcommand{\cellvspace}{-3.5mm}
+\newcommand{\cellvspace}{-2.8mm}
+\newcommand{\colheight}{-.25}
+\newlength{\maxlen}
+
+\newcommand{\numberofstudies}{80}
+
+\newcommand{\maindatabar}[2][\numberofstudies]{%
+    \databar[#1]{#2}{32}{barcolor}
+}
+
+\newcommand{\subdatabar}[2][\numberofstudies]{%
+    \databar[#1]{#2}{36}{subbarcolor}
+}
+
+\newcommand{\subsubdatabar}[2][\numberofstudies]{%
+    \databar[#1]{#2}{40}{subsubbarcolor}
+}
+
+%\newcommand{\maxnum}{32}%
+\newcommand{\databar}[4][\numberofstudies]{%
+    \settowidth{\maxlen}{#3}%
+    \addtolength{\maxlen}{\tabcolsep}%
+    \ifthenelse{\equal{#1}{}}{%
+        \FPeval{perc}{round(100.0 / \studynumberdefault * #2, 1)}%
+    }%
+    {%
+        \FPeval{perc}{round(100.0 / #1 * #2, 1)}%
+    }%
+    \FPeval\result{round(\perc / #3, 1)}%
+    \rlap{\color{#4}\hspace*{-.5\tabcolsep}\rule[\colheight\ht\strutbox]{\result\maxlen}{1.2\ht\strutbox}}%
+    \makebox[\dimexpr\maxlen-\tabcolsep][l]{#2 (\perc\%)}%
+}
+
+\newcommand{\subcategory}{\;\corner{}}
+\newcommand{\subsubcategory}{\;\;\corner{}}

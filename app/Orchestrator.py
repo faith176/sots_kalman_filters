@@ -93,7 +93,6 @@ class Orchestrator:
             if self.event_stream:
                 self.event_stream.stop()
 
-            # --- Now it's safe to close logger
             if self.logger:
                 logging.info("[ExperimentOrchestrator] Closing logger...")
                 try:

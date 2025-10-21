@@ -1,0 +1,82 @@
+% Policy Coordination in Distributed Systems
+
+% Sloman - Domain Based Management 
+% Why: Canonical work on structuring policy around distributed components.
+
+%     Use: Justify your idea of motes or DTs having scoped policy domains.
+
+%     Cite: Sloman 1994, 
+
+lupu1999conflicts, sloman1994policy
+A policy acts as a contract for a system that must be enforced for all relevant parties. The enforment of said contract can modify the behaviour of a system, thus it can acts as a management entity for a distributed system \cite{lupu1999conflicts, }
+
+\cite{lupu1999conflicts, sloman1994policy} defines the dirrect subjects of a polciy where a subject refers to the entity in which interprets policies, a target referes to an entity in which the logic applies, the domain refers to the context or system the policy can be applied in
+
+They define different types of policies as authorization - security related to acess, what activites a subject can perform on a set of target objects, equivalent to our proactive policies and obligation - what activites a subject must or must not do on a set of entities, under proactive policies umbrella
+
+benefits of using policy schema is that the ehaviour can be modified dynamically by changing the policy rather than recoding behaviour
+
+defines different types of domains that help to parition the entities within a distirbuted system: ex location boundaries, type of system, system role/function, responsibilities, and authority
+
+identify policies using labels and also identify them as negative and positive, the subject and target of the policies is also defined, they also define roles and relationships
+
+They mention modality polcies and methods to deal with this and conflicting resources
+
+Morris Sloman’s 1994 paper proposes a policy-driven approach to managing distributed systems by separating management policies from the components that enforce them, enabling dynamic behavior changes without reimplementation. It defines two main types of policies: authorization (what managers are allowed to do) and obligation (what managers must do), each scoped using object groupings called domains. Policies are treated as objects with subjects, targets, actions, constraints, and scope expressions, and can be composed hierarchically from high-level goals to low-level executable rules. The paper also addresses policy propagation, conflict detection, and role-based management, providing a flexible, reusable framework implemented across platforms like OSI, ANSAware, and CORBA.
+
+Lupu and Sloman (1999) distinguish between authorization (what actions are permitted/forbidden) and obligation (what actions must/must not occur) policies, establishing a dual-layer policy model that aligns with static and dynamic behavior management in distributed systems. They propose a domain-based conflict resolution framework and define formal methods for policy conflict detection and precedence, notably supporting role-based enforcement and constraint-based obligations. Their work justifies a layered architecture in which proactive policies map to static authorizations and reactive policies map to event-triggered obligations, both interpretable by automated agents at runtime.
+
+
+Justification of my method = our method is mainly for filtering to use correct neighbours and policies can never conflict as they are not tied to performing specific action
+
+
+% ---------------------------------------
+% Ponder
+    % Why: Object-oriented, rule-based language for distributed system policies.
+
+    % Use: Your work is similar to obligation policies ("on event, do X") and authorization policies ("X is allowed to interact with Y").
+
+\cite{damianou2001ponder}
+
+
+
+
+% ---------------------------------------
+% KAOS - policy refinement
+    % Why: Shows goal-to-rule translation with conditions and triggers.
+
+    % Use: Good fit if you want to say your system evaluates goals like "only interact with reliable motes" and refines that to conditions.
+
+
+
+
+% ---------------------------------------
+% % PMAC / IBM MAPE-K Loop
+%     Why: Shows runtime policy evaluation in autonomic systems, especially self-configuring and self-optimizing behavior.
+
+%     Use: You can say your system takes Monitor (neighbor status) → Analyze (compatibility) → Plan (select) → Execute (interact) style decisions.
+
+%     Cite: IBM, Autonomic Computing Blueprint; Agrawal et al., 2005
+
+
+
+
+% ---------------------------------------
+% CIM-SPL / PCIM
+    % Why: To illustrate that many existing models are too verbose or heavyweight.
+
+    % Use: Helps justify why you're synthesizing your own lightweight schema.
+
+    % Cite: Lobo et al., 2007 (CIM-SPL proposal); IETF RFC 3060 (PCIM)
+
+
+
+% ---------------------------------------
+
+
+
+
+tripathi2005policy - propose a general framework for policy-driven agent-based distributed systems, focusing on system-level configuration and intra-/inter-agent component integration. While their work effectively addresses configuration management and security in distributed agent systems, it does not explore runtime, context-driven peer selection for dynamic estimation or data exchange. In contrast, our approach targets runtime policy-based interaction in Digital Twin networks, where policies act as lightweight filters to guide adaptive data collection and sharing, demonstrated through a neighbor-assisted imputation use case
+
+
+bradshaw2014policy - 

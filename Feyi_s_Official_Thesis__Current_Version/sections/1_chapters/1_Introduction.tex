@@ -1,0 +1,84 @@
+\chapter{Introduction}\label{chapter:introduction}
+
+\section{Big Picture}
+According to the International Council on Systems Engineering (INCOSE) Vision 2035 \cite{incose2035}, the growing interconnectivity of cyber-physical systems and the drive toward autonomous operation are contributing to a sharp rise in system complexity. Governments are acknowledging this shift. In Canada, the Improving the Reliability and Resilience of Canada’s Digital Infrastructure report calls for reinforcing national data and communication systems to meet rising connectivity and information demands \citep{ISED_DigitalInfrastructure}.
+% At the same time, the global increase in development of cyber-physical systems is generating unprecedented data volumes across domains, reshaping how information is collected, processed, secured, and utilized \cite{atat2018big}.
+
+This growing dependence on interconnected digital infrastructure parallels the global transition toward Industry~4.0 \citep{suleiman2022industry}, where digital transformation has become a central driver of innovation across industries \citep{vial2021understanding}. Enterprises now integrate cyber-physical systems, Internet of Things (IoT) technologies, artificial intelligence (AI), and automation into their operations \citep{piardi2024role, hu2024industrial}, making information and analytics essential to performance, sustainability, and decision support.
+
+The integration of digital technologies into day-to-day operations is transforming both established and emerging sectors. In domains such as smart cities, transportation, and utilities, data is leveraged to coordinate systems and enable predictive management and maintenance \citep{tricomi2024smart, chowdhury2024data}. Decision-making increasingly relies on real-time insights to support adaptive responses—for example, adjusting traffic signals, balancing power grids, or monitoring environmental conditions. Equally transformative are domains that have traditionally relied on physical or human-centered practices: precision agriculture employs sensor networks to optimize irrigation and crop yield \citep{chithrakumar2024revolutionizing}, while healthcare applies large-scale analytics and AI-driven diagnostics for patient management and treatment design \citep{manikandan2024significance}.
+
+Across all domains, the availability, quality, and continuity of data directly influence system performance and decision-making. This growing dependency marks a fundamental shift—modern enterprises increasingly rely on algorithmic reasoning to interpret and act upon information. As the boundaries between physical and digital operations dissolve, ecosystems of interconnected, data-driven cyber-physical systems are emerging.
+
+
+\section{Shift to a New Class of Systems}
+
+A major enabler of the digital transformation shaping modern enterprises is the emergence of digital twins (DTs). DTs serve as high-fidelity virtual counterparts of physical entities, continuously updated through sensor data and computational models to mirror their real-time state and behaviour \citep{kritzinger2018digital, leng2021digital}. They enable systems to be monitored, simulated, and optimized throughout their lifecycles, aligning with the goals of Industry~4.0 through data-informed decision-making and adaptive control \citep{pires2019digital}. Through DTs, integration and semantic consistency between the physical and digital domains are achieved, enabling logical interpretation, representation, and interaction across both.
+
+While DTs enable the development of complex and autonomous cyber-physical systems, their true potential emerges when they interconnect. In practice, multiple DTs often coexist within shared environments, exchanging information, coordinating actions, and influencing one another’s behaviour \citep{dietz2020digital}. Together, these interactions give rise to collaborative networks of twinned systems. This collective behaviour reflects the system of Systems (SoS) paradigm, in which autonomous entities cooperate to achieve objectives that exceed their individual purposes \citep{maier1998architecting}.
+
+SoS are characterized by several recurring traits. They exhibit constituent independence, where each subsystem can operate and evolve autonomously while contributing to shared goals. They demonstrate evolutionary development, as their composition and configuration change dynamically when new systems join, existing ones depart, or interconnections are restructured. They also display emergent behaviour, arising from the interactions among heterogeneous constituents that produce outcomes not predictable from the behaviour of individual systems \citep{nielsen2015systems}.
+
+As networks of digital twins scale and become increasingly interconnected, they give rise to a new class of systems: Systems of Twinned Systems (SoTS) \citep{adesanya2025systems}. SoTS unite the high-fidelity modelling and state awareness of DTs with the organizational dynamics of SoS. This convergence supports enhanced situational awareness, coordinated decision-making, and adaptive operation across distributed, heterogeneous environments.
+
+
+\section{Core Problem}
+
+The integration of DTs within SoS architectures offers extraordinary potential for utilizing system-level intelligence. Through continuous sensing and interaction, SoTS enable distributed components to collaborate, negotiate, and coordinate complex behaviours across domains, supporting adaptive and goal-oriented decision-making at scale \citep{esterle2021digital}. Yet the same characteristics that make SoTS powerful also compound challenges in maintaining data reliability and continuity.
+
+Within SoTS, each constituent DT collects data from its own sensors to capture real-time information about the state and behaviour of its physical counterpart \citep{zhang2024digital}. Together, these data flows form the informational backbone of each constituent and, when integrated at the SoS level, create an interconnected representation of the system that enables coordination and situational awareness. However, these data flows are inherently imperfect. Sensors and communication links are prone to latency, noise, degradation, and occasional failure under environmental or operational stress \citep{belgacem2025toward}. In SoS contexts, these issues are further compounded by dynamic membership and evolving configurations, as subsystems may join, depart, or lose connectivity, interrupting the continuity of data exchange \citep{fang2020improving}. Consequently, information within SoTS can be incomplete, inconsistent, or delayed.
+
+Traditionally, DTs use Complex Event Processing (CEP) to reason over incoming data streams, allowing them to detect patterns and trigger context-specific responses \citep{marah2025agent}. Extending CEP to SoTS would enable higher-level reasoning across distributed, interdependent twins. However, conventional CEP engines assume deterministic and complete event flows \citep{akila2016complex}. In practice, these assumptions rarely hold in SoTS deployments, where event arrival is asynchronous, uncertain, and prone to loss. Under such conditions, standard CEP frameworks risk producing unreliable or misleading outcomes.
+
+These challenges highlight the need for an uncertainty-aware approach to event stream processing, one capable of maintaining reliability and continuity despite imperfect data. Such an approach should integrate predictive estimation directly within the processing pipeline, allowing uncertainty to be explicitly represented, propagated, and managed during event detection and reasoning. In doing so, it would enable more trustworthy decision-making under real-world SoTS conditions, where perfect data availability can rarely be ensured.
+
+
+
+\section{Problem Statement}
+SoTS are increasingly used to monitor and optimize the operation of critical infrastructures. However, the reliability of SoTS-level reasoning is hindered by data uncertainty. Due to the autonomy and heterogeneity of constituent twins, data produced across the system may be missing or inconsistent, leading to incomplete or misleading inputs for collective decision-making. Traditional CEP systems, which assume deterministic and complete data flows, are therefore ill-suited for SoTS environments, where real-world conditions and dynamic configurations disrupt data continuity.
+
+\textbf{The core problem addressed in this research is the absence of an uncertainty-aware approach for reliable and continuous CEP reasoning in SoTS, where incomplete data undermine the trustworthiness of system-level decisions.}
+
+Specifically, this research investigates how uncertainty manifests and propagates across constituent Digital Twins and how CEP mechanisms can be extended to maintain reasoning reliability under such conditions. The ultimate goal is to improve the continuity and trustworthiness of SoTS-level decision-making in real-world settings.
+
+To achieve this, the following objectives are defined:
+
+\begin{enumerate}
+    \item Conduct a systematic study of SoTS literature to identify existing gaps related to reliability, data continuity, and uncertainty management.
+    \item Formalize the types and sources of uncertainty affecting distributed event streams in SoTS, and analyze how they propagate to higher-level reasoning.
+    \item Design an uncertainty-aware CEP architecture incorporating mechanisms for data imputation, stream reconstruction, and probabilistic event handling.
+    \item Implement and evaluate the proposed framework using realistic, sensor-based scenarios that emulate SoTS conditions.
+\end{enumerate}
+
+\subsection{Research Questions}
+This study is guided by the following research questions:
+
+\begin{enumerate}
+    \item \textbf{RQ1:} What are the main gaps and challenges in current SoTS research with respect to data reliability and uncertainty?
+    \item \textbf{RQ2:} How does uncertainty in distributed DT event streams propagate to SoTS-level decision-making?
+    \item \textbf{RQ3:} What architectural principles and mechanisms are required to make CEP engines uncertainty-aware in the context of SoTS?
+    \item \textbf{RQ4:} How effective is the proposed uncertainty-aware CEP framework in improving data reliability and decision quality compared to existing approaches?
+\end{enumerate}
+
+\section{Contributions}
+This thesis makes the following key contributions:
+
+\begin{enumerate}
+    \item \textbf{A systematic study of Systems of Twinned Systems (SoTS):} A comprehensive literature review that classifies the state of SoTS research, identifying critical reliability and uncertainty gaps in current approaches.
+    \item \textbf{An uncertainty-aware CEP architecture:} The development of a distributed event processing system that integrates confidence estimation directly into event reasoning, enabling reliable detection and decision-making under incomplete data conditions.
+    \item \textbf{An evaluation and benchmarking framework:} A quantitative assessment of the proposed framework using a realistic SoTS simulated scenarios, demonstrating improved reliability and event detection under uncertain conditions.
+\end{enumerate}
+
+
+\section{Thesis Structure}
+The remainder of this thesis is organized as follows:
+
+\begin{itemize}
+    \item \textbf{Chapter~\ref{chapter:background}} introduces the theoretical foundations of Digital Twins, Systems of Systems, and Complex Event Processing, highlighting their convergence in the context of SoTS.
+    \item \textbf{Chapter~\ref{chapter:literature-review}} presents a systematic review of SoTS literature, emphasizing existing approaches to reliability, data continuity, and uncertainty.
+    \item \textbf{Chapter~\ref{chapter:uncertainty_model}} formalizes the concept of uncertainty in SoTS event streams and analyzes its impact on event detection and reasoning.
+    \item \textbf{Chapter~\ref{chapter:architecture}} details the design of the proposed uncertainty-aware CEP framework, including the reconstruction, imputation, and probabilistic inference modules.
+    \item \textbf{Chapter~\ref{chapter:evaluation}} describes the experimental setup, datasets, metrics, and results of the framework’s evaluation.
+    \item \textbf{Chapter~\ref{chapter:conclusion}} concludes the thesis, summarizing findings, limitations, and directions for future work.
+\end{itemize}
+

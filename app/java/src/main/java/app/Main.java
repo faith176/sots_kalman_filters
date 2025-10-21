@@ -1,9 +1,9 @@
 package app;
 
 import cep.esper.EsperCEPEngine;
-import logger.PatternLogger;
 import patterns.esper.EsperPatternManager;
 import runtime.EventStream;
+import utils.PatternLogger;
 
 public class Main {
 
