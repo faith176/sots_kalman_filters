@@ -1,103 +1,151 @@
-\chapter{Background}\label{chapter:background}
+\chapter{Background}\label{ch:background}
+This chapter details the foundations of digital twins, system of systems, complex event processing, and reliability.
 
+\section{Digital Twins}\label{sec:background-dt}
+Digital twins are central to the digital transformation of cyber-physical systems. They serve as dynamic virtual counterparts to physical assets, providing continuous synchronization and enabling monitoring, simulation, and control. 
+The following subsections outline their history, distinguishing characteristics, and applications.
 
-% \section{Digitalization and Industry 4.0}\label{sec:background-industry4.0}
+\subsection{Definitions and Core Characteristics}\label{subsec:background-dt-definitions}
+% Define the DT concept across major sources (Grieves 2002; Tao et al. 2018; Kritzinger et al. 2018).
+% Highlight core properties: physical–digital pairing, synchronization, fidelity, and feedback.
+% Mention how definitions converge on the idea of real-time, bi-directional linkage.
 
-\section{Digital Twins}\label{sec:background-digital-twin}
-\subsection{Definitions}\label{subsec:dt-definitions}
+A digital twin is broadly defined as a high-fidelity virtual representation of a physical asset or system that remains continuously synchronized with its real-world counterpart through bi-directional data exchange and feedback control \cite{david2024infonomics}. 
+It extends the concept of cyber-physical integration by enabling physical and digital entities to co-evolve: data from the physical system updates the virtual model, while the model can influence the physical system through predictive or corrective actions \cite{tao2018digital}. 
+This synchronization, supported by IoT-enabled sensing and networked infrastructures, allows the DT to replicate not only the structure and state of its physical twin but also its dynamic behaviour in real time.
 
-A digital twin is a high-fidelity virtual representation of a physical asset or system. It maintains a continuous bi-directional connection with its physical counterpart to enable real-time synchronization, calibration, and actuation \citep{david2024infonomics}. Across definitions, the DT represents an advanced form of cyber-physical integration in which digital and physical entities co-evolve through data exchange and feedback loops \citep{tao2018digital, kritzinger2018digital}.
+Across definitions, the literature converges on three primary components that together constitute a Digital Twin: 
+(1) a \textbf{physical reality}, representing the system, environment, and processes of interest; 
+(2) a \textbf{virtual representation}, capturing an abstraction of that reality through computational and data models; and 
+(3) \textbf{interconnections} that enable continuous information exchange between the two domains \cite{vanderhorn2021digital}. 
+The physical reality encompasses the system and its operating context and environment. The virtual representation mirrors this reality at a chosen level of abstraction, using models that combine physics-based and data-driven methods to simulate system behaviour and state evolution. 
+The interconnections between them supports two complementary flows: the \textit{physical-to-virtual} direction, which updates the virtual model with sensor or observational data, and the \textit{virtual-to-physical} direction, which projects insights or control actions back to the real system \cite{vanderhorn2021digital}. 
+Together, these flows establish the continuous synchronization that distinguishes Digital Twins from conventional simulation or monitoring models.
 
-Definitions for DTs converge on a few core characteristics. First, a DT serves as a high-fidelity virtual counterpart to a physical system, designed to replicate its structure, state, and behaviour with a high degree of accuracy. Second, it relies on bi-directional communication between the physical and digital domains, ensuring that changes in one are reflected in the other through continuous synchronization and control feedback. Third, it depends on persistent data flow, achieved through IoT-enabled infrastructures, that keep the virtual model temporally aligned with its physical source. 
-
-
-From a data exchange perspective, \citet{kritzinger2018digital} distinguish between three levels of representation in Digital Twin systems: the digital model, the digital shadow, and the digital twin. These levels describe the degree of integration between the physical and digital entities. A digital twin supports full bi-directional interaction, allowing it to both observe and actuate on its physical counterpart in real time. A digital shadow maintains a unidirectional connection in which information from the physical system is transmitted to the digital representation. This allows the digital model to reflect the current state of the asset but not to influence it. In contrast, a digital model is a static virtual representation that has no direct connection to the physical system.
-
-% consider adding \citet{verdouw2021digital}
-
-
-
-
-\subsection{Historical Evolution}\label{subsec:dt-history}
-
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.9\textwidth]{figures/Background/DT_Timeline.pdf}}
-% \caption{Evolution of the Digital Twin concept from simulation-based modeling to data-driven cyber-physical integration.}
-% \label{fig:dt_timeline}
-% \end{figure}
-
-The predecessor concept of using a “twin” for verification and testing originated in the aerospace domain. During NASA’s Apollo program in the 1960s, identical spacecraft were constructed so that engineers could mirror mission conditions on Earth and test alternative procedures in real time as flight data were received \citep{boschert2016digital}. This practice represented an early instance of using a physical counterpart to replicate operational conditions for simulation and fault diagnosis. A similar approach was later adopted in the aviation industry through “Iron Bird” test rigs, which physically replicated aircraft subsystems to validate system integration and control logic prior to flight \citep{boschert2016digital}. Together, these examples illustrate how the motivation to experiment with counterparts before acting on the real system has long been embedded in engineering practice, laying the conceptual foundation for modern data-driven digital twins.
-
-The formal concept of the digital twin emerged in the early 2000s, building on earlier notions of digital mirroring. \citet{gelernter1993mirror} envisioned “mirror worlds” in which digital representations continuously reflected their physical counterparts, anticipating the synchronization principles later realized in digital twins. In the early 2000s, \citet{grieves2005product} introduced the digital twin within the context of product lifecycle management (PLM), emphasizing the bidirectional coupling between physical systems and virtual models to enable continuous alignment throughout design, manufacturing, and operation. Around the same time, \citet{hribernik2006product} proposed the concept of a “product avatar,” linking digital representations to lifecycle integration through metadata and interoperability. NASA further refined the concept for aerospace applications, defining a digital twin as a high-fidelity, probabilistic simulation system capable of predicting system behaviour, performance degradation, and maintenance requirements across an asset’s lifecycle \citep{nasaprocessroadmap, glaessgen2012digital}.
-
-With the rise of Industry~4.0, digital twins emerged as a key enabler of cyber-physical integration. By linking physical systems, sensors, and machines through cloud and IoT infrastructures, digital twins enable real-time analytics and optimization \citep{liu2021review}. Industrial platforms such as GE’s \textit{Predix}~\citep{gepredixoverview} and Siemens’ \textit{MindSphere}~\citep{siemensmindsphere} exemplified this transition from theory to large-scale implementation, creating continuously updated digital counterparts for industrial assets. In academia, research paralleled these developments by exploring digital twin reference architectures, interoperability standards, and domain-specific implementations across healthcare, transportation, and smart cities \citep{barricelli2019survey, botin2022digital}.
-
-Overall, the evolution of the digital twin reflects a progression from simulation-based design tools toward data-driven systems that integrate sensing, computation, and actuation. Each stage of this progression—from early aerospace simulations to Industry~4.0—has increased the degree of automation, fidelity, and intelligence achievable within digital representations.
-
-
-\subsection{Architectures}\label{subsec:dt-architectures}
-
-Digital twin architectures describe how the physical and digital domains are coupled through data, models, and services. They provide a conceptual framework for defining the components, data flows, and feedback mechanisms. As DT implementations expanded across domains, several reference models and standards emerged to formalize their structure, functionality, and interoperability.
-
-\citet{tao2018digital} proposed one of the most influential architectural models, defining the digital twin as a five-dimensional construct composed of the physical entity, virtual entity, connection, data, and services. This framework emphasizes the iterative feedback loops between the physical and virtual entities, where data flow continuously through the connection and data dimensions to support real-time synchronization, simulation, and optimization. This model highlights the DT as a closed information loop in which the physical and virtual components co-evolve through data-driven feedback.
-
-International bodies have formalized DT architectures through initiatives such as ISO~23247 \citep{ISO23247-1} and RAMI~4.0 \citep{DIN91345}. ISO~23247 defines a reference framework for DTs within manufacturing, specifying roles, entities, and data flows across four hierarchical layers. RAMI~4.0 similarly organizes industrial systems along three axes: hierarchical levels, lifecycle stages, and interoperability layers. This multidimensional structure connects DT functionality with broader Industry~4.0 principles. Together, these standards establish a shared vocabulary and design foundation for scalable, interoperable DT implementations across sectors.
-
-
-% \subsection{Aggregation and Composition Theories}\label{subsec:dt-aggregation}
-
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.9\textwidth]{figures/Background/DT_Aggregation_Types.pdf}}
-% \caption{Conceptual evolution from isolated twins to aggregated and federated systems of twinned systems (SoTS).}
-% \label{fig:dt_aggregation}
-% \end{figure}
-% As digital twin technologies evolved from single-asset representations to multi-entity ecosystems, researchers began exploring how individual twins could be composed or federated to model larger, interconnected systems. These approaches, often referred to as \textit{aggregated} or \textit{federated} digital twins, extend the traditional one-to-one mapping between physical and virtual entities to support hierarchical and networked relationships among multiple twins. Such compositions enable system-level modeling, coordination, and decision-making across domains.
-
-% \citet{vering2021aggregated} conceptualized aggregated digital twins as hierarchical compositions of sub-twins, where each encapsulates localized models and data streams that collectively provide a holistic system view. Expanding this idea, \citet{lu2020dynamic} and \citet{xiang2022contextaware} proposed frameworks for dynamic and context-aware aggregation, allowing multiple twins to interoperate across spatial and functional boundaries. These systems adapt their coupling based on context—such as task relevance, data quality, or operational conditions—supporting large-scale applications like urban management and energy optimization. Together, these efforts illustrate a shift from static, isolated twins toward flexible, interdependent networks that evolve and collaborate dynamically within shared environments.
-
-
-
-% -------------------------------------------------------------
-\section{Systems of Systems (SoS)}\label{sec:background-system-of-systems}
+\citet{kritzinger2018digital} further clarify this distinction by defining three levels of digital representation: the \textit{digital model}, the \textit{digital shadow}, and the \textit{digital twin}. 
+A digital model is a static representation without live data connectivity. 
+A digital shadow supports one-way information flow, updating the digital entity from the physical system but not vice versa. 
+A digital twin, in contrast, achieves full bi-directional interaction, enabling real-time monitoring, simulation, and control. 
+This bidirectional feedback loop is what transforms the DT from a descriptive model into an operational entity capable of influencing physical outcomes.
 
 
 
 
-% -------------------------------------------------------------
+\subsection{History of DTs}\label{subsec:background-dt-history}
+The predecessor concept of using a “twin” for verification and testing originated in the aerospace domain. During NASA’s Apollo program in the 1960s, an identical spacecraft was constructed so that engineers could mirror mission conditions on Earth and test alternative procedures in real time as flight data were received \cite{boschert2016digital}. This practice represented an early instance of using a physical counterpart to replicate operational conditions for simulation and fault diagnosis. A similar approach was later adopted in the aviation industry through “Iron Bird” test rigs, which physically replicated aircraft subsystems to validate system integration and control logic prior to flight \cite{boschert2016digital}. Together, these examples illustrate how the motivation to experiment with counterparts before acting on the real system has long been embedded in engineering practice, laying the conceptual foundation for modern data-driven digital twins.
+
+The formal concept of the digital twin emerged in the early 2000s, building on earlier notions of digital mirroring. \citet{gelernter1993mirror} envisioned “mirror worlds” in which digital representations continuously reflected their physical counterparts, anticipating the synchronization principles later realized in digital twins. In the early 2000s, \citet{grieves2005product} introduced the digital twin within the context of product lifecycle management (PLM), emphasizing the bidirectional coupling between physical systems and virtual models to enable continuous alignment throughout design, manufacturing, and operation. Around the same time, \citet{hribernik2006product} proposed the concept of a “product avatar,” linking digital representations to lifecycle integration through metadata and interoperability. NASA further refined the concept for aerospace applications, defining a digital twin as a high-fidelity, probabilistic simulation system capable of predicting system behaviour, performance degradation, and maintenance requirements across an asset’s lifecycle \cite{nasaprocessroadmap, glaessgen2012digital}.
+
+With the rise of Industry~4.0, digital twins emerged as a key enabler of cyber-physical integration. By linking physical systems, sensors, and machines through cloud and IoT infrastructures, digital twins enable real-time analytics and optimization \cite{liu2021review}. Industrial platforms such as GE’s Predix~\cite{gepredixoverview} and Siemens’ MindSphere~\cite{siemensmindsphere} exemplified this transition from theory to large-scale implementation, creating continuously updated digital counterparts for industrial assets. In academia, research paralleled these developments by exploring digital twin reference architectures, interoperability standards, and domain-specific implementations across healthcare, transportation, and smart cities \cite{barricelli2019survey, botin2022digital}.
+
+Overall, the evolution of the digital twin reflects a progression from simulation-based design tools toward data-driven systems that integrate sensing, computation, and actuation. Each stage of this progression, from early aerospace simulations to Industry~4.0, has increased the degree of automation, fidelity, and intelligence achievable within digital representations.
+
+
+
+\subsection{Architectural Patterns and Application Contexts}
+\label{subsec:background-dt-architectures-applications}
+% Present common DT architectures (3-layer, 5-layer, ISO 23247, DTF reference models).
+% Discuss components: physical layer, data layer, model/simulation layer, application layer.
+% Note enabling technologies: IoT, edge/cloud computing, AI analytics.
+% Transitional sentence: "While these architectures support high-fidelity modeling and control of individual twins, they are not designed to handle inter-twin dependencies or large-scale collaboration."
+
+% Then illustrate each with domain examples:
+
+DT architectures formalize how physical systems, data infrastructures, and computational models interact to enable synchronization and control across the system lifecycle. Over the past decade, several layered and reference architectures have emerged, each extending the conceptual scope and technological maturity of DT design.
+
+Early conceptualizations of DTs adopted a three-layer structure consisting of the physical, virtual, and connection layers \cite{grieves2014digital, tao2018digital}. The physical layer represents real-world assets equipped with sensors, actuators, and controllers that generate operational data. The virtual layer maintains a digital representation that mirrors system behavior to support analysis and control, while the connection layer enables bi-directional communication and data exchange between the two. Although this model provided a foundational view of cyber-physical integration, it offered limited guidance on data management, services, and lifecycle evolution.
+
+To address these gaps, later frameworks expanded the architecture to incorporate additional layers. \citet{tao2019digital} proposed a five-layer model that introduced dedicated data and service components. In this model, the physical entity forms the basis for constructing the virtual entity that supports simulation and decision-making. The data layer functions as the core of the system, enabling collection, fusion, and knowledge generation, while the service layer provides optimization, maintenance, and user interaction capabilities. The connection layer bridges all components to maintain synchronization and feedback.
+
+\citet{redelinghuys2020six} proposed a six-layer architecture that further integrates data exchange, cloud connectivity, and simulation intelligence through open, vendor-neutral interfaces. The lower layers encompass physical devices and local data repositories, the middle layers introduce an IoT gateway that converts sensor data into structured information for cloud storage and analytics, and the upper layers host emulation and simulation tools for real-time visualization and control. By distributing data acquisition, transformation, and reasoning across interconnected layers, the architecture enhances scalability and interoperability within complex industrial environments.
+
+Parallel to academic developments, standardization initiatives have formalized DT concepts into reference frameworks. The Reference Architectural Model for Industry 4.0 (RAMI 4.0) provides a structured model for organizing DT-enhanced industrial systems across three dimensions: hierarchy levels, product lifecycle stages, and architecture layers \cite{DIN91345}. Together, these dimensions describe how physical assets, digital systems, and business processes interact throughout the system lifecycle. Within this structure, RAMI 4.0 serves as the reference model defining the structural and functional layers of Industry 4.0 systems, while the DT provides the implementation mechanism that realizes these principles in practice. DTs align the hierarchy, lifecycle, and functional dimensions of RAMI 4.0, enabling continuous synchronization between operational processes and enterprise decision-making.
+
+Building on these principles, the international standard ISO 23247 \cite{ISO23247-1} defines a Digital Twin reference architecture for manufacturing structured around four interconnected domains: the observable manufacturing domain, the device communication domain, the digital twin domain, and the user domain. The observable manufacturing domain contains the physical assets and processes being monitored, while the device communication domain ensures secure and reliable data transfer between physical and digital components. The digital twin domain manages models, analytics, and synchronization, and the user domain provides visualization and decision support interfaces. The architecture is governed by a Digital Twin Framework that specifies functional entities and standardized interfaces for data acquisition, communication, and synchronization. By defining explicit roles and message exchanges between these entities, ISO 23247 enables modular and interoperable DT implementations across heterogeneous industrial environments.
+
+DT architectures have since been applied across a wide range of domains—including manufacturing, energy, healthcare, transportation, and smart cities—to enhance operational efficiency and system resilience \cite{hu2021digital}. \citet{shao2021use} describe several representative implementations developed within the NIST Smart Manufacturing Systems Test Bed. A machine health DT uses process and equipment data to monitor, diagnose, and predict faults in manufacturing assets, enabling proactive maintenance through data-driven recommendations or automated control adjustments. A scheduling and routing DT integrates information from shop-floor systems such as production equipment, MES, and ERP platforms to optimize routing flexibility, cycle times, and resource utilization under varying demand conditions. Finally, a virtual commissioning DT employs simulation and control logic emulation to design and validate production systems prior to physical deployment, minimizing commissioning costs and reducing post-installation risks. Collectively, these applications demonstrate the adaptability of the DT paradigm, showing how real-time synchronization and continuous feedback enhance reliability, efficiency, and decision-making across diverse socio-technical contexts.
+
+
+\section{System of Systems}\label{sec:background-sos}
+\subsection{Definitions and Core Characteristics}\label{subsec:background-sos-definitions}
+% Define SoS (Maier, 1998; INCOSE, 2005) and describe autonomy, belonging, evolution, and emergence.
+
+\subsection{Historical Evolution and Application Domains}\label{subsec:background-sos-history}
+% Trace SoS from defense/aerospace origins to CPS, smart cities, and digital ecosystems.
+
+\subsection{Architectural Models and Governance Structures}\label{subsec:background-sos-architecture}
+% Describe centralized, federated, and collaborative SoS architectures.
+% Discuss governance, communication, and integration mechanisms.
+
+
+
+
+
+
+
+\section{From Digital Twins to Systems of Systems}
+  \subsection{Aggregation and Composition Theories}
+  % Introduce aggregation concepts: federated twins, composite twins, twin networks.
+% Explain theories of composition, hierarchy, and interoperability (e.g., Tao et al., 2020; Leng et al., 2021).
+% Discuss the role of shared semantics, synchronization, and interoperability standards.
+% Transitional sentence: "These theories of composition and interoperability extend Digital Twins from isolated representations toward collective, system-level integration — a conceptual bridge to Systems of Systems (SoS)."
+
+  \subsection{Convergence of DT and SoS Paradigms}
+  % Highlight issues like interoperability, coordination, and reliability.
+% Lead into the need for digital representation and continuous synchronization — the emergence of SoTS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Complex Event Processing}\label{sec:background-cep}
+% Introduce the concept of events and Complex Event Processing (CEP), its architectures, and its relevance to event-driven reasoning.
+% Review dependability principles (fault tolerance, compensation) in distributed systems.
+
+\subsection{Event Concepts and Event-Driven Architectures}\label{subsec:background-cep-events}
+% Define events as discrete state changes (Cugola & Margara, 2012; Luckham, 2002).
+% Explain event streams, producers, consumers, and event-driven system principles.
+
+\subsection{CEP Architectures and Processing Models}\label{subsec:background-cep-architecture}
+% Discuss traditional CEP architectures (data ingestion, correlation, pattern detection).
+% Mention engines like Esper, Siddhi, and rule-based frameworks.
+
+\subsection{Applications in CPS and Distributed Systems}\label{subsec:background-cep-applications}
+% Show how CEP is used for real-time monitoring, control, and adaptive behavior in IoT and CPS.
+
+\subsection{Limitations and Motivation for Reliable CEP in SoTS}\label{subsec:background-cep-limitations}
+% Highlight assumptions of determinism, complete data, and synchronization.
+% Discuss how these break down in dynamic, distributed SoTS environments.
+% Lead into reliability and compensation needs.
+
+
+\section{Dependability in Software Systems}\label{sec:background-dependability}
+% Introduce reliability, dependability, and relevant taxonomies (Avizienis et al., ISO 26262, etc.).
+\subsection{Dependability Concepts and Attributes}\label{subsec:background-dependability-attributes}
+% Define dependability (Avizienis et al., 2004) as the ability to deliver service that can justifiably be trusted.
+% Describe attributes: availability, reliability, safety, integrity, maintainability.
+
+\subsection{Means to Achieve Dependability}\label{subsec:background-dependability-means}
+% Discuss fault prevention, fault tolerance, fault removal, and fault forecasting.
+% Include examples from software and CPS systems.
+
+\subsection{Fault Taxonomy and Propagation in Distributed Systems}\label{subsec:background-dependability-faults}
+% Describe types of faults (transient, intermittent, permanent).
+% Explain how they propagate across interconnected systems — relevant to SoTS dynamics.
+
+\subsection{Relevance to Reliable Event Processing in SoTS}\label{subsec:background-dependability-relevance}
+% Connect dependability principles to the design of reliable CEP architectures.
+% Emphasize fault tolerance through compensation as the key guiding concept.
 
 
 
-% -------------------------------------------------------------
 
-
-
-
-
-
-% \section{Digital Twins (DT)}\label{sec:background-digital-twins}
-
-% A digital twin is a virtual representation of a physical system that maintains continuous two-way communication with its real-world counterpart \citep{kritzinger2018digital}. In practice, this means that data from sensors embedded in the physical system are streamed in real-time to its digital counterpart, where the data are processed to simulate current conditions, predict future states, and evaluate potential decisions. Subsequently the digital twin can generate commands and recommendations which are actuated on the physical system. This bi-directional exchange supports real-time monitoring, simulation, and control of the physical entity. Digital twins have evolved significantly over the past few decades, originating in the aerospace domain and dominating Industry 4.0 in recent times. Recent work positions DTs as adaptive agents capable of enabling autonomy in distributed, dynamic environments \citep{grassi2024conceptual}.
-
-% The concept of a digital twin originated in aerospace engineering. NASA's Apollo program used a virtual replica of the spacecraft to simulate mission scenarios and support failure recovery \citep{boschert2016digital}. This early use case emphasized the role of real-time mirroring and decision support. NASA later defined DTs as probabilistic simulation systems that predict asset behaviour and support system health management throughout the lifecycle \cite{nasaprocessroadmap}. Complementary to this \citet{glaessgen2012digital} described DTs as integrated monitors and probabilistic simulations that mirror systems and predict behaviour and system degradation in aerospace vehicles. Additionally,  \citet{tuegel2011reengineering} envisioned DTs are high fidelity structural models that used simulation data to support real time prognostics in aircraft.
-
-% Subsequent research broadened the DT's scope beyond aerospace. \citet{tao2018product} proposed a framework integrating the physical product, its virtual counterpart, and the data connecting them across the entire product lifecycle, including design, manufacturing, and service. \citet{boschert2016digital} emphasized the DT’s modular, simulation-driven architecture and its alignment with Model-Based Systems Engineering (MBSE) to enable consistent reuse, verification, and predictive analytics. Similarly, \citet{rosen2015importance} outlined DTs as a core enabler of modularity, connectivity, and autonomy in manufacturing systems, demonstrating how DTs allow cyber-physical systems to perform real-time diagnosis, self-adaptation, and decentralized decision-making.
-
-% As DTs matured, researchers began distinguishing between different levels of digital representation. \citet{kritzinger2018digital} introduced a taxonomy separating Digital Models, Digital Shadows, and true Digital Twins based on integration and feedback mechanisms, highlighting that only DTs offer bidirectional communication between the physical and virtual domains.  \citet{tao2018digital} identified five essential dimensions of DTs: physical entities, virtual models, data, services, and connections, providing a structure for implementation.
-
-% DTs have been utilized in a wide range of sectors. In aerospace, DTs support structural health monitoring, fault detection, and mission planning \citep{tuegel2011reengineering, glaessgen2012digital}. In manufacturing, they enable predictive maintenance, process optimization, and digital factory simulations \citep{tao2018product, rosen2015importance}. Healthcare systems increasingly use DTs for patient-specific treatment planning and diagnostics \citep{barricelli2019survey}, while smart cities use  DTs for urban planning, energy optimization, and real-time event response \citep{botin2022digital}. 
-
-
-
-
-% -------------------------------------------------------------
-% \section{Systems of Systems (SoS)}\label{sec:background-system-of-systems}
-% A System of systems refers to a system composed of multiple operationally and managerially independent systems that interact to achieve collective goals that cannot be accomplished by any individual constituent alone \citep{maier1998architecting}. In practice, this means forming a larger-scale system in which each constituent system retains its own functionality and governance, yet contributes to the objectives of the overall ensemble. These systems are inherently complex, characterized by emergent behaviour arising from the interactions among components, which often results in dynamic and evolving structures \cite{mittal2015harnessing}. These features make SoS a powerful paradigm for coordinating distributed assets across domains such as disaster response, transportation, and industrial automation \citep{jamshidi2017systems}.
-
-% The origins of SoS thinking can be traced to General Systems Theory, where \citet{von1950theory} characterized a system as a set of interdependent elements whose internal interactions and exchanges form a complex whole. This is supported by contributions from \citet{boulding1956general} and \citet{ackoff1971towards} who emphasized viewing systems are interconnected wholes. Applications of the SoS paradigm began to emerge throughout the 1980s and 1990s in defence applications, where it was used to coordinate autonomous systems for crisis response and joint operations \citep{klein2013systematic, eisner1991computer, shenhar19952}. The term \textit{system of systems} was formally defined by \citet{maier1998architecting}, who outlined its distinguishing characteristics and emphasized that SoS should be designed to evolve over time, as independent systems integrate to accomplish higher-level objectives.
-
-% As research on SoS matured, \citet{nielsen2015systems} synthesized prior classifications into an eight-dimensional taxonomy encompassing autonomy, independence, distribution, evolution, reconfiguration, emergence, interdependence, and interoperability. These dimensions reflect core properties such as self-governance, operational self-sufficiency, spatial and logical dispersion, adaptability, emergent behaviour arising from interactions, mutual reliance, and the capacity to exchange data and services. Together, they provide a comprehensive framework for analysing and designing complex SoS.
-
-% Recent work in this space highlights the growing focus on dependability, adaptability, and assurance in SoS environments. For instance, \citet{ferreira2024framework} propose a resilience-oriented architecture for self-healing in degraded systems. Meanwhile, \citet{song2023continuous} and \citet{hyun2023timed} develop verification and monitoring approaches tailored for safety critical SoS applications. Additionally, \citet{wang2019motifs} explore long-term reliability motifs in manufacturing and logistics.

@@ -1,5 +1,5 @@
-\chapter{Evaluation and Results}
-\label{chapter:evaluation}
+\chapter{Evaluation }
+\label{ch:results}
 
 \section{Evaluation Design}
 \label{sec:evaluation_design}
@@ -29,7 +29,7 @@ Results are compared against two reference cases: an \textbf{Oracle} baseline (n
     (i) \textit{Random (MCAR)} removals, where individual readings are deleted independently to represent sporadic communication losses or packet drops; and  
     (ii) \textit{Block Missingness}, where consecutive readings (ranging from 2--6 hours) are removed to simulate short sensor outages or temporary twin disconnections.  
 
-    \item \textbf{Structural Gap (Baseline):}  
+    \item \textbf{Dropped (Baseline):}  
     Represents long or permanent data absences due to known downtime, maintenance periods, or total node failure. These gaps are intentionally unreconstructed and serve as a lower-bound reference for assessing the of event detection under persistent loss.
 
     \item \textbf{Oracle (Baseline):}  
@@ -43,7 +43,7 @@ Results are compared against two reference cases: an \textbf{Oracle} baseline (n
 \subsection{Dataset Description}
 \label{sec:dataset_description}
 
-The experiments use the Chicago Park District Beach Water and Weather Sensors dataset~\citep{chicago_beach_sensors_dataset}, which records hourly measurements for variables such as water temperature, turbidity, wave height, and wave period across multiple beaches along Lake Michigan. 
+The experiments use the Chicago Park District Beach Water and Weather Sensors dataset~\cite{chicago_beach_sensors_dataset}, which records hourly measurements for variables such as water temperature, turbidity, wave height, and wave period across multiple beaches along Lake Michigan. 
 For this study, three representative sites are used: Calumet Beach, Montrose Beach, and 63rd Street Beach. 
 Their geographical distribution along the shoreline (Figure~\ref{fig:results_beach_map}) makes them well-suited for modelling a SoTS scenario.
 
@@ -131,8 +131,7 @@ For all complex patterns, event confidence is computed as the \textbf{mean confi
 \centering
 \fbox{\includegraphics[width=0.45\textwidth]{figures/Results/Results Patterns.drawio.pdf}}
 \caption{Illustration of a sample event composition of atomic and complex events}
-\label{fig:event_composition}
-\label{fig:results_pattern_composition}
+\label{fig:results_event_composition}
 \end{figure}
 
 
@@ -173,18 +172,42 @@ Two predictors were chosen to evaluate the reconstruction of the missing sensor 
 The Kalman Filter is a recursive state estimator that models the evolution of a variable as a linear dynamical system with Gaussian noise.  
 At each step, the filter predicts the next state based on the previous estimate and corrects it when a new measurement becomes available, balancing process and measurement uncertainty through their respective covariances.  
 
-Confidence is computed using the covariance trace, which quantifies how the current uncertainty compares to the filter's initial uncertainty. 
-It is derived directly from the posterior covariance matrix of the Kalman filter and defined as:
+% Confidence is computed using the covariance trace, which quantifies how the current uncertainty compares to the filter's initial uncertainty. 
+% It is derived directly from the posterior covariance matrix of the Kalman filter and defined as:
+
+% \begin{equation}
+%     \text{confidence}_{\text{KF}} 
+%     = 1 - \frac{\operatorname{trace}(P_k)}{\operatorname{trace}(P_0)}
+% \end{equation}
+
+% where $P_k$ denotes the posterior covariance matrix at the current time step, and $P_0$ represents the initial covariance matrix used for normalization. 
+% A lower trace value indicates reduced overall uncertainty, leading to higher confidence, whereas an increasing trace reflects the accumulation of uncertainty over time.
+
+
+% \paragraph{Rational} The confidence formula used is derived directly from the Kalman filter’s posterior covariance, which represents the estimator’s internal measure of uncertainty. Minimizing this quantity is equivalent to minimizing the mean-squared estimation error, making it a good basis for quantifying estimator precision. Building on the analysis of \cite{kang2021some}, who characterize the magnitude and decay of the Kalman filter’s error covariance as quantitative descriptors of uncertainty, the normalized covariance trace captures the overall reduction of uncertainty as the filter converges.
+
+
+Confidence is computed using a hybrid formulation that integrates both the innovation-based consistency of the Kalman filter and its predictive uncertainty decay. 
+When an observation is available, confidence is derived from the normalized innovation magnitude, reflecting how consistent the new measurement is with the model's expected behavior. 
+During periods of missing data, confidence decays exponentially as the prediction horizon extends, reflecting growing uncertainty in the absence of corrective measurements. 
+The combined hybrid formulation is expressed as:
 
 \begin{equation}
-    \text{confidence}_{\text{KF}} 
-    = 1 - \frac{\operatorname{trace}(P_k)}{\operatorname{trace}(P_0)}
+\label{eq:hybrid_confidence_cov}
+\mathrm{Confidence}_k =
+\begin{cases}
+\exp\!\left(-\dfrac{\nu_k^2}{2 S_k}\right), 
+& \text{if observation available}, \\[10pt]
+\alpha \cdot 
+\dfrac{\operatorname{trace}(P_k^-)}{\operatorname{trace}(P_0)} - 1
+\cdot \mathrm{Confidence}_{k-1}, 
+& \text{if observation missing.}
+\end{cases}
 \end{equation}
 
-where $P_k$ denotes the posterior covariance matrix at the current time step, and $P_0$ represents the initial covariance matrix used for normalization. 
-A lower trace value indicates reduced overall uncertainty, leading to higher confidence, whereas an increasing trace reflects the accumulation of uncertainty over time.
-
-\paragraph{Rational} The confidence formula used is derived directly from the Kalman filter’s posterior covariance, which represents the estimator’s internal measure of uncertainty. Minimizing this quantity is equivalent to minimizing the mean-squared estimation error, making it a good basis for quantifying estimator precision. Building on the analysis of \citet{kang2021some}, who characterize the magnitude and decay of the Kalman filter’s error covariance as quantitative descriptors of uncertainty, the normalized covariance trace captures the overall reduction of uncertainty as the filter converges.
+The first term corresponds to the Normalized Innovation Squared (NIS) measure, which quantifies how consistent each incoming observation is with the predicted state.
+The second term applies a covariance-based decay driven by the ratio. $\operatorname{trace}(P_k^-)/\operatorname{trace}(P_0)$, 
+capturing how uncertainty increases between updates. 
 
 
 
@@ -193,7 +216,7 @@ A lower trace value indicates reduced overall uncertainty, leading to higher con
 The Particle Filter approximates the posterior distribution through a set of weighted samples (particles) that evolve under the process model.  
 Each particle represents a potential system state, with weights updated when new measurements arrive.  
 When data are missing, particles propagate without correction.  
-The Particle Filter used in this work follows the Sampling Importance Resampling (SIR) described by ~\citet{arulampalam2002tutorial}.
+The Particle Filter used in this work follows the Sampling Importance Resampling (SIR) described by ~\cite{arulampalam2002tutorial}.
 
 Confidence is computed from the spread of particles:
 \[
@@ -207,21 +230,18 @@ where \(\boldsymbol{p} = \{p_1, p_2, \ldots, p_N\}\) denotes the set of particle
 \subsubsection{Configuration and Initialization} 
 \label{sec:predictor_config}
 
-All predictors were tuned through a grid search using data from a subset of the dataset, Montrose Beach dataset (2016), which was excluded from subsequent evaluation. 
-The tuning process simulated a baseline of 30\% missingness under an MCAR pattern to represent moderate uncertainty conditions. 
-Parameter selection was guided by minimizing the Root Mean Squared Error (RMSE) between reconstructed and observed values, while simultaneously promoting a negative correlation between reconstruction error and model confidence. In other words, low-accuracy predictions were expected to return lower confidence, and high-accuracy predictions higher confidence.
+All predictors were tuned through a grid search using data from a held-out subset of the dataset, the Montrose Beach (2016) subset, which was excluded from subsequent evaluation. 
+The tuning process simulated a baseline hybrid missingness rate of 30\%, representing moderate uncertainty conditions. 
+Parameter selection was guided by minimizing the Root Mean Squared Error (RMSE) between reconstructed and observed values.
 
-A combined score function was used to balance these two criteria:
+The optimization objective is defined as:
 
 \begin{equation}
 \label{eq:gridsearch_score}
-S = \alpha \cdot \mathrm{RMSE} + (1 - \alpha) \cdot (1 - \rho),
+S = \mathrm{RMSE}
 \end{equation}
 
-where \( \rho \) denotes the Pearson correlation between the model’s confidence estimates \(c_t\) and the corresponding reconstruction errors \(|y_t - \hat{y}_t|\). 
-The weighting factor \(\alpha = 0.75\) prioritizes reconstruction accuracy while still rewarding consistent confidence outputs. 
-
-
+where the goal is to minimize \( S \), selecting the configuration that yields the smallest reconstruction error under uncertaintain conditions.
 
 
 
@@ -234,8 +254,8 @@ The weighting factor \(\alpha = 0.75\) prioritizes reconstruction accuracy while
 \toprule
 \textbf{Predictor} & \textbf{Parameter} & \textbf{Range Tested} \\
 \midrule
-Kalman Filter & Process noise \(Q\) & [0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0] \\
-              & Measurement noise \(R\) & [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2] \\
+Kalman Filter & Process noise \(Q\) & [0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0] \\
+              & Measurement noise \(R\) & [0.01, 0.02, 0.05, 0.1, 0.2] \\
 \midrule
 Particle Filter & Process std. \(\sigma_Q\) & [0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3] \\
                 & Measurement std. \(\sigma_R\) & [0.002, 0.005, 0.01, 0.02, 0.03] \\
@@ -252,6 +272,11 @@ All predictors were initialized using the minimum observed value of each variabl
 
 
 
+
+
+
+
+
 % -------------------------------------------------------------
 \section{Results}
 \label{sec:results}
@@ -259,36 +284,52 @@ All predictors were initialized using the minimum observed value of each variabl
 This section presents the quantitative and qualitative results of the evaluation, comparing reconstruction quality and complex event detection accuracy across the oracle, MCAR, and structural-gap conditions.
 
 \subsection{Reconstruction Accuracy}
-
 \begin{table}[H]
 \centering
 \caption{Comparison of reconstruction performance (MAE) per dataset and attribute (averaged across beaches) between Kalman and Particle filters under hybrid missingness.}
 \label{tab:recon_mae_per_dataset_attribute_comparison}
-\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccccccc}
 \toprule
-\multirow{2}{*}{Attribute} & \multicolumn{3}{c}{\textbf{Kalman Filter}} & & \multicolumn{3}{c}{\textbf{Particle Filter}} \\
+\multirow{2}{*}{\textbf{Attribute}} & \multicolumn{3}{c}{\textbf{Kalman Filter}} & & \multicolumn{3}{c}{\textbf{Particle Filter}} \\
 \cmidrule(lr){2-4} \cmidrule(lr){6-8}
- & hybrid\_10 & hybrid\_20 & hybrid\_30 & & hybrid\_10 & hybrid\_20 & hybrid\_30 \\
+ & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} & & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
 \midrule
-Turbidity         & \textbf{0.037} & \textbf{0.090} & \textbf{0.141} & & X & X & X \\
-Water Temperature & \textbf{0.032} & \textbf{0.073} & \textbf{0.122} & & X & X & X \\
-Wave Height       & \textbf{0.002} & \textbf{0.005} & \textbf{0.007} & & X & X & X \\
-Wave Period       & \textbf{0.117} & \textbf{0.241} & \textbf{0.337} & & X & X & X \\
+Turbidity         & \textbf{0.030} & \textbf{0.086} & \textbf{0.114} & & X & X & X \\
+Water Temperature & \textbf{0.027} & \textbf{0.068} & \textbf{0.097} & & X & X & X \\
+Wave Height       & \textbf{0.002} & \textbf{0.004} & \textbf{0.007} & & X & X & X \\
+Wave Period       & \textbf{0.089} & \textbf{0.214} & \textbf{0.294} & & X & X & X \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}
+\end{table}
+
+
+
+\subsubsection{Kalman Filters}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/Results/error_progression_mae_rmse.png}}
+\caption{MAE and RMSE across Beaches For the Kalman Filter}
+\label{fig:results_kf_mae_rmse}
+\end{figure}
+
+
+\begin{table}[H]
+\centering
+\caption{Summary of reconstruction confidence statistics (mean ± std) per dataset and attribute, averaged across beaches for the Kalman Filter.}
+\label{tab:confidence_stats_per_dataset_attribute}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Attribute} & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
+\midrule
+Turbidity         & 0.940 ± 0.191 & 0.877 ± 0.261 & 0.807 ± 0.315 \\
+Water Temperature & 0.990 ± 0.034 & 0.979 ± 0.049 & 0.966 ± 0.061 \\
+Wave Height       & 0.990 ± 0.034 & 0.978 ± 0.050 & 0.966 ± 0.061 \\
+Wave Period       & 0.967 ± 0.130 & 0.928 ± 0.195 & 0.890 ± 0.230 \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 
 \subsection{Event Continuity and Detection}
 \subsubsection{Kalman Filter}
-
-
-\subsection{Confidence Behavior}
-(Plots of confidence trajectories under varying $Q$ and missingness rates.)
-
-\subsection{System-Level Observations}
-(Summarize emergent patterns across all beaches — e.g., correlation, stability, and temporal drift.)
-
-

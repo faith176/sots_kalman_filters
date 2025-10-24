@@ -1,13 +1,17 @@
 % !TEX root = Thesis_Main.tex
-
 \documentclass[12pt]{report} % Times New Roman, 12pt
+
+
 
 %\usepackage{gscale_thesis_singlespace} % Single spaced thesis
 \usepackage{settings/template/gscale_thesis_doublespace} % Double spaced thesis
 \usepackage{settings/template/fancyheadings} % Header and footer styling
 
 
-\usepackage{natbib} % Bibliography formatting
+% \usepackage{natbib} % Bibliography formatting
+% \usepackage{cite}
+\usepackage[numbers]{natbib} % Bibliography formatting for IEEE
+
 \usepackage{setspace} % Allows double spacing but skips headers/footers
 \setcounter{tocdepth}{1} % Limits the TOC to chapter and section names
 
@@ -57,8 +61,8 @@
   \academicstatement{sections/0_preamble/7_academicachievementdeclaration}
 \afterpreface
   
-  
-    \include{sections/1_chapters/1_Introduction}                  
+        
+  \include{sections/1_chapters/1_Introduction}                  
        \setcounter{figure}{0}
        \setcounter{equation}{0}
        \setcounter{table}{0}
@@ -73,32 +77,40 @@
        \setcounter{equation}{0}
        \setcounter{table}{0}
 
-    % \include{sections/1_chapters/4_Model}                  
-    %    \setcounter{figure}{0}
-    %    \setcounter{equation}{0}
-    %    \setcounter{table}{0}
-
-    \include{sections/1_chapters/5_Architecture}                  
+\include{sections/1_chapters/4_Requirements}                  
        \setcounter{figure}{0}
        \setcounter{equation}{0}
        \setcounter{table}{0}
 
-    \include{sections/1_chapters/6_Results}                  
+
+\include{sections/1_chapters/5_Architecture}                  
        \setcounter{figure}{0}
        \setcounter{equation}{0}
        \setcounter{table}{0}
 
-        
-  % \include{sections/1_chapters/sample_chapter}                  
-  %      \setcounter{figure}{0}
-  %      \setcounter{equation}{0}
-  %      \setcounter{table}{0}
 
-  \include{sections/1_chapters/X_Conclusion}
-        \setcounter{figure}{0}
-        \setcounter{equation}{0}
-        \setcounter{table}{0}
+\include{sections/1_chapters/6_Results}                  
+       \setcounter{figure}{0}
+       \setcounter{equation}{0}
+       \setcounter{table}{0}
 
+\include{sections/1_chapters/7_Discussion}                  
+       \setcounter{figure}{0}
+       \setcounter{equation}{0}
+       \setcounter{table}{0}
+
+
+\include{sections/1_chapters/8_Conclusion}                  
+       \setcounter{figure}{0}
+       \setcounter{equation}{0}
+       \setcounter{table}{0}
+       
+% \include{sections/1_chapters/X_Conclusion}                  
+%        \setcounter{figure}{0}
+%        \setcounter{equation}{0}
+%        \setcounter{table}{0}
+
+       
 % \begin{appendix}
 %     \include{sections/3_appendix/appendixA}
 %         \setcounter{figure}{0}
@@ -112,7 +124,8 @@
 % \end{appendix}
 
 % The bibliography is set up to allow for multiple bib files
-\bibliographystyle{ACM-Reference-Format}
+% \bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{IEEEtranN}
 \bibliography{bib/references, bib/sots_references, bib/primary_studies}
 
 \label{NumDocumentPages}

@@ -8,9 +8,10 @@ import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 
+
 class MissingnessInjector:
     """
-    Injects artificial missingness (MCAR, MAR, MNAR, STRUCTURAL, HYBRID) into datasets.
+    Injects artificial missingness (MCAR, MAR, MNAR, HYBRID) into datasets.
     HYBRID mixes MCAR and block missingness with 50/50 probability.
     """
 
@@ -33,12 +34,11 @@ class MissingnessInjector:
         value_cols: Union[str, List[str]],
         group_col: Optional[str] = None
     ) -> pd.DataFrame:
+        """Applies missingness independently per group (beach) and per column."""
         if isinstance(value_cols, str):
             value_cols = [value_cols]
 
         df = df.copy()
-        if "structural_gap" in df.columns:
-            df = df[df["structural_gap"] == 0]
 
         if group_col:
             processed = []
@@ -82,13 +82,7 @@ class MissingnessInjector:
                 drop_idx = np.random.choice(n, size=k, replace=False)
                 uncertain_df.iloc[drop_idx, uncertain_df.columns.get_loc(col)] = np.nan
 
-            # === STRUCTURAL ===
-            elif self.mode == "STRUCTURAL":
-                drop_idx = np.random.choice(n, size=k, replace=False)
-                uncertain_df.iloc[drop_idx, uncertain_df.columns.get_loc(col)] = np.nan
-                uncertain_df.iloc[drop_idx, uncertain_df.columns.get_loc("structural_gap")] = 1
-
-            # === ORACLE ===
+            # === ORACLE (no missingness) ===
             elif self.mode is None or self.mode == "ORACLE":
                 return uncertain_df
 
@@ -102,18 +96,16 @@ def expand_to_hourly(
     df: pd.DataFrame,
     value_cols: List[str],
     timestamp_col="Readable Timestamp",
-    group_col="Beach Name"
+    group_col="Beach Name",
+    interpolate: bool = True
 ) -> pd.DataFrame:
-    """
-    Pads the dataset to a full hourly grid per beach and marks true structural gaps.
-    Structural gaps are timestamps that had no original measurement at all.
-    """
     all_groups = []
     for group_name, group in df.groupby(group_col):
         group = group.copy()
         group[timestamp_col] = pd.to_datetime(group[timestamp_col], errors="coerce")
-        group = group.set_index(timestamp_col)
+        group = group.set_index(timestamp_col).sort_index()
 
+        # Create full hourly index for this beach
         full_index = pd.date_range(
             start=group.index.min().floor("h"),
             end=group.index.max().ceil("h"),
@@ -122,14 +114,38 @@ def expand_to_hourly(
         expanded = group.reindex(full_index)
         expanded[group_col] = group_name
 
-        # Structural gap = when all values are NaN (no record existed)
-        expanded["structural_gap"] = expanded[value_cols].isna().all(axis=1).astype(int)
-        all_groups.append(expanded.reset_index().rename(columns={"index": timestamp_col}))
+        # Interpolate time-based gaps if enabled
+        if interpolate:
+            expanded[value_cols] = expanded[value_cols].interpolate(
+                method="time", limit_direction="both"
+            )
 
-    return pd.concat(all_groups).reset_index(drop=True)
+        # Reset index to restore timestamp column
+        expanded = expanded.reset_index().rename(columns={"index": timestamp_col})
+
+        # Add numeric Measurement Timestamp (POSIX seconds)
+        expanded["Measurement Timestamp"] = expanded[timestamp_col].astype("int64").astype(int) // 10**9
+
+        # Generate unique Measurement ID = BeachNameYYYYMMDDHHMM
+        expanded["Measurement ID"] = expanded.apply(
+            lambda row: f"{row[group_col].replace(' ', '')}"
+                        f"{pd.to_datetime(row[timestamp_col]).strftime('%Y%m%d%H%M')}",
+            axis=1
+        )
+
+        # Add *_groundtruth columns as interpolated reference values
+        for col in value_cols:
+            expanded[f"{col}_groundtruth"] = expanded[col]
+
+        all_groups.append(expanded)
+
+    # Combine all beaches
+    return pd.concat(all_groups).sort_values(["Measurement Timestamp", group_col]).reset_index(drop=True)
 
 
-
+# ====================================================
+#  MAIN
+# ====================================================
 CONFIG_PATH = "app_examples/experiment_example/data/miss_config.json"
 OUTPUT_DIR = "app_examples/experiment_example/data/processed/experiment_dfs"
 
@@ -142,13 +158,19 @@ def main():
     df = pd.read_csv(config["dataset_path"])
     DEFAULT_VALUE_COLS = ["Water Temperature", "Turbidity", "Wave Height", "Wave Period"]
 
+    # Expand to hourly + interpolate
     df_expanded = expand_to_hourly(
         df,
         timestamp_col="Readable Timestamp",
         group_col="Beach Name",
-        value_cols=DEFAULT_VALUE_COLS
+        value_cols=DEFAULT_VALUE_COLS,
+        interpolate=True
     )
 
+    for col in DEFAULT_VALUE_COLS:
+        df_expanded[f"{col}_groundtruth"] = df_expanded[col]
+
+    # Inject missingness experiments
     for exp in config["experiments"]:
         name = exp["name"]
         rate = exp.get("rate", 0.1)
@@ -165,19 +187,15 @@ def main():
         )
 
         df_injected = injector.inject(
-            df_expanded[df_expanded["structural_gap"] == 0],
+            df_expanded,
             DEFAULT_VALUE_COLS,
             group_col="Beach Name"
         )
 
-        df_final = pd.concat([
-            df_injected,
-            df_expanded[df_expanded["structural_gap"] == 1]
-        ]).sort_values("Readable Timestamp").reset_index(drop=True)
-
         out_path = os.path.join(OUTPUT_DIR, f"{name}.csv")
-        df_final.to_csv(out_path, index=False)
+        df_injected.to_csv(out_path, index=False)
         logging.info(f"[INFO] Saved processed dataset: {out_path}")
+
 
 if __name__ == "__main__":
     main()

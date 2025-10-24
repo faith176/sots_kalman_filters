@@ -1,40 +1,52 @@
-\chapter{Literature Review}\label{chapter:literature-review}
+\chapter{Literature Review}\label{ch:literature-review}
+
+Systems of twinned systems represent the convergence of system of systems and digital twins. While SoS research emphasizes the orchestration of independent, heterogeneous systems to achieve collective goals \cite{maier1998architecting}, DTs focus on establishing a synchronized digital representation of physical assets. This enables real-time monitoring, analysis, and control \cite{kritzinger2018digital, tao2018digital}. Integrating these ideas creates opportunities to extend both. DTs gain scalability and coordination across multiple interacting systems, while SoS benefit from intelligent, data-driven representations of their constituents.
+
+In a SoTS, each constituent system is augmented with one or more digital twins that provide predictive, diagnostic, and prescriptive capabilities. These DT-enhanced constituents interoperate within a larger SoS enabling higher-level coordination, adaptation, and optimization across domains. This integration supports emergent capabilities, such as federated simulation, collaborative prediction, and coordinated decision-making under uncertainty, that neither standalone DTs nor traditional SoS can achieve alone. As cyber-physical infrastructures grow in complexity, the SoTS vision has gained traction as a means to enhance reliability, interoperability, and adaptability. Recent research shows that combining DTs and SoS improves cross-system optimization and situational awareness in areas such as manufacturing, transportation, and critical infrastructure management \cite{david2024infonomics, ferreira2024framework}, positioning SoTS as a scalable and adaptive evolution of both paradigms.
 
 
-\section{Systems of Twinned Systems (SoTS)}\label{sec:background-sots}
-Systems of twinned systems represent the convergence of system of systems and digital twins. While SoS research emphasizes the orchestration of independent, heterogeneous systems to achieve collective goals \citep{maier1998architecting}, DTs focus on establishing a synchronized digital representation of physical assets. This enables real-time monitoring, analysis, and control \citep{kritzinger2018digital, tao2018digital}. Integrating these paradigms creates opportunities to extend both. DTs gain scalability and coordination across multiple interacting systems, while SoS benefit from intelligent, data-driven representations of their constituents.
-
-In a SoTS, each constituent system is augmented with one or more digital twins that provide predictive, diagnostic, and prescriptive capabilities. These DT-enhanced constituents interoperate within a larger SoS enabling higher-level coordination, adaptation, and optimization across domains. This integration supports emergent capabilities, such as federated simulation, collaborative prediction, and coordinated decision-making under uncertainty, that neither standalone DTs nor traditional SoS can achieve alone. As cyber-physical infrastructures grow in complexity, the SoTS vision has gained traction as a means to enhance reliability, interoperability, and adaptability. Recent research shows that combining DTs and SoS improves cross-system optimization and situational awareness in areas such as manufacturing, transportation, and critical infrastructure management \citep{david2024infonomics, ferreira2024framework}, positioning SoTS as a scalable and adaptive evolution of both paradigms.
+To explore this convergence, a systematic study was conducted to identify, classify, and analyze works in SoTS research. 
+This review aimed to achieve answer the following objectives:
 
 
-To explore this convergence, a systematic study was conducted to identify, classify, and analyze works at the intersection for SoTS research. 
-This review aimed to answer the following high-level questions:
-
+\noindent \textbf{Conceptual Motivation and Integration.} 
 \begin{itemize}
-    \item \textbf{RQ1–RQ2: Conceptual Motivation and Integration.} \textit{Why and how are DT and SoS combined?}  
+    \item Why are DT and SoS combined?
+    \item How are DT and Sos combined?
+\end{itemize}
     These questions investigate the motivations, domains, and architectures that drive SoTS development, as well as the organizational and technical mechanisms by which these systems are composed.
-    
-    \item \textbf{RQ3–RQ4: Technical Characterization.} \textit{What are the defining features of DTs and SoS within SoTS?}  
+
+\noindent \textbf{Technical Characterization.}
+\begin{itemize}
+    \item What are the defining features of DTs within SoTS?
+    \item What are the defining features of SoS within SoTS?
+\end{itemize}
     These questions examine autonomy, data exchange, modelling formalisms, and emergent behaviours across constituent systems.
 
-    \item \textbf{RQ5–RQ7: Reliability, Maturity, and Implementation.}  
-    \textit{How are non-functional properties such as reliability and security addressed? What is the current level of research and technical maturity? What technologies and platforms are most frequently used?}
+\noindent \textbf{Reliability, Maturity, and Implementation.}  
+\begin{itemize}
+    \item How are non-functional properties such as reliability and security addressed in SoTS
+    \item What is the current level of research and technical maturity?
+    \item What technologies and platforms are most frequently used?
 \end{itemize}
+These questions examine the treatment of non-functional qualities throughout the SoTS lifecycle, the current state of technological readiness, and the practical means through which such systems are engineered and deployed.
 
-Together, these questions guided the extraction of key patterns, challenges, and design practices observed in existing SoTS literature.  
-The study followed a systematic protocol consistent with the guidelines of \citet{kitchenham2007guidelines} and \citet{wohlin2020guidelines}, comprising the following phases:
+
+Together, these all these research questions guided the extraction of key patterns, challenges, and design practices observed in existing SoTS literature.  
+
+The study followed a systematic protocol consistent with the guidelines of \cite{kitchenham2007guidelines} and \cite{wohlin2020guidelines}, comprising the following phases:
 
 \begin{enumerate}
-    \item \textbf{Database Search and Screening:} A comprehensive search across Scopus, Web of Science, IEEE Xplore, and ACM Digital Library, returning an initial corpus of 317 studies.
-    \item \textbf{Selection and Quality Assessment:} Application of explicit inclusion and exclusion criteria, duplicate removal, and quality evaluation
-    \item \textbf{Snowballing and Validation:} Forward and backward snowballing added relevant works, resulting in a final set of 80 high-quality primary studies.
+    \item Database Search and Screening: A comprehensive search across Scopus, Web of Science, IEEE Xplore, and ACM Digital Library, returning an initial corpus of 317 studies.
+    \item Selection and Quality Assessment: Application of explicit inclusion and exclusion criteria, duplicate removal, and quality evaluation
+    \item Snowballing and Validation: Forward and backward snowballing added relevant works, resulting in a final set of 80 high-quality primary studies.
 \end{enumerate}
 
 
 
 \section{Study Design}
 \label{sec:literature-review-study-design}
-a systematic literature review was conducted following the established guidelines of \citet{kitchenham2007guidelines} and \citet{wohlin2020guidelines}. 
+a systematic literature review was conducted following the established guidelines of \cite{kitchenham2007guidelines} and \cite{wohlin2020guidelines}. 
 The review process was designed to capture both the conceptual and technical aspects of SoTS, focusing on how digital twin and system of systems principles are integrated, implemented, and evaluated in the literature.
 
 \begin{figure}[H]
@@ -72,56 +84,4 @@ A total of 317 studies were initially retrieved, and after the application of in
 These studies collectively represent the current state of SoTS research, capturing both theoretical advances and empirical applications across diverse domains such as manufacturing, energy, and urban infrastructure.
 
 
-
-
-
-
-
-
-
-
-\section{Survey of Systems of Twinned Systems}\label{sec:literature-review-sots-survey}
-This section reviews existing studies on Systems of Twinned Systems (SoTS).  
-\subsection{SoTS Types}\label{sec:sots-types}
-- Directed, acknowledged, collaborative, and virtual SoTS.  
-- Examples of studies for each type (quality threshold: 8).  
-
-\subsection{Trends in SoTS Research}\label{sec:literature-review-sots-trends}
-- Rapid growth in acknowledged SoTS.  
-- Emerging but smaller growth in collaborative and virtual SoTS.  
-- Complexity increases across types; reliability may be a limiting factor for higher-level SoTS.  
-- Very few studies perform formal validation of reliability.  
-
-\section{Reliability Mechanisms in SoTS}\label{sec:literature-review-sots-reliability}
-\subsection{Maturity Levels of Reliability Consideration}\label{sec:literature-review-reliability-maturity}
-- Not addressed, mentioned only, architecturally addressed, explicitly modeled, validated.  
-
-\subsection{Dimensions of Reliability}\label{sec:literature-review-reliability-dimensions}
-- Constituent reliability.  
-- Data and communication reliability.  
-- Coordination reliability.  
-- Emergence reliability.  
-- Runtime adaptation reliability.  
-
-\subsection{Mechanism Categories}\label{sec:literature-review-reliability-mechanisms}
-- Preventative.  
-- Fault-tolerant.  
-- Detective.  
-- Corrective.  
-
-\subsection{Mapping Reliability to SoTS Types}\label{sec:literature-review-reliability-mapping}
-- Unique reliability concerns for directed, acknowledged, collaborative, and virtual SoTS.  
-- Positioning of this study in the data and communication dimension, with implications for other dimensions.  
-
-\section{Complex Event Processing in DT and SoS Contexts}\label{sec:literature-review-cep-context}
-- Use of CEP with digital twins.  
-- Use of CEP with systems of systems.  
-- Observation: existing production-ready CEP engines do not address reliability.  
-
 \section{Research Gap and Contribution}\label{sec:literature-review-gap}
-\subsection{Gap}\label{sec:literature-review-gap-specific}
-- SoTS is growing rapidly, but implementations rarely consider reliability.  
-- CEP is well-studied in DTs but absent in SoTS due to missing-data and reliability challenges.  
-
-\subsection{Contribution}\label{sec:literature-review-contribution}
-- This thesis ensures CEP can be applied in SoTS by introducing a reliability-aware imputation mechanism for streaming data.  
