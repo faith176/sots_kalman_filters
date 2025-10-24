@@ -51,31 +51,55 @@ Overall, the evolution of the digital twin reflects a progression from simulatio
 
 % Then illustrate each with domain examples:
 
-DT architectures formalize how physical systems, data infrastructures, and computational models interact to enable synchronization and control across the system lifecycle. Over the past decade, several layered and reference architectures have emerged, each extending the conceptual scope and technological maturity of DT design.
+DT architectures formalize how physical systems, data infrastructures, and computational models interact to enable synchronization and control across the system lifecycle. Over the past decade, layered and reference models have evolved to increase the conceptual scope and technological maturity of DT design.
 
-Early conceptualizations of DTs adopted a three-layer structure consisting of the physical, virtual, and connection layers \cite{grieves2014digital, tao2018digital}. The physical layer represents real-world assets equipped with sensors, actuators, and controllers that generate operational data. The virtual layer maintains a digital representation that mirrors system behavior to support analysis and control, while the connection layer enables bi-directional communication and data exchange between the two. Although this model provided a foundational view of cyber-physical integration, it offered limited guidance on data management, services, and lifecycle evolution.
+Early models adopted a three-layer structure consisting of physical, virtual, and connection layers \cite{tao2018digital}. The physical layer represents sensor-equipped assets, the virtual layer maintains a digital replica for analysis and control, and the connection layer enables bi-directional data exchange. While foundational for cyber-physical integration, this model offered limited guidance on data management and lifecycle evolution.
 
-To address these gaps, later frameworks expanded the architecture to incorporate additional layers. \citet{tao2019digital} proposed a five-layer model that introduced dedicated data and service components. In this model, the physical entity forms the basis for constructing the virtual entity that supports simulation and decision-making. The data layer functions as the core of the system, enabling collection, fusion, and knowledge generation, while the service layer provides optimization, maintenance, and user interaction capabilities. The connection layer bridges all components to maintain synchronization and feedback.
+Subsequent frameworks expanded this view. \citet{tao2019digital} introduced a five-layer model with dedicated data and service layers to support collection, fusion, optimization, and user interaction. \citet{redelinghuys2020six} extended this further into a six-layer architecture integrating IoT gateways, cloud analytics, and simulation intelligence to enhance scalability and interoperability in industrial settings.
 
-\citet{redelinghuys2020six} proposed a six-layer architecture that further integrates data exchange, cloud connectivity, and simulation intelligence through open, vendor-neutral interfaces. The lower layers encompass physical devices and local data repositories, the middle layers introduce an IoT gateway that converts sensor data into structured information for cloud storage and analytics, and the upper layers host emulation and simulation tools for real-time visualization and control. By distributing data acquisition, transformation, and reasoning across interconnected layers, the architecture enhances scalability and interoperability within complex industrial environments.
+In parallel, standardization initiatives formalized DT concepts. The Reference Architectural Model for Industry 4.0 (RAMI 4.0) organizes DT-enabled systems across hierarchy levels, lifecycle stages, and functional layers \cite{DIN91345}, providing a structural foundation for aligning physical assets with enterprise processes. Similarly, ISO 23247 \cite{ISO23247-1} defines a DT reference architecture for manufacturing across four domains, observable, communication, twin, and user, and specifies standardized roles and interfaces for secure data exchange and synchronization.
 
-Parallel to academic developments, standardization initiatives have formalized DT concepts into reference frameworks. The Reference Architectural Model for Industry 4.0 (RAMI 4.0) provides a structured model for organizing DT-enhanced industrial systems across three dimensions: hierarchy levels, product lifecycle stages, and architecture layers \cite{DIN91345}. Together, these dimensions describe how physical assets, digital systems, and business processes interact throughout the system lifecycle. Within this structure, RAMI 4.0 serves as the reference model defining the structural and functional layers of Industry 4.0 systems, while the DT provides the implementation mechanism that realizes these principles in practice. DTs align the hierarchy, lifecycle, and functional dimensions of RAMI 4.0, enabling continuous synchronization between operational processes and enterprise decision-making.
+DT architectures now support applications in manufacturing, energy, healthcare, transportation, and smart cities \cite{hu2021digital}. Within NIST’s Smart Manufacturing Test Bed, for example, DTs support machine health monitoring, dynamic scheduling, and virtual commissioning to improve reliability, efficiency, and decision-making across connected industrial environments \cite{shao2021use}.
 
-Building on these principles, the international standard ISO 23247 \cite{ISO23247-1} defines a Digital Twin reference architecture for manufacturing structured around four interconnected domains: the observable manufacturing domain, the device communication domain, the digital twin domain, and the user domain. The observable manufacturing domain contains the physical assets and processes being monitored, while the device communication domain ensures secure and reliable data transfer between physical and digital components. The digital twin domain manages models, analytics, and synchronization, and the user domain provides visualization and decision support interfaces. The architecture is governed by a Digital Twin Framework that specifies functional entities and standardized interfaces for data acquisition, communication, and synchronization. By defining explicit roles and message exchanges between these entities, ISO 23247 enables modular and interoperable DT implementations across heterogeneous industrial environments.
 
-DT architectures have since been applied across a wide range of domains—including manufacturing, energy, healthcare, transportation, and smart cities—to enhance operational efficiency and system resilience \cite{hu2021digital}. \citet{shao2021use} describe several representative implementations developed within the NIST Smart Manufacturing Systems Test Bed. A machine health DT uses process and equipment data to monitor, diagnose, and predict faults in manufacturing assets, enabling proactive maintenance through data-driven recommendations or automated control adjustments. A scheduling and routing DT integrates information from shop-floor systems such as production equipment, MES, and ERP platforms to optimize routing flexibility, cycle times, and resource utilization under varying demand conditions. Finally, a virtual commissioning DT employs simulation and control logic emulation to design and validate production systems prior to physical deployment, minimizing commissioning costs and reducing post-installation risks. Collectively, these applications demonstrate the adaptability of the DT paradigm, showing how real-time synchronization and continuous feedback enhance reliability, efficiency, and decision-making across diverse socio-technical contexts.
 
 
 \section{System of Systems}\label{sec:background-sos}
-\subsection{Definitions and Core Characteristics}\label{subsec:background-sos-definitions}
-% Define SoS (Maier, 1998; INCOSE, 2005) and describe autonomy, belonging, evolution, and emergence.
+A system of systems is a collection of independent systems that collaborate to achieve outcomes unattainable by any single constituent \cite{maier1998architecting}. SoS engineering provides a foundation for managing large-scale complexity in environments requiring adaptability, scalability, and interoperability.
+The following subsections outline the defining characteristics that distinguish SoS from traditional systems. It will also detail its history and application domains.
 
-\subsection{Historical Evolution and Application Domains}\label{subsec:background-sos-history}
-% Trace SoS from defense/aerospace origins to CPS, smart cities, and digital ecosystems.
+\subsection{Definitions and Taxonomies}\label{subsec:background-sos-definitions}
+The foundations of SoS theory were established by \citet{maier1998architecting}, who defined an SoS as a collection of operationally and managerially independent systems that collaborate to achieve outcomes beyond their individual capabilities. Operational independence implies that each constituent can function autonomously and continue to deliver useful outcomes outside the SoS. While managerial independence indicates that these systems are developed and governed under separate authority, integrating through voluntary coordination rather than centralized control. From these principles emerge several defining properties that distinguish SoS from traditional systems. Because participation is dynamic and decentralized, SoS must preserve stability through partial composition. It must remaining functional even as individual systems join, leave, or fail to participate. This capacity to sustain useful operation amid structural changes ensures stability in uncertain environments. Rather than depending on full integration, SoS unify their constituents through negotiated interactions among heterogeneous systems pursuing distinct objectives. The result is a form of emergent behavior, that arises from local coordination and feedback, allowing the overall system to self-stabilize and reallocate functions as conditions evolve.
 
-\subsection{Architectural Models and Governance Structures}\label{subsec:background-sos-architecture}
-% Describe centralized, federated, and collaborative SoS architectures.
-% Discuss governance, communication, and integration mechanisms.
+Subsequent perspectives expanded on this view. \citet{boardman2006system} framed SoS as purposeful organizations of systems united by overlapping objectives but governed through decentralized authority. They identified five interrelated characteristics that describe how independence and cooperation coexist within an SoS. Autonomy, belonging, and connectivity capture the balance between self-governance and collaboration: each constituent retains autonomy in its goals and operations, yet demonstrates belonging through participation in shared objectives. This collaboration is enabled by connective mechanisms that allow for coordination and information exchange. Diversity and emergence describe the adaptive character of the SoS, where heterogeneous systems with different capabilities and purposes interact to produce collective behaviors unattainable by any single constituent.
+
+Building on these foundations, \citet{nielsen2015systems} synthesized prior frameworks into an eight-dimensional taxonomy designed to analyze and engineer complex SoS. The dimensions are:
+\begin{description}
+\item[\textbf{Autonomy}] the extent to which constituent systems act according to their own goals rather than centralized control.
+\item[\textbf{Independence}] the ability of a constituent system to operate even when separated from the SoS.
+\item[\textbf{Distribution}] the physical and functional separation of constituent systems, which rely on communication networks to exchange information.
+\item[\textbf{Evolution}] long-term structural and functional adaptation within the SoS.
+\item[\textbf{Reconfiguration}] short-term or real-time structural changes in response to the environment or operational changes.
+\item[\textbf{Emergence}] novel behavior arising from system interactions rather than from individual system design.
+\item[\textbf{Interdependence}] mutual reliance among systems to achieve collective goals.
+\item[\textbf{Interoperability}] the ability to exchange data and services across heterogeneous systems.
+\end{description}
+Together, these dimensions provide a conceptual basis for understanding SoS behavior.
+
+\subsection{History of SoS and Application Domains}\label{subsec:background-sos-history}
+The conceptual roots of SoS trace back to General Systems Theory \cite{von1950theory}, which emphasized holism, interdependence, and the organization of complex entities as integrated wholes. Early theorists such as \citet{boulding1956general} introduced the term “system of systems” to describe the hierarchical organization of theoretical constructs. In his classification, systems exist within a hierarchy of increasing complexity. From simple frameworks to adaptive, open systems capable of responding to external influences. This notion of dynamic, evolving structures foreshadowed the evolving emergent qualities later associated with modern SoS.
+
+Building on this foundation, \citet{ackoff1971towards} and \citet{jackson1984towards} emphasized the purposeful behavior and design of interconnected systems, highlighting the need to consider not just component interactions but also organizational and environmental context. Their work reinforced the view that systems derive meaning and stability from their interrelations rather than from isolated function.
+
+By the late 20th century, these theoretical ideas found practical expression in large-scale engineering and defense applications. \citet{eisner1991computer} described SoS as geographically distributed assemblages of independently functioning systems working to serve a specific operational goal. \citet{shenhar19952} proposed a taxonomy that included “arrays” of systems, networks of autonomous yet coordinated systems working toward a common purpose.
+
+
+Over time, the SoS paradigm expanded beyond defense into domains such as transportation, energy, emergency management, and digital commerce. With each demonstrating how loosely coupled systems can achieve stability through adaptive coordination. In transportation, air traffic and maritime networks exemplify distributed SoS, where autonomous subsystems collaborate through shared information to balance efficiency and safety. Smart energy grids integrate independent generators, utilities, and consumers into adaptive infrastructures that stabilize demand and supply in real time. Emergency management systems combine autonomous agencies and sensor networks to enable coordinated response under unpredictable conditions. Even digital platforms such as e-commerce ecosystems function as socio-technical SoS, linking payment systems, logistics providers, and supply chains into resilient, data-driven marketplaces \cite{nielsen2015systems}.
+
+
+\subsection{Dependable SoS}\label{subsec:background-sos-history}
+Recent studies highlight growing attention to dependability in SoS operation. For example, \citet{ferreira2024framework} propose architectures that support fault tolerance and recovery; \citet{song2023continuous} and \citet{hyun2023timed} develop verification methods for safety-critical systems; and \citet{wang2019motifs} model reliability propagation across distributed components. These contributions demonstrate an ongoing shift from conceptual characterization toward engineered dependability. 
+
 
 
 
@@ -90,9 +114,15 @@ DT architectures have since been applied across a wide range of domains—includ
 % Discuss the role of shared semantics, synchronization, and interoperability standards.
 % Transitional sentence: "These theories of composition and interoperability extend Digital Twins from isolated representations toward collective, system-level integration — a conceptual bridge to Systems of Systems (SoS)."
 
-  \subsection{Convergence of DT and SoS Paradigms}
-  % Highlight issues like interoperability, coordination, and reliability.
+\subsection{Convergence of DT and SoS Paradigms into SoTS}
+% dependable SoTS - maybe can tie in on the DT side
 % Lead into the need for digital representation and continuous synchronization — the emergence of SoTS.
+
+
+\subsection{differentiating between a system, a sos, and a sots}
+% system vs sos vs sots - boardmnan and saucer table
+% differentiate and write theorized use cases based on reasearch
+
 
 
 
