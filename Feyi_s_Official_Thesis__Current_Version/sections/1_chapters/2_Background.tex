@@ -73,18 +73,8 @@ The foundations of SoS theory were established by \citet{maier1998architecting},
 
 Subsequent perspectives expanded on this view. \citet{boardman2006system} framed SoS as purposeful organizations of systems united by overlapping objectives but governed through decentralized authority. They identified five interrelated characteristics that describe how independence and cooperation coexist within an SoS. Autonomy, belonging, and connectivity capture the balance between self-governance and collaboration: each constituent retains autonomy in its goals and operations, yet demonstrates belonging through participation in shared objectives. This collaboration is enabled by connective mechanisms that allow for coordination and information exchange. Diversity and emergence describe the adaptive character of the SoS, where heterogeneous systems with different capabilities and purposes interact to produce collective behaviors unattainable by any single constituent.
 
-Building on these foundations, \citet{nielsen2015systems} synthesized prior frameworks into an eight-dimensional taxonomy designed to analyze and engineer complex SoS. The dimensions are:
-\begin{description}
-\item[\textbf{Autonomy}] the extent to which constituent systems act according to their own goals rather than centralized control.
-\item[\textbf{Independence}] the ability of a constituent system to operate even when separated from the SoS.
-\item[\textbf{Distribution}] the physical and functional separation of constituent systems, which rely on communication networks to exchange information.
-\item[\textbf{Evolution}] long-term structural and functional adaptation within the SoS.
-\item[\textbf{Reconfiguration}] short-term or real-time structural changes in response to the environment or operational changes.
-\item[\textbf{Emergence}] novel behavior arising from system interactions rather than from individual system design.
-\item[\textbf{Interdependence}] mutual reliance among systems to achieve collective goals.
-\item[\textbf{Interoperability}] the ability to exchange data and services across heterogeneous systems.
-\end{description}
-Together, these dimensions provide a conceptual basis for understanding SoS behavior.
+Building on these foundations, \citet{nielsen2015systems} proposed an eight-dimensional taxonomy for analyzing and engineering complex SoS. Autonomy and independence define the self-governance and operational freedom of constituent systems. Distribution, evolution, and reconfiguration describe how SoS are spatially dispersed, evolve over time, and adapt dynamically to change. Emergence and interdependence capture the collective behaviours that arise from system interaction and mutual reliance. Finally, interoperability reflects the ability of heterogeneous systems to exchange and use information effectively. Together, these dimensions provide a concise conceptual framework for characterizing SoS organization and behavior.
+
 
 \subsection{History of SoS and Application Domains}\label{subsec:background-sos-history}
 The conceptual roots of SoS trace back to General Systems Theory \cite{von1950theory}, which emphasized holism, interdependence, and the organization of complex entities as integrated wholes. Early theorists such as \citet{boulding1956general} introduced the term “system of systems” to describe the hierarchical organization of theoretical constructs. In his classification, systems exist within a hierarchy of increasing complexity. From simple frameworks to adaptive, open systems capable of responding to external influences. This notion of dynamic, evolving structures foreshadowed the evolving emergent qualities later associated with modern SoS.
@@ -97,33 +87,22 @@ By the late 20th century, these theoretical ideas found practical expression in 
 Over time, the SoS paradigm expanded beyond defense into domains such as transportation, energy, emergency management, and digital commerce. With each demonstrating how loosely coupled systems can achieve stability through adaptive coordination. In transportation, air traffic and maritime networks exemplify distributed SoS, where autonomous subsystems collaborate through shared information to balance efficiency and safety. Smart energy grids integrate independent generators, utilities, and consumers into adaptive infrastructures that stabilize demand and supply in real time. Emergency management systems combine autonomous agencies and sensor networks to enable coordinated response under unpredictable conditions. Even digital platforms such as e-commerce ecosystems function as socio-technical SoS, linking payment systems, logistics providers, and supply chains into resilient, data-driven marketplaces \cite{nielsen2015systems}.
 
 
-\subsection{Dependable SoS}\label{subsec:background-sos-history}
-Recent studies highlight growing attention to dependability in SoS operation. For example, \citet{ferreira2024framework} propose architectures that support fault tolerance and recovery; \citet{song2023continuous} and \citet{hyun2023timed} develop verification methods for safety-critical systems; and \citet{wang2019motifs} model reliability propagation across distributed components. These contributions demonstrate an ongoing shift from conceptual characterization toward engineered dependability. 
+\section{DT SoS Convergence to SOTS}
+
+The hierarchical combination of DTs to create a fully integrated SoS is a common research point throughout the literature. \citet{tao2019digital} explore this concept, emphasizing that enterprises can achieve SoS by incrementally building and combining unit-level DTs into larger, more complex systems. This perspective is complemented by \citet{gill2024toward}, who propose a system to automate horizontal and vertical DT integration for SoS, highlighting the need for a unified DT model to enable cross-manufacturer integration. \citet{schroeder2021digital} categorize levels of connectivity within DT structures, showing how aggregated DTs can hierarchically combine to represent larger systems. Domain-specific implementations are also demonstrated in the work of \citet{zhang2021supply}, who introduce the integration of Sub-DTs into an SoS for supply chain management. Similarly, \citet{dietz2020digital} describe SoS as a composition of a main and sub-DTs, noting that spatial-temporal DT configurations can mimic real-world systems.
+
+Another critical focus area is DTs' self-organizing and self-optimizing potential, which further complements their use in developing SoS. \citet{ghanbarifard2023digital} highlight these dynamics in distributed environments, examining works where aggregated DTs are used in adaptable and dynamic systems. \citet{esterle2021digital} propose a framework for creating self-integrating and self-optimizing systems, using DTs as autonomous components that can collaborate and adapt.
+
+Despite these advancements, achieving effective integration of DTs into an SoS presents several challenges. \citet{michael2022integration} identify barriers such as connectivity issues, privacy concerns, and the lack of unified technological development. These challenges necessitate the evolution of DTs to support horizontal and vertical integration. \citet{semeraro2021digital} emphasize the importance of horizontal integration and data sharing as prerequisites for optimized vertical integration. Extending these discussions, \citet{olsson2023systems} synthesize works related to DTs and SoS, highlighting lifecycle management difficulties, integration complexities, and inconsistent terminology as key obstacles. 
+Further challenges emerge in distributed DT systems, as outlined by \citet{borth2019digital}, who discuss strategies, architectures, and challenges for DTs in SoS. They note that loosely coupled DTs often face issues related to lifecycle management, conflicting requirements, and organizational independence. These challenges highlight the need for stronger research and unification to fully realize the potential of DT-based SoS.
 
 
+\subsection{Differentiating between a System, a System of Systems, and a Systems of Twinned Systems}
+Building on the comparative framework proposed by \citet{boardman2006system}, this section expands the original distinction between traditional systems and system of systems to include the emerging concept of the systems of twinned systems.  
+While Boardman and Sauser’s taxonomy detailed SoS characteristics such as autonomy, belonging, connectivity, diversity, and emergence, later research, specifically the eight-dimensional taxonomy of \citet{nielsen2015systems}, provided a more comprehensive analytical structure for understanding SoS behavior.  
 
-
-
-
-
-
-\section{From Digital Twins to Systems of Systems}
-  \subsection{Aggregation and Composition Theories}
-  % Introduce aggregation concepts: federated twins, composite twins, twin networks.
-% Explain theories of composition, hierarchy, and interoperability (e.g., Tao et al., 2020; Leng et al., 2021).
-% Discuss the role of shared semantics, synchronization, and interoperability standards.
-% Transitional sentence: "These theories of composition and interoperability extend Digital Twins from isolated representations toward collective, system-level integration — a conceptual bridge to Systems of Systems (SoS)."
-
-\subsection{Convergence of DT and SoS Paradigms into SoTS}
-% dependable SoTS - maybe can tie in on the DT side
-% Lead into the need for digital representation and continuous synchronization — the emergence of SoTS.
-
-
-\subsection{differentiating between a system, a sos, and a sots}
-% system vs sos vs sots - boardmnan and saucer table
-% differentiate and write theorized use cases based on reasearch
-
-
+To provide a unified conceptual foundation, the following table maps the classical characteristics identified by \citet{boardman2006system} onto \citet{nielsen2015systems}'s eight dimensions: autonomy, independence, distribution, evolution, reconfiguration, emergence, interdependence, and interoperability. This mapping was established by first aligning Boardman and Sauser’s attributes with their equivalent dimensions as defined by Nielsen, and then extending the comparison through a review of existing literature that discussed related characteristics. Each dimension is subsequently examined across three system types: system, system of systems, and system of twinned systems.
+\input{tables/Background/sys_sos_sots.tex}
 
 
 
