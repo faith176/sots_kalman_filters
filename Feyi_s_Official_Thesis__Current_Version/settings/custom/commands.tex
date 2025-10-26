@@ -38,16 +38,17 @@
 %     \makebox[\dimexpr\maxlen-\tabcolsep][l]{#2 (\perc\%)}%
 % }
 
-% % Subcategory corner labels
-% \newcommand{\subcategory}{\;\corner{}}
-% \newcommand{\subsubcategory}{\;\;\corner{}}
+
+
+% Made by Feyi! 
+\newcommand{\chref}[1]{Chapter.~\ref{#1}}
+\newcommand{\cellcite}[1]{{\scriptsize{#1}}}
 
 
 
 
 % From Prof
 %%%%%%%%%%%%%%%%%%% Basic commands for editing %%%%%%%%%%%%%%%%%%%
-\newcommand{\chref}[1]{Chapter.~\ref{#1}}
 \newcommand{\secref}[1]{Sec.~\ref{#1}}
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
 \newcommand{\tabref}[1]{Tab.~\ref{#1}}
@@ -292,7 +293,7 @@
 %\newcommand{\colheight}{-.05}
 %\newcommand{\cellvspace}{-3.5mm}
 \newcommand{\cellvspace}{-2.8mm}
-\newcommand{\colheight}{-.25}
+\newcommand{\colheight}{-.25} % Adjust bar thickness here if needed
 \newlength{\maxlen}
 
 \newcommand{\numberofstudies}{80}
@@ -324,5 +325,6 @@
     \makebox[\dimexpr\maxlen-\tabcolsep][l]{#2 (\perc\%)}%
 }
 
+% Subcategory corner labels
 \newcommand{\subcategory}{\;\corner{}}
 \newcommand{\subsubcategory}{\;\;\corner{}}

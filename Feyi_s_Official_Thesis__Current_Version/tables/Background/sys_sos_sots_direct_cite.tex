@@ -1,0 +1,68 @@
+\begin{table}[htbp]
+\centering
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{3pt}
+% \begin{adjustbox}{max width=1.25\textwidth,center} % stretch 10% beyond normal width
+% \begin{tabularx}{1.3\textwidth}{>{\raggedright\arraybackslash}p{3cm}
+\hspace*{-0.1\textwidth}
+\begin{adjustbox}{center}
+\begin{tabularx}{1.3\textwidth}{>{\raggedright\arraybackslash}p{3cm}
+                                 >{\raggedright\arraybackslash}p{4.5cm} % use 4cm or 4.5cm
+                                 >{\raggedright\arraybackslash}X
+                                 >{\raggedright\arraybackslash}X}
+\hline
+\textbf{Dimension} & \textbf{System} & \textbf{System of Systems (SoS)} & \textbf{System of Twinned Systems (SoTS)} \\
+\hline
+Autonomy &
+Subsystems cede autonomy to centralized control. \cellcite{\cite{jackson1984towards, boardman2006system}} &
+Constituent systems retain and exercise autonomy while contributing to overall SoS goals. \cellcite{\cite{maier1998architecting, boardman2006system, nielsen2015systems, jackson1984towards}} &
+Each digital twin governs its own data, model, and operational autonomy while coordinating via shared semantics. \cellcite{\cite{borth2019digital, dietz2020digital}} \\
+
+\hline
+Independence &
+Subsystems depend fully on the whole for purpose and operation. \cellcite{\cite{jackson1984towards, ackoff1971towards}} &
+Constituent systems remain operationally and managerially independent. \cellcite{\cite{maier1998architecting, nielsen2015systems}} &
+Each asset and its digital twin are owned and managed by separate entities but cooperate through interoperability mechanisms. \cellcite{\cite{borth2019digital, dietz2020digital}} \\
+
+\hline
+Distribution &
+Components are co-located and integrated under a single management structure. \cellcite{\cite{ackoff1971towards, boardman2006system}} &
+Constituent systems are geographically and organizationally distributed, connected through communication networks. \cellcite{\cite{maier1998architecting, nielsen2015systems, boardman2006system}}  &
+Extend distribution across cyber–physical–digital boundaries, integrating federated digital twins and distributed sensing. \cellcite{\cite{michael2022integration, borth2019digital, dietz2020digital}}  \\
+
+\hline
+Evolution &
+System evolution is centrally planned and executed. \cellcite{\cite{jackson1984towards, ackoff1971towards, jordan1960some}}  &
+SoS evolve continuously as systems join, leave, or change their roles. \cellcite{\cite{nielsen2015systems, maier1998architecting, jackson1984towards, jordan1960some}}  &
+Co-evolution of physical and digital entities; updates in data, models, and analytics evolve alongside assets. \cellcite{\cite{michael2022integration, olsson2023systems, borth2019digital, dietz2020digital, esterle2021digital}}  \\
+
+\hline
+Reconfiguration &
+Reconfiguration occurs only through planned design modifications. \cellcite{\cite{jackson1984towards, jordan1960some}}  &
+Constituent systems dynamically reconfigure relationships and data exchanges. \cellcite{\cite{boardman2006system, nielsen2015systems, maier1998architecting, jackson1984towards, jordan1960some}}  &
+Reconfiguration occurs autonomously through distributed decision-making between digital twins. \cellcite{\cite{gill2024toward, dietz2020digital, esterle2021digital}}  \\
+
+\hline
+Emergence &
+Emergent behavior is minimal or predictable; the system is fully specified. \cellcite{\cite{ackoff1971towards, boardman2006system}}  &
+SoS exhibit emergent behaviors resulting from interactions among constituent systems. \cellcite{\cite{mmaier1998architecting, boardman2006system, nielsen2015systems, jackson1984towards, boulding1956general}}  &
+Emergent properties arise through combined cyber-physical-digital interactions and predictive coordination among twins. \cellcite{\cite{gill2024toward, dietz2020digital}}  \\
+
+\hline
+Interdependence &
+Subsystems are tightly coupled through fixed, designed dependencies. \cellcite{\cite{jordan1960some, boardman2006system}}  &
+Constituent systems depend on others through interfaces but retain independent operation. \cellcite{\cite{nielsen2015systems, boardman2006system}}  &
+Digital twins form interdependent analytic and operational networks, sharing models, data, and inferences. \cellcite{\cite{borth2019digital, esterle2021digital}}  \\
+
+\hline
+Interoperability &
+Limited to standardized internal protocols within the same organization. \cellcite{\cite{boardman2006system}}  &
+Established through well-defined communication interfaces and shared standards. \cellcite{\cite{boardman2006system, nielsen2015systems}}  &
+Achieved through semantic, syntactic, and dynamic interoperability enabling autonomous cooperation and model exchange. \cellcite{\cite{gill2024toward, michael2022integration, olsson2023systems, borth2019digital}} \\
+\hline
+\end{tabularx}
+\end{adjustbox}
+\caption{Comparison of system characteristics across \citet{nielsen2015systems} dimensions.}
+\label{tab:sys_sos_sots}
+\end{table}

@@ -6,10 +6,6 @@ Digital twins are central to the digital transformation of cyber-physical system
 The following subsections outline their history, distinguishing characteristics, and applications.
 
 \subsection{Definitions and Core Characteristics}\label{subsec:background-dt-definitions}
-% Define the DT concept across major sources (Grieves 2002; Tao et al. 2018; Kritzinger et al. 2018).
-% Highlight core properties: physical–digital pairing, synchronization, fidelity, and feedback.
-% Mention how definitions converge on the idea of real-time, bi-directional linkage.
-
 A digital twin is broadly defined as a high-fidelity virtual representation of a physical asset or system that remains continuously synchronized with its real-world counterpart through bi-directional data exchange and feedback control \cite{david2024infonomics}. 
 It extends the concept of cyber-physical integration by enabling physical and digital entities to co-evolve: data from the physical system updates the virtual model, while the model can influence the physical system through predictive or corrective actions \cite{tao2018digital}. 
 This synchronization, supported by IoT-enabled sensing and networked infrastructures, allows the DT to replicate not only the structure and state of its physical twin but also its dynamic behaviour in real time.
@@ -44,13 +40,6 @@ Overall, the evolution of the digital twin reflects a progression from simulatio
 
 \subsection{Architectural Patterns and Application Contexts}
 \label{subsec:background-dt-architectures-applications}
-% Present common DT architectures (3-layer, 5-layer, ISO 23247, DTF reference models).
-% Discuss components: physical layer, data layer, model/simulation layer, application layer.
-% Note enabling technologies: IoT, edge/cloud computing, AI analytics.
-% Transitional sentence: "While these architectures support high-fidelity modeling and control of individual twins, they are not designed to handle inter-twin dependencies or large-scale collaboration."
-
-% Then illustrate each with domain examples:
-
 DT architectures formalize how physical systems, data infrastructures, and computational models interact to enable synchronization and control across the system lifecycle. Over the past decade, layered and reference models have evolved to increase the conceptual scope and technological maturity of DT design.
 
 Early models adopted a three-layer structure consisting of physical, virtual, and connection layers \cite{tao2018digital}. The physical layer represents sensor-equipped assets, the virtual layer maintains a digital replica for analysis and control, and the connection layer enables bi-directional data exchange. While foundational for cyber-physical integration, this model offered limited guidance on data management and lifecycle evolution.
@@ -61,8 +50,7 @@ In parallel, standardization initiatives formalized DT concepts. The Reference A
 
 DT architectures now support applications in manufacturing, energy, healthcare, transportation, and smart cities \cite{hu2021digital}. Within NIST’s Smart Manufacturing Test Bed, for example, DTs support machine health monitoring, dynamic scheduling, and virtual commissioning to improve reliability, efficiency, and decision-making across connected industrial environments \cite{shao2021use}.
 
-
-
+% -------------------------------------------------------------
 
 \section{System of Systems}\label{sec:background-sos}
 A system of systems is a collection of independent systems that collaborate to achieve outcomes unattainable by any single constituent \cite{maier1998architecting}. SoS engineering provides a foundation for managing large-scale complexity in environments requiring adaptability, scalability, and interoperability.
@@ -76,49 +64,23 @@ Subsequent perspectives expanded on this view. \citet{boardman2006system} framed
 Building on these foundations, \citet{nielsen2015systems} proposed an eight-dimensional taxonomy for analyzing and engineering complex SoS. Autonomy and independence define the self-governance and operational freedom of constituent systems. Distribution, evolution, and reconfiguration describe how SoS are spatially dispersed, evolve over time, and adapt dynamically to change. Emergence and interdependence capture the collective behaviours that arise from system interaction and mutual reliance. Finally, interoperability reflects the ability of heterogeneous systems to exchange and use information effectively. Together, these dimensions provide a concise conceptual framework for characterizing SoS organization and behavior.
 
 
-\subsection{History of SoS and Application Domains}\label{subsec:background-sos-history}
-The conceptual roots of SoS trace back to General Systems Theory \cite{von1950theory}, which emphasized holism, interdependence, and the organization of complex entities as integrated wholes. Early theorists such as \citet{boulding1956general} introduced the term “system of systems” to describe the hierarchical organization of theoretical constructs. In his classification, systems exist within a hierarchy of increasing complexity. From simple frameworks to adaptive, open systems capable of responding to external influences. This notion of dynamic, evolving structures foreshadowed the evolving emergent qualities later associated with modern SoS.
+\subsection{History of SoS}\label{subsec:background-sos-history}
+The conceptual roots of SoS trace back to General Systems Theory \cite{von1950theory}, which emphasized holism, interdependence, and the organization of complex entities as integrated wholes. Early theorists such as \citet{boulding1956general} introduced the term “system of systems” to describe the hierarchical organization of theoretical constructs. In his classification, systems exist within a hierarchy of increasing complexity. From simple frameworks to adaptive, open systems capable of responding to external influences. Around the same time, \citet{jordan1960some} emphasized the semantic ambiguity of the term “system,” arguing that its meaning derives not from a fixed definition but from the perceiver’s organization of interrelated elements. Building on this foundation, \citet{ackoff1971towards} and \citet{jackson1984towards} emphasized the purposeful behaviour and design of interconnected systems, highlighting the need to consider not just component interactions but also organizational and environmental context. Their work reinforced the view that systems derive meaning and stability from their interrelations rather than from isolated function.
 
-Building on this foundation, \citet{ackoff1971towards} and \citet{jackson1984towards} emphasized the purposeful behavior and design of interconnected systems, highlighting the need to consider not just component interactions but also organizational and environmental context. Their work reinforced the view that systems derive meaning and stability from their interrelations rather than from isolated function.
+By the late 20th century, these theoretical ideas found practical application in large-scale engineering and defense projects. \citet{eisner1991computer} described SoS as geographically distributed assemblages of independently functioning systems working to serve a specific operational goal. \citet{shenhar19952} proposed a taxonomy that included “arrays” of systems, networks of autonomous yet coordinated systems working toward a common purpose.
 
-By the late 20th century, these theoretical ideas found practical expression in large-scale engineering and defense applications. \citet{eisner1991computer} described SoS as geographically distributed assemblages of independently functioning systems working to serve a specific operational goal. \citet{shenhar19952} proposed a taxonomy that included “arrays” of systems, networks of autonomous yet coordinated systems working toward a common purpose.
-
-
-Over time, the SoS paradigm expanded beyond defense into domains such as transportation, energy, emergency management, and digital commerce. With each demonstrating how loosely coupled systems can achieve stability through adaptive coordination. In transportation, air traffic and maritime networks exemplify distributed SoS, where autonomous subsystems collaborate through shared information to balance efficiency and safety. Smart energy grids integrate independent generators, utilities, and consumers into adaptive infrastructures that stabilize demand and supply in real time. Emergency management systems combine autonomous agencies and sensor networks to enable coordinated response under unpredictable conditions. Even digital platforms such as e-commerce ecosystems function as socio-technical SoS, linking payment systems, logistics providers, and supply chains into resilient, data-driven marketplaces \cite{nielsen2015systems}.
-
-
-\section{DT SoS Convergence to SOTS}
-
-The hierarchical combination of DTs to create a fully integrated SoS is a common research point throughout the literature. \citet{tao2019digital} explore this concept, emphasizing that enterprises can achieve SoS by incrementally building and combining unit-level DTs into larger, more complex systems. This perspective is complemented by \citet{gill2024toward}, who propose a system to automate horizontal and vertical DT integration for SoS, highlighting the need for a unified DT model to enable cross-manufacturer integration. \citet{schroeder2021digital} categorize levels of connectivity within DT structures, showing how aggregated DTs can hierarchically combine to represent larger systems. Domain-specific implementations are also demonstrated in the work of \citet{zhang2021supply}, who introduce the integration of Sub-DTs into an SoS for supply chain management. Similarly, \citet{dietz2020digital} describe SoS as a composition of a main and sub-DTs, noting that spatial-temporal DT configurations can mimic real-world systems.
-
-Another critical focus area is DTs' self-organizing and self-optimizing potential, which further complements their use in developing SoS. \citet{ghanbarifard2023digital} highlight these dynamics in distributed environments, examining works where aggregated DTs are used in adaptable and dynamic systems. \citet{esterle2021digital} propose a framework for creating self-integrating and self-optimizing systems, using DTs as autonomous components that can collaborate and adapt.
-
-Despite these advancements, achieving effective integration of DTs into an SoS presents several challenges. \citet{michael2022integration} identify barriers such as connectivity issues, privacy concerns, and the lack of unified technological development. These challenges necessitate the evolution of DTs to support horizontal and vertical integration. \citet{semeraro2021digital} emphasize the importance of horizontal integration and data sharing as prerequisites for optimized vertical integration. Extending these discussions, \citet{olsson2023systems} synthesize works related to DTs and SoS, highlighting lifecycle management difficulties, integration complexities, and inconsistent terminology as key obstacles. 
-Further challenges emerge in distributed DT systems, as outlined by \citet{borth2019digital}, who discuss strategies, architectures, and challenges for DTs in SoS. They note that loosely coupled DTs often face issues related to lifecycle management, conflicting requirements, and organizational independence. These challenges highlight the need for stronger research and unification to fully realize the potential of DT-based SoS.
-
-
-\subsection{Differentiating between a System, a System of Systems, and a Systems of Twinned Systems}
-Building on the comparative framework proposed by \citet{boardman2006system}, this section expands the original distinction between traditional systems and system of systems to include the emerging concept of the systems of twinned systems.  
-While Boardman and Sauser’s taxonomy detailed SoS characteristics such as autonomy, belonging, connectivity, diversity, and emergence, later research, specifically the eight-dimensional taxonomy of \citet{nielsen2015systems}, provided a more comprehensive analytical structure for understanding SoS behavior.  
-
-To provide a unified conceptual foundation, the following table maps the classical characteristics identified by \citet{boardman2006system} onto \citet{nielsen2015systems}'s eight dimensions: autonomy, independence, distribution, evolution, reconfiguration, emergence, interdependence, and interoperability. This mapping was established by first aligning Boardman and Sauser’s attributes with their equivalent dimensions as defined by Nielsen, and then extending the comparison through a review of existing literature that discussed related characteristics. Each dimension is subsequently examined across three system types: system, system of systems, and system of twinned systems.
-\input{tables/Background/sys_sos_sots.tex}
+Over time, the SoS paradigm expanded beyond defense into domains such as transportation, energy, emergency management, and digital commerce. With each demonstrating how loosely coupled systems can achieve stability through adaptive coordination. In transportation, air traffic and maritime networks exemplify distributed SoS, where autonomous subsystems collaborate through shared information to balance efficiency and safety. Smart energy grids integrate independent generators, utilities, and consumers into adaptive infrastructures that stabilize demand and supply in real time. Emergency management systems combine autonomous agencies and sensor networks to enable coordinated response under unpredictable conditions. Even digital platforms such as e-commerce ecosystems function as socio-technical SoS, linking payment systems, logistics providers, and supply chains into data-driven marketplaces \cite{nielsen2015systems}.
 
 
 
 
-
-
-
-
-
-
-
+% -------------------------------------------------------------
 
 
 \section{Complex Event Processing}\label{sec:background-cep}
 % Introduce the concept of events and Complex Event Processing (CEP), its architectures, and its relevance to event-driven reasoning.
 % Review dependability principles (fault tolerance, compensation) in distributed systems.
+% CEP fundamentals, relevance to SoTS, existing gaps
 
 \subsection{Event Concepts and Event-Driven Architectures}\label{subsec:background-cep-events}
 % Define events as discrete state changes (Cugola & Margara, 2012; Luckham, 2002).
@@ -130,15 +92,17 @@ To provide a unified conceptual foundation, the following table maps the classic
 
 \subsection{Applications in CPS and Distributed Systems}\label{subsec:background-cep-applications}
 % Show how CEP is used for real-time monitoring, control, and adaptive behavior in IoT and CPS.
-
-\subsection{Limitations and Motivation for Reliable CEP in SoTS}\label{subsec:background-cep-limitations}
 % Highlight assumptions of determinism, complete data, and synchronization.
 % Discuss how these break down in dynamic, distributed SoTS environments.
 % Lead into reliability and compensation needs.
 
 
+% -------------------------------------------------------------
+
 \section{Dependability in Software Systems}\label{sec:background-dependability}
 % Introduce reliability, dependability, and relevant taxonomies (Avizienis et al., ISO 26262, etc.).
+% Dependable SoS frameworks, reliability metrics, motivation for your framework
+
 \subsection{Dependability Concepts and Attributes}\label{subsec:background-dependability-attributes}
 % Define dependability (Avizienis et al., 2004) as the ability to deliver service that can justifiably be trusted.
 % Describe attributes: availability, reliability, safety, integrity, maintainability.
@@ -151,10 +115,32 @@ To provide a unified conceptual foundation, the following table maps the classic
 % Describe types of faults (transient, intermittent, permanent).
 % Explain how they propagate across interconnected systems — relevant to SoTS dynamics.
 
-\subsection{Relevance to Reliable Event Processing in SoTS}\label{subsec:background-dependability-relevance}
-% Connect dependability principles to the design of reliable CEP architectures.
-% Emphasize fault tolerance through compensation as the key guiding concept.
 
 
 
+% -------------------------------------------------------------
+\section{Synthesis: From Systems to Systems of Twinned Systems}\label{sec:background-sots-synthesis}
 
+This section bridges the foundational concepts of systems and systems of systems to systems of twinned systems. It consolidates existing literature on how DTs are combined, integrated, and managed within larger system architectures, establishing the conceptual basis for differentiating SoTS from traditional system classifications.
+
+\subsection{Related Work}\label{subsec:background-sots-related-work}
+
+Research on SoTS has primarily emerged through studies exploring the integration of DTs within SoS contexts. The following studies illustrate key directions in this progression, focusing on hierarchical integration, autonomy, and coordination within DT-based SoS frameworks.
+
+The hierarchical combination of DTs to create a fully integrated SoS is a common research point throughout the literature. \citet{tao2019digital} explore this concept, emphasizing that enterprises can achieve SoS by incrementally building and combining unit-level DTs into larger, more complex systems. This perspective is complemented by \citet{gill2024toward}, who propose a system to automate horizontal and vertical DT integration for SoS, highlighting the need for a unified DT model to enable cross-manufacturer integration. \citet{schroeder2021digital} categorize levels of connectivity within DT structures, showing how aggregated DTs can hierarchically combine to represent larger systems. Domain-specific implementations are also demonstrated in the work of \citet{zhang2021supply}, who introduce the integration of Sub-DTs into an SoS for supply chain management. Similarly, \citet{dietz2020digital} describe SoS as a composition of a main and sub-DTs, noting that spatial-temporal DT configurations can mimic real-world systems.
+
+Another critical focus area is DTs' self-organizing and self-optimizing potential, which further complements their use in developing SoS. \citet{ghanbarifard2023digital} highlight these dynamics in distributed environments, examining works where aggregated DTs are used in adaptable and dynamic systems. \citet{esterle2021digital} propose a framework for creating self-integrating and self-optimizing systems, using DTs as autonomous components that can collaborate and adapt.
+
+Despite these advancements, achieving effective integration of DTs into an SoS presents several challenges. \citet{michael2022integration} identify barriers such as connectivity issues, privacy concerns, and the lack of unified technological development. These challenges necessitate the evolution of DTs to support horizontal and vertical integration. \citet{semeraro2021digital} emphasize the importance of horizontal integration and data sharing as prerequisites for optimized vertical integration. Extending these discussions, \citet{olsson2023systems} synthesize works related to DTs and SoS, highlighting lifecycle management difficulties, integration complexities, and inconsistent terminology as key obstacles. 
+Further challenges emerge in distributed DT systems, as outlined by \citet{borth2019digital}, who discuss strategies, architectures, and challenges for DTs in SoS. They note that loosely coupled DTs often face issues related to lifecycle management, conflicting requirements, and organizational independence.
+
+
+\subsection{Differentiating between a System, a System of Systems, and a Systems of Twinned Systems}
+This section synthesizes the conceptual foundations established in the background to distinguish between three levels of systemic organization: a traditional system, a system of systems, and the emerging systems of twinned systems. The aim is to clarify how fundamental system characteristics evolve across increasing scales of integration.
+
+The mapping followed the conceptual synthesis approach of \citet{jabareen2009building}, which systematically aligns and refines concepts across theoretical frameworks to construct an analytical model. The synthesis builds on the literature introduced in \secref{subsec:background-sos-history}, \secref{subsec:background-sos-definitions}, and 
+secref{subsec:background-sots-related-work}, encompassing classical systems theory, foundational SoS frameworks, and related work on SoTS.
+
+Building on the comparative framework of \citet{boardman2006system}, which distinguished traditional systems from systems of systems, this analysis extends to the SoTS context. While Boardman and Sauser identified key SoS attributes such as autonomy, belonging, connectivity, diversity, and emergence, the eight-dimensional taxonomy of \citet{nielsen2015systems} provides a broader basis for comparison. Boardman and Sauser’s attributes were first aligned with their equivalent dimensions in Nielsen’s taxonomy and then refined through supporting literature to ensure conceptual consistency. In \tabref{tab:sys_sos_sots}, each resulting dimension, autonomy, independence, distribution, evolution, reconfiguration, emergence, interdependence, and interoperability, is examined across the three system types.
+
+\input{tables/Background/sys_sos_sots_direct_cite.tex}
