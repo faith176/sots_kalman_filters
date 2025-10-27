@@ -1,99 +1,97 @@
 \chapter{Evaluation }
 \label{ch:results}
 
-\section{Evaluation Design}
-\label{sec:evaluation_design}
+% \section{Evaluation Design}
+% \label{sec:evaluation_design}
 
-This chapter evaluates the performance and reliability of the proposed uncertainty-aware CEP framework under controlled missing data scenarios. The goal is to assess how well the system maintains event continuity when sensor streams are partially missing, reflecting real-world disruptions.
+% This chapter evaluates the performance and reliability of the proposed uncertainty-aware CEP framework under controlled missing data scenarios. The goal is to assess how well the system maintains event continuity when sensor streams are partially missing, reflecting real-world disruptions.
 
-\subsection{Evaluation Overview}
-The evaluation is structured around three key components:
-\begin{enumerate}
-    \item \textbf{Missingness Patterns:} Controlled data loss patterns are introduced to simulate uncertainty and partial observability.
-    \item \textbf{Dataset and Scenario:} A real-world multi-sensor dataset is selected to represent a distributed cyber-physical environment.
-    \item \textbf{Event Patterns and Predictors:} Defined CEP rules and prediction models are tested to analyse system-level behaviour.
-\end{enumerate}
-
-
-
-\subsection{Missingness Patterns}
-\label{sec:missingness_patterns}
-
-To evaluate reconstruction robustness under uncertainty, the experiments introduce controlled data loss through a hybrid missingness scenario applied at three loss levels (10\%, 20\%, 30\%). 
-This scenario blends both random and structured missingness mechanisms to more realistically emulate disruptions observed in SoTS environments. 
-Results are compared against two reference cases: an \textbf{Oracle} baseline (no missing data) and a \textbf{Structural Gap} baseline (irrecoverable data loss).
-
-\begin{itemize}
-    \item \textbf{Hybrid Missingness (Proposed):}  
-    Combines two complementary mechanisms with equal probability:  
-    (i) \textit{Random (MCAR)} removals, where individual readings are deleted independently to represent sporadic communication losses or packet drops; and  
-    (ii) \textit{Block Missingness}, where consecutive readings (ranging from 2--6 hours) are removed to simulate short sensor outages or temporary twin disconnections.  
-
-    \item \textbf{Dropped (Baseline):}  
-    Represents long or permanent data absences due to known downtime, maintenance periods, or total node failure. These gaps are intentionally unreconstructed and serve as a lower-bound reference for assessing the of event detection under persistent loss.
-
-    \item \textbf{Oracle (Baseline):}  
-    Ideal condition with complete, uninterrupted data, used as the upper-bound benchmark for reconstruction accuracy and event-detection confidence.
-\end{itemize}
+% \subsection{Evaluation Overview}
+% The evaluation is structured around three key components:
+% \begin{enumerate}
+%     \item \textbf{Missingness Patterns:} Controlled data loss patterns are introduced to simulate uncertainty and partial observability.
+%     \item \textbf{Dataset and Scenario:} A real-world multi-sensor dataset is selected to represent a distributed cyber-physical environment.
+%     \item \textbf{Event Patterns and Predictors:} Defined CEP rules and prediction models are tested to analyse system-level behaviour.
+% \end{enumerate}
 
 
 
+% \subsection{Missingness Patterns}
+% \label{sec:missingness_patterns}
+
+% To evaluate reconstruction robustness under uncertainty, the experiments introduce controlled data loss through a hybrid missingness scenario applied at three loss levels (10\%, 20\%, 30\%). 
+% This scenario blends both random and structured missingness mechanisms to more realistically emulate disruptions observed in SoTS environments. 
+% Results are compared against two reference cases: an \textbf{Oracle} baseline (no missing data) and a \textbf{Structural Gap} baseline (irrecoverable data loss).
+
+% \begin{itemize}
+%     \item \textbf{Hybrid Missingness (Proposed):}  
+%     Combines two complementary mechanisms with equal probability:  
+%     (i) \textit{Random (MCAR)} removals, where individual readings are deleted independently to represent sporadic communication losses or packet drops; and  
+%     (ii) \textit{Block Missingness}, where consecutive readings (ranging from 2--6 hours) are removed to simulate short sensor outages or temporary twin disconnections.  
+
+%     \item \textbf{Dropped (Baseline):}  
+%     Represents long or permanent data absences due to known downtime, maintenance periods, or total node failure. These gaps are intentionally unreconstructed and serve as a lower-bound reference for assessing the of event detection under persistent loss.
+
+%     \item \textbf{Oracle (Baseline):}  
+%     Ideal condition with complete, uninterrupted data, used as the upper-bound benchmark for reconstruction accuracy and event-detection confidence.
+% \end{itemize}
 
 
-\subsection{Dataset Description}
-\label{sec:dataset_description}
-
-The experiments use the Chicago Park District Beach Water and Weather Sensors dataset~\cite{chicago_beach_sensors_dataset}, which records hourly measurements for variables such as water temperature, turbidity, wave height, and wave period across multiple beaches along Lake Michigan. 
-For this study, three representative sites are used: Calumet Beach, Montrose Beach, and 63rd Street Beach. 
-Their geographical distribution along the shoreline (Figure~\ref{fig:results_beach_map}) makes them well-suited for modelling a SoTS scenario.
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.45\textwidth]{figures/Results/beaches_map.png}}
-\caption{Map of beaches}
-\label{fig:results_beach_map}
-\end{figure}
 
 
-Each beach is modelled as a DT node continuously monitoring local water and environmental conditions. 
-Together, these nodes form a distributed network that collectively represents the coastal monitoring system for safety monitoring and environmental awareness 
 
-The beaches are located in adjacent regions, meaning that environmental changes, such as wave propagation, temperature shifts, or turbidity gradients, at one location can influence conditions at others. 
-This interdependence captures the \textit{emergent behaviour} typical of SoS environments, where local phenomena have system-level impacts. 
-In a realistic deployment, such a network could support autonomous actions, such as:
-\begin{itemize}
-    \item issuing public safety alerts for high bacterial or turbidity levels,
-    \item coordinating automated water pumping or drainage responses during high wave events,
-    \item dynamically adjusting sensor sampling rates based on neighbouring conditions.
-\end{itemize}
+% \subsection{Dataset Description}
+% \label{sec:dataset_description}
 
-Thus, the dataset provides a strong foundation for evaluating the framework in a realistic SoTS context.
+% The experiments use the Chicago Park District Beach Water and Weather Sensors dataset~\cite{chicago_beach_sensors_dataset}, which records hourly measurements for variables such as water temperature, turbidity, wave height, and wave period across multiple beaches along Lake Michigan. 
+% For this study, three representative sites are used: Calumet Beach, Montrose Beach, and 63rd Street Beach. 
+% Their geographical distribution along the shoreline (Figure~\ref{fig:results_beach_map}) makes them well-suited for modelling a SoTS scenario.
 
-
-\subsection{Dataset Statistics and Visual Overview}
-\label{sec:results_dataset_visuals}
-
-Figure~\ref{fig:results_attr_distributions_beach} presents the per-beach distributions of the key measured attributes, water temperature, turbidity, wave height, and wave period, during the 2015 summer season. 
-These distributions capture the statistical variability observed at each site and highlight local environmental differences across the Chicago coastline. 
-While the overall shapes remain consistent across beaches, subtle shifts in means and variances reflect their location differences influenced by shoreline shape, wave exposure, and localized weather conditions.
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.85\textwidth]{figures/Results/attribute_histograms_per_beach_2015_5_9.jpg}}
-\caption{Per-beach attribute distributions (May–September 2015).}
-\label{fig:results_attr_distributions_beach}
-\end{figure}
-
-Figure~\ref{fig:results_time_series} provides a time-series overview for each beach. Water temperature exhibits gradual seasonal warming, while turbidity and wave-related attributes show irregular bursts corresponding to storm events, rainfall, or inflow disturbances. 
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.9\textwidth]{figures/Results/time_series_overview_2015_5_9.jpg}}
-\caption{Hourly time-series overview for the three selected beaches (May–September 2015).}
-\label{fig:results_time_series}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.45\textwidth]{figures/Results/beaches_map.png}}
+% \caption{Map of beaches}
+% \label{fig:results_beach_map}
+% \end{figure}
 
 
+% Each beach is modelled as a DT node continuously monitoring local water and environmental conditions. 
+% Together, these nodes form a distributed network that collectively represents the coastal monitoring system for safety monitoring and environmental awareness 
+
+% The beaches are located in adjacent regions, meaning that environmental changes, such as wave propagation, temperature shifts, or turbidity gradients, at one location can influence conditions at others. 
+% This interdependence captures the \textit{emergent behaviour} typical of SoS environments, where local phenomena have system-level impacts. 
+% In a realistic deployment, such a network could support autonomous actions, such as:
+% \begin{itemize}
+%     \item issuing public safety alerts for high bacterial or turbidity levels,
+%     \item coordinating automated water pumping or drainage responses during high wave events,
+%     \item dynamically adjusting sensor sampling rates based on neighbouring conditions.
+% \end{itemize}
+
+% Thus, the dataset provides a strong foundation for evaluating the framework in a realistic SoTS context.
+
+
+% \subsection{Dataset Statistics and Visual Overview}
+% \label{sec:results_dataset_visuals}
+
+% Figure~\ref{fig:results_attr_distributions_beach} presents the per-beach distributions of the key measured attributes, water temperature, turbidity, wave height, and wave period, during the 2015 summer season. 
+% These distributions capture the statistical variability observed at each site and highlight local environmental differences across the Chicago coastline. 
+% While the overall shapes remain consistent across beaches, subtle shifts in means and variances reflect their location differences influenced by shoreline shape, wave exposure, and localized weather conditions.
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.85\textwidth]{figures/Results/attribute_histograms_per_beach_2015_5_9.jpg}}
+% \caption{Per-beach attribute distributions (May–September 2015).}
+% \label{fig:results_attr_distributions_beach}
+% \end{figure}
+
+% Figure~\ref{fig:results_time_series} provides a time-series overview for each beach. Water temperature exhibits gradual seasonal warming, while turbidity and wave-related attributes show irregular bursts corresponding to storm events, rainfall, or inflow disturbances. 
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.9\textwidth]{figures/Results/time_series_overview_2015_5_9.jpg}}
+% \caption{Hourly time-series overview for the three selected beaches (May–September 2015).}
+% \label{fig:results_time_series}
+% \end{figure}
 
 
 
@@ -101,172 +99,174 @@ Figure~\ref{fig:results_time_series} provides a time-series overview for each be
 
 
 
-\subsection{Scenario Setup}
-\label{sec:scenario_setup}
-
-The experimental process follows the general workflow below:
-
-\begin{itemize}
-    \item Each beach node generates sensor readings at fixed hourly intervals, representing continuous monitoring of environmental parameters. 
-    \item When data gaps occur, the system automatically estimates the missing values using the selected prediction model to maintain a consistent event flow. 
-    \item Both the original and reconstructed data streams are then used for complex event detection, allowing the evaluation of how uncertainty and data loss influence overall system behaviour.
-\end{itemize}
 
 
+% \subsection{Scenario Setup}
+% \label{sec:scenario_setup}
 
+% The experimental process follows the general workflow below:
 
-\subsection{CEP Evaluation and Event Patterns}
-\label{sec:event_patterns}
-
-To evaluate detection performance under uncertainty, the CEP layer was tested with varying confidence thresholds and hierarchical patterns. 
-
-Each experiment was conducted using detection cutoffs of \textbf{0.65}, \textbf{0.75}, \textbf{0.85}, and \textbf{0.95}, enabling comparison across multiple confidence levels. These thresholds represent progressively stricter detection requirements, allowing analysis of system performance under relaxed, moderate, and highly selective confidence conditions.
-
-
-The evaluation uses hierarchical set of patterns, progressing from simple sensor-level conditions (atomic events) to beach-level (local complex) and system-wide (distributed complex) alerts. 
-This structure reflects the SoTS concept: local twins operate autonomously but can trigger collective behaviour when multiple conditions align across nodes. 
-For all complex patterns, event confidence is computed as the \textbf{mean confidence} of the constituent events that make them up.
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.45\textwidth]{figures/Results/Results Patterns.drawio.pdf}}
-\caption{Illustration of a sample event composition of atomic and complex events}
-\label{fig:results_event_composition}
-\end{figure}
+% \begin{itemize}
+%     \item Each beach node generates sensor readings at fixed hourly intervals, representing continuous monitoring of environmental parameters. 
+%     \item When data gaps occur, the system automatically estimates the missing values using the selected prediction model to maintain a consistent event flow. 
+%     \item Both the original and reconstructed data streams are then used for complex event detection, allowing the evaluation of how uncertainty and data loss influence overall system behaviour.
+% \end{itemize}
 
 
 
-\begin{table}[H]
-\centering
-\caption{Hierarchy of event patterns used in the evaluation.}
-\label{tab:event_patterns}
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{p{0.18\textwidth} p{0.22\textwidth} p{0.53\textwidth}}
-\toprule
-\textbf{Event Type} & \textbf{Example Name(s)} & \textbf{Condensed Description} \\
-\midrule
 
-\textbf{Atomic (Sensor-level)} 
-& \texttt{HighTurbidity}, \texttt{LowWaterTemp}, \texttt{HighWave}, \texttt{HighWavePeriod}
-& Single-sensor threshold events per beach, such as turbidity $>$ 8.5\,NTU, wave height $>$ 0.35\,m, or temperature $<$ 22°C. These serve as the building blocks for higher-level detection. \\
+% \subsection{CEP Evaluation and Event Patterns}
+% \label{sec:event_patterns}
 
-\textbf{Local Complex (Beach-level)} 
-& \texttt{LocalAlert}
-& Combines two atomic events within the same beach (e.g., high turbidity and low temperature at Calumet, or high turbidity and high wave height at Montrose) occurring within 3\,s. Represents short-term local correlations indicative of abnormal conditions. \\
+% To evaluate detection performance under uncertainty, the CEP layer was tested with varying confidence thresholds and hierarchical patterns. 
 
-\textbf{Distributed Complex (Cross-beach)} 
-& \texttt{AlertSpread}, \texttt{TripleAlert}
-& Captures inter-beach propagation of alerts (e.g., Montrose $\rightarrow$ Calumet $\rightarrow$ 63rd) within short windows (5–7\,s). Reflects emergent regional SoTS behaviour, where local anomalies align across multiple sites. \\
-
-\bottomrule
-\end{tabular}
-\end{table}
+% Each experiment was conducted using detection cutoffs of \textbf{0.65}, \textbf{0.75}, \textbf{0.85}, and \textbf{0.95}, enabling comparison across multiple confidence levels. These thresholds represent progressively stricter detection requirements, allowing analysis of system performance under relaxed, moderate, and highly selective confidence conditions.
 
 
-\subsection{Predictor Configuration}
-\label{sec:predictor_configuration}
+% The evaluation uses hierarchical set of patterns, progressing from simple sensor-level conditions (atomic events) to beach-level (local complex) and system-wide (distributed complex) alerts. 
+% This structure reflects the SoTS concept: local twins operate autonomously but can trigger collective behaviour when multiple conditions align across nodes. 
+% For all complex patterns, event confidence is computed as the \textbf{mean confidence} of the constituent events that make them up.
 
-Two predictors were chosen to evaluate the reconstruction of the missing sensor readings: the Kalman Filter (KF) and the Particle Filter (PF).  
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.45\textwidth]{figures/Results/Results Patterns.drawio.pdf}}
+% \caption{Illustration of a sample event composition of atomic and complex events}
+% \label{fig:results_event_composition}
+% \end{figure}
 
-\noindent\textbf{Kalman Filter.}  
-The Kalman Filter is a recursive state estimator that models the evolution of a variable as a linear dynamical system with Gaussian noise.  
-At each step, the filter predicts the next state based on the previous estimate and corrects it when a new measurement becomes available, balancing process and measurement uncertainty through their respective covariances.  
 
-% Confidence is computed using the covariance trace, which quantifies how the current uncertainty compares to the filter's initial uncertainty. 
-% It is derived directly from the posterior covariance matrix of the Kalman filter and defined as:
+
+% \begin{table}[H]
+% \centering
+% \caption{Hierarchy of event patterns used in the evaluation.}
+% \label{tab:event_patterns}
+% \renewcommand{\arraystretch}{1.1}
+% \begin{tabular}{p{0.18\textwidth} p{0.22\textwidth} p{0.53\textwidth}}
+% \toprule
+% \textbf{Event Type} & \textbf{Example Name(s)} & \textbf{Condensed Description} \\
+% \midrule
+
+% \textbf{Atomic (Sensor-level)} 
+% & \texttt{HighTurbidity}, \texttt{LowWaterTemp}, \texttt{HighWave}, \texttt{HighWavePeriod}
+% & Single-sensor threshold events per beach, such as turbidity $>$ 8.5\,NTU, wave height $>$ 0.35\,m, or temperature $<$ 22°C. These serve as the building blocks for higher-level detection. \\
+
+% \textbf{Local Complex (Beach-level)} 
+% & \texttt{LocalAlert}
+% & Combines two atomic events within the same beach (e.g., high turbidity and low temperature at Calumet, or high turbidity and high wave height at Montrose) occurring within 3\,s. Represents short-term local correlations indicative of abnormal conditions. \\
+
+% \textbf{Distributed Complex (Cross-beach)} 
+% & \texttt{AlertSpread}, \texttt{TripleAlert}
+% & Captures inter-beach propagation of alerts (e.g., Montrose $\rightarrow$ Calumet $\rightarrow$ 63rd) within short windows (5–7\,s). Reflects emergent regional SoTS behaviour, where local anomalies align across multiple sites. \\
+
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
+% \subsection{Predictor Configuration}
+% \label{sec:predictor_configuration}
+
+% Two predictors were chosen to evaluate the reconstruction of the missing sensor readings: the Kalman Filter (KF) and the Particle Filter (PF).  
+
+% \noindent\textbf{Kalman Filter.}  
+% The Kalman Filter is a recursive state estimator that models the evolution of a variable as a linear dynamical system with Gaussian noise.  
+% At each step, the filter predicts the next state based on the previous estimate and corrects it when a new measurement becomes available, balancing process and measurement uncertainty through their respective covariances.  
+
+% % Confidence is computed using the covariance trace, which quantifies how the current uncertainty compares to the filter's initial uncertainty. 
+% % It is derived directly from the posterior covariance matrix of the Kalman filter and defined as:
+
+% % \begin{equation}
+% %     \text{confidence}_{\text{KF}} 
+% %     = 1 - \frac{\operatorname{trace}(P_k)}{\operatorname{trace}(P_0)}
+% % \end{equation}
+
+% % where $P_k$ denotes the posterior covariance matrix at the current time step, and $P_0$ represents the initial covariance matrix used for normalization. 
+% % A lower trace value indicates reduced overall uncertainty, leading to higher confidence, whereas an increasing trace reflects the accumulation of uncertainty over time.
+
+
+% % \paragraph{Rational} The confidence formula used is derived directly from the Kalman filter’s posterior covariance, which represents the estimator’s internal measure of uncertainty. Minimizing this quantity is equivalent to minimizing the mean-squared estimation error, making it a good basis for quantifying estimator precision. Building on the analysis of \cite{kang2021some}, who characterize the magnitude and decay of the Kalman filter’s error covariance as quantitative descriptors of uncertainty, the normalized covariance trace captures the overall reduction of uncertainty as the filter converges.
+
+
+% Confidence is computed using a hybrid formulation that integrates both the innovation-based consistency of the Kalman filter and its predictive uncertainty decay. 
+% When an observation is available, confidence is derived from the normalized innovation magnitude, reflecting how consistent the new measurement is with the model's expected behavior. 
+% During periods of missing data, confidence decays exponentially as the prediction horizon extends, reflecting growing uncertainty in the absence of corrective measurements. 
+% The combined hybrid formulation is expressed as:
 
 % \begin{equation}
-%     \text{confidence}_{\text{KF}} 
-%     = 1 - \frac{\operatorname{trace}(P_k)}{\operatorname{trace}(P_0)}
+% \label{eq:hybrid_confidence_cov}
+% \mathrm{Confidence}_k =
+% \begin{cases}
+% \exp\!\left(-\dfrac{\nu_k^2}{2 S_k}\right), 
+% & \text{if observation available}, \\[10pt]
+% \alpha \cdot 
+% \dfrac{\operatorname{trace}(P_k^-)}{\operatorname{trace}(P_0)} - 1
+% \cdot \mathrm{Confidence}_{k-1}, 
+% & \text{if observation missing.}
+% \end{cases}
 % \end{equation}
 
-% where $P_k$ denotes the posterior covariance matrix at the current time step, and $P_0$ represents the initial covariance matrix used for normalization. 
-% A lower trace value indicates reduced overall uncertainty, leading to higher confidence, whereas an increasing trace reflects the accumulation of uncertainty over time.
-
-
-% \paragraph{Rational} The confidence formula used is derived directly from the Kalman filter’s posterior covariance, which represents the estimator’s internal measure of uncertainty. Minimizing this quantity is equivalent to minimizing the mean-squared estimation error, making it a good basis for quantifying estimator precision. Building on the analysis of \cite{kang2021some}, who characterize the magnitude and decay of the Kalman filter’s error covariance as quantitative descriptors of uncertainty, the normalized covariance trace captures the overall reduction of uncertainty as the filter converges.
-
-
-Confidence is computed using a hybrid formulation that integrates both the innovation-based consistency of the Kalman filter and its predictive uncertainty decay. 
-When an observation is available, confidence is derived from the normalized innovation magnitude, reflecting how consistent the new measurement is with the model's expected behavior. 
-During periods of missing data, confidence decays exponentially as the prediction horizon extends, reflecting growing uncertainty in the absence of corrective measurements. 
-The combined hybrid formulation is expressed as:
-
-\begin{equation}
-\label{eq:hybrid_confidence_cov}
-\mathrm{Confidence}_k =
-\begin{cases}
-\exp\!\left(-\dfrac{\nu_k^2}{2 S_k}\right), 
-& \text{if observation available}, \\[10pt]
-\alpha \cdot 
-\dfrac{\operatorname{trace}(P_k^-)}{\operatorname{trace}(P_0)} - 1
-\cdot \mathrm{Confidence}_{k-1}, 
-& \text{if observation missing.}
-\end{cases}
-\end{equation}
-
-The first term corresponds to the Normalized Innovation Squared (NIS) measure, which quantifies how consistent each incoming observation is with the predicted state.
-The second term applies a covariance-based decay driven by the ratio. $\operatorname{trace}(P_k^-)/\operatorname{trace}(P_0)$, 
-capturing how uncertainty increases between updates. 
+% The first term corresponds to the Normalized Innovation Squared (NIS) measure, which quantifies how consistent each incoming observation is with the predicted state.
+% The second term applies a covariance-based decay driven by the ratio. $\operatorname{trace}(P_k^-)/\operatorname{trace}(P_0)$, 
+% capturing how uncertainty increases between updates. 
 
 
 
-\vspace{0.5em}
-\noindent\textbf{Particle Filter -}  
-The Particle Filter approximates the posterior distribution through a set of weighted samples (particles) that evolve under the process model.  
-Each particle represents a potential system state, with weights updated when new measurements arrive.  
-When data are missing, particles propagate without correction.  
-The Particle Filter used in this work follows the Sampling Importance Resampling (SIR) described by ~\cite{arulampalam2002tutorial}.
+% \vspace{0.5em}
+% \noindent\textbf{Particle Filter -}  
+% The Particle Filter approximates the posterior distribution through a set of weighted samples (particles) that evolve under the process model.  
+% Each particle represents a potential system state, with weights updated when new measurements arrive.  
+% When data are missing, particles propagate without correction.  
+% The Particle Filter used in this work follows the Sampling Importance Resampling (SIR) described by ~\cite{arulampalam2002tutorial}.
 
-Confidence is computed from the spread of particles:
-\[
-\text{confidence}_{PF} = \frac{1}{1 + \text{Var}(\boldsymbol{p})}
-\]
-where \(\boldsymbol{p} = \{p_1, p_2, \ldots, p_N\}\) denotes the set of particles representing possible realizations of the system state. The variance of this distribution reflects the uncertainty in the estimated state: a tightly clustered particle set indicates high confidence, while a wide spread corresponds to greater uncertainty.
+% Confidence is computed from the spread of particles:
+% \[
+% \text{confidence}_{PF} = \frac{1}{1 + \text{Var}(\boldsymbol{p})}
+% \]
+% where \(\boldsymbol{p} = \{p_1, p_2, \ldots, p_N\}\) denotes the set of particles representing possible realizations of the system state. The variance of this distribution reflects the uncertainty in the estimated state: a tightly clustered particle set indicates high confidence, while a wide spread corresponds to greater uncertainty.
 
-\paragraph{Rational} The confidence formula used ...
+% \paragraph{Rational} The confidence formula used ...
 
 
-\subsubsection{Configuration and Initialization} 
-\label{sec:predictor_config}
+% \subsubsection{Configuration and Initialization} 
+% \label{sec:predictor_config}
 
-All predictors were tuned through a grid search using data from a held-out subset of the dataset, the Montrose Beach (2016) subset, which was excluded from subsequent evaluation. 
-The tuning process simulated a baseline hybrid missingness rate of 30\%, representing moderate uncertainty conditions. 
-Parameter selection was guided by minimizing the Root Mean Squared Error (RMSE) between reconstructed and observed values.
+% All predictors were tuned through a grid search using data from a held-out subset of the dataset, the Montrose Beach (2016) subset, which was excluded from subsequent evaluation. 
+% The tuning process simulated a baseline hybrid missingness rate of 30\%, representing moderate uncertainty conditions. 
+% Parameter selection was guided by minimizing the Root Mean Squared Error (RMSE) between reconstructed and observed values.
 
-The optimization objective is defined as:
+% The optimization objective is defined as:
 
-\begin{equation}
-\label{eq:gridsearch_score}
-S = \mathrm{RMSE}
-\end{equation}
+% \begin{equation}
+% \label{eq:gridsearch_score}
+% S = \mathrm{RMSE}
+% \end{equation}
 
-where the goal is to minimize \( S \), selecting the configuration that yields the smallest reconstruction error under uncertaintain conditions.
+% where the goal is to minimize \( S \), selecting the configuration that yields the smallest reconstruction error under uncertaintain conditions.
 
 
 
 
-\begin{table}[H]
-\centering
-\caption{Grid search parameter ranges for predictor tuning (Montrose Beach, 2016).}
-\label{tab:predictor_params}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Predictor} & \textbf{Parameter} & \textbf{Range Tested} \\
-\midrule
-Kalman Filter & Process noise \(Q\) & [0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0] \\
-              & Measurement noise \(R\) & [0.01, 0.02, 0.05, 0.1, 0.2] \\
-\midrule
-Particle Filter & Process std. \(\sigma_Q\) & [0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3] \\
-                & Measurement std. \(\sigma_R\) & [0.002, 0.005, 0.01, 0.02, 0.03] \\
-                & Number of particles \(N_p\) & [100, 250, 500, 750, 1000] \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \centering
+% \caption{Grid search parameter ranges for predictor tuning (Montrose Beach, 2016).}
+% \label{tab:predictor_params}
+% \begin{tabular}{lcc}
+% \toprule
+% \textbf{Predictor} & \textbf{Parameter} & \textbf{Range Tested} \\
+% \midrule
+% Kalman Filter & Process noise \(Q\) & [0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0] \\
+%               & Measurement noise \(R\) & [0.01, 0.02, 0.05, 0.1, 0.2] \\
+% \midrule
+% Particle Filter & Process std. \(\sigma_Q\) & [0.001, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3] \\
+%                 & Measurement std. \(\sigma_R\) & [0.002, 0.005, 0.01, 0.02, 0.03] \\
+%                 & Number of particles \(N_p\) & [100, 250, 500, 750, 1000] \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 
 
-All predictors were initialized using the minimum observed value of each variable from the 2016 dataset and fixed with the optimal configurations identified through the grid search.  
+% All predictors were initialized using the minimum observed value of each variable from the 2016 dataset and fixed with the optimal configurations identified through the grid search.  
 
 
 
@@ -277,59 +277,59 @@ All predictors were initialized using the minimum observed value of each variabl
 
 
 
-% -------------------------------------------------------------
-\section{Results}
-\label{sec:results}
+% % -------------------------------------------------------------
+% \section{Results}
+% \label{sec:results}
 
-This section presents the quantitative and qualitative results of the evaluation, comparing reconstruction quality and complex event detection accuracy across the oracle, MCAR, and structural-gap conditions.
+% This section presents the quantitative and qualitative results of the evaluation, comparing reconstruction quality and complex event detection accuracy across the oracle, MCAR, and structural-gap conditions.
 
-\subsection{Reconstruction Accuracy}
-\begin{table}[H]
-\centering
-\caption{Comparison of reconstruction performance (MAE) per dataset and attribute (averaged across beaches) between Kalman and Particle filters under hybrid missingness.}
-\label{tab:recon_mae_per_dataset_attribute_comparison}
-\begin{tabular}{lccccccc}
-\toprule
-\multirow{2}{*}{\textbf{Attribute}} & \multicolumn{3}{c}{\textbf{Kalman Filter}} & & \multicolumn{3}{c}{\textbf{Particle Filter}} \\
-\cmidrule(lr){2-4} \cmidrule(lr){6-8}
- & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} & & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
-\midrule
-Turbidity         & \textbf{0.030} & \textbf{0.086} & \textbf{0.114} & & X & X & X \\
-Water Temperature & \textbf{0.027} & \textbf{0.068} & \textbf{0.097} & & X & X & X \\
-Wave Height       & \textbf{0.002} & \textbf{0.004} & \textbf{0.007} & & X & X & X \\
-Wave Period       & \textbf{0.089} & \textbf{0.214} & \textbf{0.294} & & X & X & X \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-
-
-\subsubsection{Kalman Filters}
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]{figures/Results/error_progression_mae_rmse.png}}
-\caption{MAE and RMSE across Beaches For the Kalman Filter}
-\label{fig:results_kf_mae_rmse}
-\end{figure}
+% \subsection{Reconstruction Accuracy}
+% \begin{table}[H]
+% \centering
+% \caption{Comparison of reconstruction performance (MAE) per dataset and attribute (averaged across beaches) between Kalman and Particle filters under hybrid missingness.}
+% \label{tab:recon_mae_per_dataset_attribute_comparison}
+% \begin{tabular}{lccccccc}
+% \toprule
+% \multirow{2}{*}{\textbf{Attribute}} & \multicolumn{3}{c}{\textbf{Kalman Filter}} & & \multicolumn{3}{c}{\textbf{Particle Filter}} \\
+% \cmidrule(lr){2-4} \cmidrule(lr){6-8}
+%  & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} & & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
+% \midrule
+% Turbidity         & \textbf{0.030} & \textbf{0.086} & \textbf{0.114} & & X & X & X \\
+% Water Temperature & \textbf{0.027} & \textbf{0.068} & \textbf{0.097} & & X & X & X \\
+% Wave Height       & \textbf{0.002} & \textbf{0.004} & \textbf{0.007} & & X & X & X \\
+% Wave Period       & \textbf{0.089} & \textbf{0.214} & \textbf{0.294} & & X & X & X \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 
-\begin{table}[H]
-\centering
-\caption{Summary of reconstruction confidence statistics (mean ± std) per dataset and attribute, averaged across beaches for the Kalman Filter.}
-\label{tab:confidence_stats_per_dataset_attribute}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Attribute} & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
-\midrule
-Turbidity         & 0.940 ± 0.191 & 0.877 ± 0.261 & 0.807 ± 0.315 \\
-Water Temperature & 0.990 ± 0.034 & 0.979 ± 0.049 & 0.966 ± 0.061 \\
-Wave Height       & 0.990 ± 0.034 & 0.978 ± 0.050 & 0.966 ± 0.061 \\
-Wave Period       & 0.967 ± 0.130 & 0.928 ± 0.195 & 0.890 ± 0.230 \\
-\bottomrule
-\end{tabular}
-\end{table}
+
+% \subsubsection{Kalman Filters}
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=\textwidth]{figures/Results/error_progression_mae_rmse.png}}
+% \caption{MAE and RMSE across Beaches For the Kalman Filter}
+% \label{fig:results_kf_mae_rmse}
+% \end{figure}
 
 
-\subsection{Event Continuity and Detection}
-\subsubsection{Kalman Filter}
+% \begin{table}[H]
+% \centering
+% \caption{Summary of reconstruction confidence statistics (mean ± std) per dataset and attribute, averaged across beaches for the Kalman Filter.}
+% \label{tab:confidence_stats_per_dataset_attribute}
+% \begin{tabular}{lccc}
+% \toprule
+% \textbf{Attribute} & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\
+% \midrule
+% Turbidity         & 0.940 ± 0.191 & 0.877 ± 0.261 & 0.807 ± 0.315 \\
+% Water Temperature & 0.990 ± 0.034 & 0.979 ± 0.049 & 0.966 ± 0.061 \\
+% Wave Height       & 0.990 ± 0.034 & 0.978 ± 0.050 & 0.966 ± 0.061 \\
+% Wave Period       & 0.967 ± 0.130 & 0.928 ± 0.195 & 0.890 ± 0.230 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
+% \subsection{Event Continuity and Detection}
+% \subsubsection{Kalman Filter}

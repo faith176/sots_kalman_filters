@@ -1,0 +1,183 @@
+\chapter{Background}\label{ch:background}
+This chapter details the foundations of digital twins, system of systems, complex event processing, and dependable software systems.
+
+\section{Digital Twins}\label{sec:background-dt}
+Digital twins are central to the digital transformation of cyber-physical systems. They serve as dynamic virtual counterparts to physical assets, providing continuous synchronization and enabling monitoring, simulation, and control. 
+The following subsections outline their history, distinguishing characteristics, and applications.
+
+\subsection{Definitions and Core Characteristics}\label{subsec:background-dt-definitions}
+A digital twin is broadly defined as a high-fidelity virtual representation of a physical asset or system that remains continuously synchronized with its real-world counterpart through bi-directional data exchange and feedback control \cite{david2024infonomics}. 
+It extends the concept of cyber-physical integration by enabling physical and digital entities to co-evolve: data from the physical system updates the virtual model, while the model can influence the physical system through predictive or corrective actions \cite{tao2018digital}. 
+This synchronization, supported by IoT-enabled sensing and networked infrastructures, allows the DT to replicate not only the structure and state of its physical twin but also its dynamic behaviour in real time.
+
+Across definitions, the literature converges on three primary components that together constitute a Digital Twin: 
+(1) a physical reality, representing the system, environment, and processes of interest; 
+(2) a virtual representation, capturing an abstraction of that reality through computational and data models; and 
+(3) interconnections that enable continuous information exchange between the two domains \cite{vanderhorn2021digital}. 
+The physical reality encompasses the system and its operating context and environment. The virtual representation mirrors this reality at a chosen level of abstraction, using models that combine physics-based and data-driven methods to simulate system behaviour and state evolution. 
+The interconnections between them supports two complementary flows: the \textit{physical-to-virtual} direction, which updates the virtual model with sensor or observational data, and the \textit{virtual-to-physical} direction, which projects insights or control actions back to the real system \cite{vanderhorn2021digital}. 
+Together, these flows establish the continuous synchronization that distinguishes Digital Twins from conventional simulation or monitoring models.
+
+\citet{kritzinger2018digital} further clarify this distinction by defining three levels of digital representation: the \textit{digital model}, the \textit{digital shadow}, and the \textit{digital twin}. 
+A digital model is a static representation without live data connectivity. 
+A digital shadow supports one-way information flow, updating the digital entity from the physical system but not vice versa. 
+A digital twin, in contrast, achieves full bi-directional interaction, enabling real-time monitoring, simulation, and control. 
+This bidirectional feedback loop is what transforms the DT from a descriptive model into an operational entity capable of influencing physical outcomes.
+
+
+
+====
+\subsection{History of DTs}\label{subsec:background-dt-history}
+The predecessor concept of using a “twin” for verification and testing originated in the aerospace domain. During NASA’s Apollo program in the 1960s, an identical spacecraft was constructed so that engineers could mirror mission conditions on Earth and test alternative procedures in real time as flight data were received \cite{boschert2016digital}. This practice represented an early instance of using a physical counterpart to replicate operational conditions for simulation and fault diagnosis. A similar approach was later adopted in the aviation industry through “Iron Bird” test rigs, which physically replicated aircraft subsystems to validate system integration and control logic prior to flight \cite{boschert2016digital}. Together, these examples illustrate how the motivation to experiment with counterparts before acting on the real system has long been embedded in engineering practice, laying the conceptual foundation for modern data-driven digital twins.
+
+The formal concept of the digital twin emerged in the early 2000s, building on earlier notions of digital mirroring. \citet{gelernter1993mirror} envisioned “mirror worlds” in which digital representations continuously reflected their physical counterparts, anticipating the synchronization principles later realized in digital twins. In the early 2000s, \citet{grieves2005product} introduced the digital twin within the context of product lifecycle management (PLM), emphasizing the bidirectional coupling between physical systems and virtual models to enable continuous alignment throughout design, manufacturing, and operation. Around the same time, \citet{hribernik2006product} proposed the concept of a “product avatar,” linking digital representations to lifecycle integration through metadata and interoperability. NASA further refined the concept for aerospace applications, defining a digital twin as a high-fidelity, probabilistic simulation system capable of predicting system behaviour, performance degradation, and maintenance requirements across an asset’s lifecycle \cite{nasaprocessroadmap, glaessgen2012digital}.
+
+With the rise of Industry~4.0, digital twins emerged as a key enabler of cyber-physical integration. By linking physical systems, sensors, and machines through cloud and IoT infrastructures, digital twins enable real-time analytics and optimization \cite{liu2021review}. Industrial platforms such as GE’s Predix~\cite{gepredixoverview} and Siemens’ MindSphere~\cite{siemensmindsphere} exemplified this transition from theory to large-scale implementation, creating continuously updated digital counterparts for industrial assets. In academia, research paralleled these developments by exploring digital twin reference architectures, interoperability standards, and domain-specific implementations across healthcare, transportation, and smart cities \cite{barricelli2019survey, botin2022digital}.
+
+Overall, the evolution of the digital twin reflects a progression from simulation-based design tools toward data-driven systems that integrate sensing, computation, and actuation. Each stage of this progression, from early aerospace simulations to Industry~4.0, has increased the degree of automation, fidelity, and intelligence achievable within digital representations.
+
+
+
+\subsection{Architectural Patterns and Application Contexts}
+\label{subsec:background-dt-architectures-applications}
+DT architectures formalize how physical systems, data infrastructures, and computational models interact to enable synchronization and control across the system lifecycle. Over the past decade, layered and reference models have evolved to increase the conceptual scope and technological maturity of DT design.
+
+Early models adopted a three-layer structure consisting of physical, virtual, and connection layers \cite{tao2018digital}. The physical layer represents sensor-equipped assets, the virtual layer maintains a digital replica for analysis and control, and the connection layer enables bi-directional data exchange. While foundational for cyber-physical integration, this model offered limited guidance on data management and lifecycle evolution.
+
+Subsequent frameworks expanded this view. \citet{tao2019digital} introduced a five-layer model with dedicated data and service layers to support collection, fusion, optimization, and user interaction. \citet{redelinghuys2020six} extended this further into a six-layer architecture integrating IoT gateways, cloud analytics, and simulation intelligence to enhance scalability and interoperability in industrial settings.
+
+In parallel, standardization initiatives formalized DT concepts. The Reference Architectural Model for Industry 4.0 (RAMI 4.0) organizes DT-enabled systems across hierarchy levels, lifecycle stages, and functional layers \cite{DIN91345}, providing a structural foundation for aligning physical assets with enterprise processes. Similarly, ISO 23247 \cite{ISO23247-1} defines a DT reference architecture for manufacturing across four domains, observable, communication, twin, and user, and specifies standardized roles and interfaces for secure data exchange and synchronization.
+
+DT architectures now support applications in manufacturing, energy, healthcare, transportation, and smart cities \cite{hu2021digital}. Within NIST’s Smart Manufacturing Test Bed, for example, DTs support machine health monitoring, dynamic scheduling, and virtual commissioning to improve reliability, efficiency, and decision-making across connected industrial environments \cite{shao2021use}.
+
+% -------------------------------------------------------------
+
+\section{System of Systems}\label{sec:background-sos}
+A system of systems is a collection of independent systems that collaborate to achieve outcomes unattainable by any single constituent \cite{maier1998architecting}. SoS engineering provides a foundation for managing large-scale complexity in environments requiring adaptability, scalability, and interoperability.
+The following subsections outline the defining characteristics that distinguish SoS from traditional systems. It will also detail its history and application domains.
+
+\subsection{Definitions and Taxonomies}\label{subsec:background-sos-definitions}
+The foundations of SoS theory were established by \citet{maier1998architecting}, who defined an SoS as a collection of operationally and managerially independent systems that collaborate to achieve outcomes beyond their individual capabilities. Operational independence implies that each constituent can function autonomously and continue to deliver useful outcomes outside the SoS. While managerial independence indicates that these systems are developed and governed under separate authority, integrating through voluntary coordination rather than centralized control. From these principles emerge several defining properties that distinguish SoS from traditional systems. Because participation is dynamic and decentralized, SoS must preserve stability through partial composition. It must remaining functional even as individual systems join, leave, or fail to participate. This capacity to sustain useful operation amid structural changes ensures stability in uncertain environments. Rather than depending on full integration, SoS unify their constituents through negotiated interactions among heterogeneous systems pursuing distinct objectives. The result is a form of emergent behavior, that arises from local coordination and feedback, allowing the overall system to self-stabilize and reallocate functions as conditions evolve.
+
+Subsequent perspectives expanded on this view. \citet{boardman2006system} framed SoS as purposeful organizations of systems united by overlapping objectives but governed through decentralized authority. They identified five interrelated characteristics that describe how independence and cooperation coexist within an SoS. Autonomy, belonging, and connectivity capture the balance between self-governance and collaboration: each constituent retains autonomy in its goals and operations, yet demonstrates belonging through participation in shared objectives. This collaboration is enabled by connective mechanisms that allow for coordination and information exchange. Diversity and emergence describe the adaptive character of the SoS, where heterogeneous systems with different capabilities and purposes interact to produce collective behaviors unattainable by any single constituent.
+
+Building on these foundations, \citet{nielsen2015systems} proposed an eight-dimensional taxonomy for analyzing and engineering complex SoS. Autonomy and independence define the self-governance and operational freedom of constituent systems. Distribution, evolution, and reconfiguration describe how SoS are spatially dispersed, evolve over time, and adapt dynamically to change. Emergence and interdependence capture the collective behaviours that arise from system interaction and mutual reliance. Finally, interoperability reflects the ability of heterogeneous systems to exchange and use information effectively. Together, these dimensions provide a concise conceptual framework for characterizing SoS organization and behavior.
+
+
+\subsection{History of SoS}\label{subsec:background-sos-history}
+The conceptual roots of SoS trace back to General Systems Theory \cite{von1950theory}, which emphasized holism, interdependence, and the organization of complex entities as integrated wholes. Early theorists such as \citet{boulding1956general} introduced the term “system of systems” to describe the hierarchical organization of theoretical constructs. In his classification, systems exist within a hierarchy of increasing complexity. From simple frameworks to adaptive, open systems capable of responding to external influences. Around the same time, \citet{jordan1960some} emphasized the semantic ambiguity of the term “system,” arguing that its meaning derives not from a fixed definition but from the perceiver’s organization of interrelated elements. Building on this foundation, \citet{ackoff1971towards} and \citet{jackson1984towards} emphasized the purposeful behaviour and design of interconnected systems, highlighting the need to consider not just component interactions but also organizational and environmental context. Their work reinforced the view that systems derive meaning and stability from their interrelations rather than from isolated function.
+
+By the late 20th century, these theoretical ideas found practical application in large-scale engineering and defense projects. \citet{eisner1991computer} described SoS as geographically distributed assemblages of independently functioning systems working to serve a specific operational goal. \citet{shenhar19952} proposed a taxonomy that included “arrays” of systems, networks of autonomous yet coordinated systems working toward a common purpose.
+
+Over time, the SoS paradigm expanded beyond defense into domains such as transportation, energy, emergency management, and digital commerce. With each demonstrating how loosely coupled systems can achieve stability through adaptive coordination. In transportation, air traffic and maritime networks exemplify distributed SoS, where autonomous subsystems collaborate through shared information to balance efficiency and safety. Smart energy grids integrate independent generators, utilities, and consumers into adaptive infrastructures that stabilize demand and supply in real time. Emergency management systems combine autonomous agencies and sensor networks to enable coordinated response under unpredictable conditions. Even digital platforms such as e-commerce ecosystems function as socio-technical SoS, linking payment systems, logistics providers, and supply chains into data-driven marketplaces \cite{nielsen2015systems}.
+
+% -------------------------------------------------------------
+
+
+\section{Synthesis: From Systems to Systems of Twinned Systems}\label{sec:background-sots-synthesis}
+
+This section bridges the foundational concepts of systems and systems of systems to systems of twinned systems. It consolidates existing literature on how DTs are combined, integrated, and managed within larger system architectures, establishing the conceptual basis for differentiating SoTS from traditional system classifications.
+
+\subsection{Related Work}\label{subsec:background-sots-related-work}
+
+Research on SoTS has primarily emerged through studies exploring the integration of DTs within SoS contexts. The following studies illustrate key directions in this progression, focusing on hierarchical integration, autonomy, and coordination within DT-based SoS frameworks.
+
+The hierarchical combination of DTs to create a fully integrated SoS is a common research point throughout the literature. \citet{tao2019digital} explore this concept, emphasizing that enterprises can achieve SoS by incrementally building and combining unit-level DTs into larger, more complex systems. This perspective is complemented by \citet{gill2024toward}, who propose a system to automate horizontal and vertical DT integration for SoS, highlighting the need for a unified DT model to enable cross-manufacturer integration. \citet{schroeder2021digital} categorize levels of connectivity within DT structures, showing how aggregated DTs can hierarchically combine to represent larger systems. Domain-specific implementations are also demonstrated in the work of \citet{zhang2021supply}, who introduce the integration of Sub-DTs into an SoS for supply chain management. Similarly, \citet{dietz2020digital} describe SoS as a composition of a main and sub-DTs, noting that spatial-temporal DT configurations can mimic real-world systems.
+
+Another critical focus area is DTs' self-organizing and self-optimizing potential, which further complements their use in developing SoS. \citet{ghanbarifard2023digital} highlight these dynamics in distributed environments, examining works where aggregated DTs are used in adaptable and dynamic systems. \citet{esterle2021digital} propose a framework for creating self-integrating and self-optimizing systems, using DTs as autonomous components that can collaborate and adapt.
+
+Despite these advancements, achieving effective integration of DTs into an SoS presents several challenges. \citet{michael2022integration} identify barriers such as connectivity issues, privacy concerns, and the lack of unified technological development. These challenges necessitate the evolution of DTs to support horizontal and vertical integration. \citet{semeraro2021digital} emphasize the importance of horizontal integration and data sharing as prerequisites for optimized vertical integration. Extending these discussions, \citet{olsson2023systems} synthesize works related to DTs and SoS, highlighting lifecycle management difficulties, integration complexities, and inconsistent terminology as key obstacles. 
+Further challenges emerge in distributed DT systems, as outlined by \citet{borth2019digital}, who discuss strategies, architectures, and challenges for DTs in SoS. They note that loosely coupled DTs often face issues related to lifecycle management, conflicting requirements, and organizational independence.
+
+
+\subsection{Differentiating between a System, a System of Systems, and a Systems of Twinned Systems}
+This section synthesizes the conceptual foundations established in the background to distinguish between three levels of systemic organization: a traditional system, a system of systems, and the emerging systems of twinned systems. The aim is to clarify how fundamental system characteristics evolve across increasing scales of integration.
+
+The mapping followed the conceptual synthesis approach of \citet{jabareen2009building}, which systematically aligns and refines concepts across theoretical frameworks to construct an analytical model. The synthesis builds on the literature introduced in \secref{subsec:background-sos-history}, \secref{subsec:background-sos-definitions}, and 
+secref{subsec:background-sots-related-work}, encompassing classical systems theory, foundational SoS frameworks, and related work on SoTS.
+
+Building on the comparative framework of \citet{boardman2006system}, which distinguished traditional systems from systems of systems, this analysis extends to the SoTS context. While Boardman and Sauser identified key SoS attributes such as autonomy, belonging, connectivity, diversity, and emergence, the eight-dimensional taxonomy of \citet{nielsen2015systems} provides a broader basis for comparison. Boardman and Sauser’s attributes were first aligned with their equivalent dimensions in Nielsen’s taxonomy and then refined through supporting literature to ensure conceptual consistency. In \tabref{tab:sys_sos_sots}, each resulting dimension, autonomy, independence, distribution, evolution, reconfiguration, emergence, interdependence, and interoperability, is examined across the three system types.
+
+\input{tables/Background/sys_sos_sots_direct_cite.tex}
+
+
+% -------------------------------------------------------------
+
+\section{Complex Event Processing}\label{sec:background-cep}
+Complex Event Processing (CEP) enables systems to detect, correlate, and respond to significant patterns within continuous streams of events in real time. The following subsections introduce the fundamental principles of CEP, review its major frameworks and architectures, and discuss the treatment of uncertainty within event-driven systems.
+
+\subsection{Overview}\label{subsec:background-cep-overview}
+Complex Event Processing is a computational paradigm designed to identify meaningful patterns and relationships within continuous streams of events \citep{cugola2015complex}. CEP systems continuously process heterogeneous event data to detect conditions or correlations that signify higher-level phenomena. Each event typically carries a payload and timestamp, representing an observation in time. To extract knowledge from these streams, CEP engines register declarative queries or rules that define temporal and logical relationships among primitive events. These rules use operators such as selection, negation, aggregation, and sequencing to compose event patterns. When an incoming sequence satisfies the defined conditions, the engine emits a complex event that represents the detection of a significant situation within the observed system \citep{bok2018complex, gehani1992composite}.
+
+Over the past few decades, several CEP engines have been developed to support real-time detection of event patterns across diverse domains. Early academic systems such as SASE \citep{wu2006high} and Cayuga \citep{brenna2007cayuga} laid the groundwork for modern CEP architectures. SASE introduced native sequence operators for processing unbounded event streams and proposed a declarative query model for detecting temporal and semantic relationships within continuous data flows, with applications in retail and healthcare monitoring. Cayuga extended these ideas through a relational model, representing events as tuples and evaluating SQL-like temporal queries using non-deterministic finite-state automata to enable expressive event correlation. 
+
+Esper \citep{esper_reference} evolved CEP into a practical, open-source engine widely adopted in industry. Unlike traditional databases that store data and query it retrospectively, Esper inverts this model by storing continuous queries and streaming live data through them. When incoming events match registered patterns, the system triggers real-time actions. Its state-machine-based implementation efficiently supports sequence and pattern detection over sliding time windows, making it suitable for financial trading, network monitoring, and business process automation. Siddhi \citep{suhothayan2011siddhi} advanced this model with a high-performance, publish–subscribe architecture that decomposes complex queries into a pipeline of processors. Each processor maintains event queues and evaluates time-windowed queries in parallel, enabling fine-grained concurrency and support for both pattern and sequence queries through tree-based evaluation and state machines. At a larger scale, Apache Flink \citep{carbone2015apache} integrates CEP principles into distributed stream processing environments. 
+
+CEP has been widely adopted across domains that demand continuous situational awareness and rapid response. Its applications span business process monitoring, algorithmic trading, cybersecurity, sensor networks, and large-scale IoT infrastructures \citep{halle2017complex}. In financial systems, CEP engines monitor market feeds to detect rapid price fluctuations and trigger automated trading strategies within milliseconds. In healthcare, they integrate heterogeneous patient data streams from monitoring devices to identify anomalies or critical conditions in real time. Industrial and smart city applications use CEP to correlate data from distributed sensors—such as temperature, vibration, or energy usage—to detect faults, optimize operations, and ensure safety compliance. Within cybersecurity, CEP supports intrusion and anomaly detection by correlating high-volume network and application logs to uncover complex attack patterns. 
+
+
+\subsection{Uncertainty in CEP}\label{subsec:background-cep-uncertainty}
+While traditional CEP engines assume perfect, deterministic event streams, real-world data sources often introduce uncertainty. Events may be missing, delayed, duplicated, or noisy, leading to incomplete or incorrect pattern detection. As noted by \citet{cugola2015complex}, ignoring uncertainty can result in inaccurate or incomplete decisions about the observed phenomena. Effective CEP systems must therefore: identify sources of uncertainty, model uncertainty explicitly, and propagate uncertainty from atomic to composite events \cite{cugola2015complex}. 
+
+To reason about uncertainty, \citet{wasserkrug2006taxonomy} classify it within active systems, systems that automatically react to detected events or changing conditions in their environment. These systems continuously monitor event streams to identify situations of interest, making them inherently sensitive to uncertainty in event detection and interpretation. Their taxonomy categorizes this uncertainty along two dimensions: element uncertainty and origin uncertainty.
+
+The first dimension, element uncertainty, concerns what aspect of the event is uncertain. This includes event occurrence uncertainty, where it is unclear whether an event actually took place, and event attribute uncertainty, where the event is known to have occurred but its properties, such as event time or magnitude, remain imprecise. The second dimension, origin uncertainty, describes where uncertainty arises within the system. Source-based uncertainty stems from unreliable sensors, communication faults, or other data acquisition issues, whereas inference-based uncertainty emerges from reasoning over uncertain evidence or applying probabilistic inference rules. Together, these dimensions capture the principal forms of uncertainty that manifest within active systems and influence how they perceive and respond to events.
+
+
+
+\begin{table}[H]
+\centering
+\caption{Dimensions of Event Uncertainty in Active Systems (adapted from \citealt{wasserkrug2006taxonomy})}
+\label{tab:uncertainty-dimensions}
+\begin{tabular}{|p{4cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Uncertainty Dimension} & \textbf{Element: Event Occurrence} & \textbf{Element: Event Attributes} \\
+\hline
+\textbf{Origin: Source-based} &
+Uncertainty about whether an event actually occurred due to sensor inaccuracy, noise, or missing signals. &
+Event occurred but its measured attributes (e.g., timestamp, magnitude, location) are imprecise or distorted by faulty sensors or communication delays. \\
+\hline
+\textbf{Origin: Inference-based} &
+Uncertainty propagated from reasoning over prior uncertain events or probabilistic inference rules (e.g., money laundering detection). &
+Uncertainty in derived event attributes resulting from aggregation or transformation of uncertain evidence. \\
+\hline
+\end{tabular}
+\end{table}
+
+Building on these dimensions, \citet{wasserkrug2006taxonomy} identify several causal mechanisms explaining how uncertainty enters and evolves through event systems. At the source level, uncertainty may result from imprecise or malfunctioning sensors, unreliable communication channels, statistical estimation models, or temporal misalignments such as clock synchronization errors in distributed environments. At the inference level, uncertainty can arise from deterministic rules applied to uncertain inputs, from inherently probabilistic rules where causation is uncertain, or from combinations of both, where ambiguous evidence is compounded by uncertain inference logic. 
+
+
+Early work regarding uncertainty in CEP introduced probabilistric extensions and formal mechanism for handling uncertainty at event and rule levels. \citet{re2008event} introduced a probabilistic relational model for events, distinguishing between existence, attribute, and temporal uncertainty. Their framework redefines CEP operators so that outputs are probability distributions reflecting input uncertainty. \citet{wasserkrug2010efficient} proposed a probabilistic event model using Bayesian networks and a Monte Carlo sampling algorithm to approximate event probabilities in real time. They later extended this by representing both imprecise event data (e.g., noisy readings) and uncertain inference rules, where derived events have associated likelihoods based on evidence and prior probabilities \cite{wasserkrug2012model}.
+
+
+
+% -------------------------------------------------------------
+
+
+\section{Dependability in Software Systems}\label{sec:background-dependability}
+
+Dependability refers to the justified confidence that a system will deliver its expected service, even in the presence of faults or disturbances \citep{avizienis2004basic}. Traditionally, dependability has been framed as a technical property emerging from software and hardware reliability, safety, and fault tolerance. However, later perspectives emphasize that dependability is also a socio-technical phenomenon—dependent not only on how a system functions, but on how well it fits into the human and environmental context in which it operates \citep{sommerville2007dependable}. This section outlines the key dependability attributes, the mechanisms by which dependability is achieved, and the ways in which faults arise and propagate in distributed environments.
+
+\subsection{Dependability Concepts and Attributes}\label{subsec:background-dependability-attributes}
+
+According to the taxonomy of \citet{avizienis2004basic}, dependability encompasses a set of core attributes that together determine how trustworthy a system’s service is: availability, reliability, safety, integrity, and maintainability. These describe complementary aspects of dependable behavior and form measurable indicators of system trustworthiness.
+
+Availability and reliability express service continuity. Availability refers to the readiness of a system to deliver correct service when required, while reliability represents the sustained delivery of that service over time. Both are crucial for real-time and mission-critical applications where service interruptions have immediate consequences.
+
+Safety and integrity ensure correctness and protection from harm. Safety prevents system faults from leading to catastrophic outcomes, while integrity safeguards data and operations against corruption or unauthorized modification. These properties are vital for maintaining both functional and informational trustworthiness in cyber-physical and connected systems.
+
+Maintainability reflects the ease with which a system can be repaired, updated, or adapted without compromising functionality. In socio-technical terms, maintainability also extends to the system’s adaptability to evolving contexts and user needs, as highlighted by \citet{sommerville2007dependable}, who argue that true dependability requires systems to remain effective and acceptable throughout their lifecycle.
+
+\subsection{Means to Achieve Dependability}\label{subsec:background-dependability-means}
+
+Dependability is achieved through four complementary means: fault prevention, fault tolerance, fault removal, and fault forecasting \citep{avizienis2004basic}.  
+Fault prevention aims to avoid introducing faults during design through formal verification, disciplined engineering, and standards compliance. Fault tolerance ensures continued operation despite faults using redundancy, recovery, or dynamic reconfiguration. Fault removal identifies and corrects existing faults through testing and runtime monitoring. Finally, fault forecasting uses reliability modeling and risk assessment to anticipate potential failures and evaluate design trade-offs.
+
+These strategies span the system lifecycle: prevention during design, tolerance during operation, removal during maintenance, and forecasting during evaluation. Together, they establish a comprehensive approach to sustaining dependable operation under uncertainty and change.
+
+
+\subsection{Fault Taxonomy and Propagation in Distributed Systems}\label{subsec:background-dependability-faults}
+
+Faults are the underlying causes of errors and failures, defined by \citet{avizienis2004basic} as conditions that may lead a component into an erroneous state. When triggered, faults produce errors that can propagate through interconnected components, eventually resulting in visible failures. From a temporal perspective, faults are classified as transient (momentary disturbances such as voltage spikes), intermittent (recurrent faults due to unstable conditions), or permanent (persistent hardware or software defects). Each type requires distinct mitigation strategies—from retries and redundancy to adaptive fault detection or repair.
+
+In distributed and system-of-systems environments, fault propagation poses a major dependability challenge. Localized faults—such as delayed data, missing sensor updates, or corrupted messages—can cascade through shared communication channels, causing inconsistencies across dependent subsystems. This interdependence amplifies risk and demands architectural mechanisms for fault isolation, containment, and graceful degradation. Techniques such as redundancy, sandboxing, and feedback-based reconfiguration help limit fault spread and maintain partial functionality. Within Systems of Twinned Systems (SoTS), these mechanisms are essential for ensuring that reliability emerges not only from individual twins but also from their coordinated, collective behavior.
