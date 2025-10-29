@@ -1,6 +1,8 @@
 % !TEX root = Thesis_Main.tex
 \documentclass[12pt]{report} % Times New Roman, 12pt
 
+% ADD IF WANTING PS NUMBERS ---------------
+% \usepackage[utf8]{inputenc} % added to address Package biblatex Warning: Load 'inputenc' before biblatex error
 
 
 %\usepackage{gscale_thesis_singlespace} % Single spaced thesis
@@ -8,9 +10,26 @@
 \usepackage{settings/template/fancyheadings} % Header and footer styling
 
 
-% \usepackage{natbib} % Bibliography formatting
-% \usepackage{cite}
-\usepackage[numbers]{natbib} % Bibliography formatting for IEEE
+\usepackage[numbers, sort&compress]{natbib} % Bibliography formatting for IEEE
+
+% ADD IF WANTING PS NUMBERS ---------------
+% \usepackage[backend=biber,style=ieee,natbib,sorting=none, defernumbers=true]{biblatex}
+
+% \addbibresource{bib/references.bib}
+% \addbibresource{bib/sots_references.bib}
+% \addbibresource{bib/cep.bib}
+% \addbibresource{bib/architecture.bib}
+% \addbibresource{bib/primary_studies.bib}
+
+
+% \DeclareSourcemap{ \maps[datatype=bibtex]{ \map{ \perdatasource{bib/primary_studies.bib} \step[fieldset=keywords, fieldvalue={primary}, append] } } }
+
+
+% \DeclareFieldFormat{labelnumber}{% 
+% \ifkeyword{primary}{PS#1}{#1}% 
+% }
+
+
 
 \usepackage{setspace} % Allows double spacing but skips headers/footers
 \setcounter{tocdepth}{1} % Limits the TOC to chapter and section names
@@ -122,10 +141,18 @@
 %         \setcounter{table}{0}
 % \end{appendix}
 
-% The bibliography is set up to allow for multiple bib files
+
 % \bibliographystyle{ACM-Reference-Format}
+
+% The bibliography is set up to allow for multiple bib files
 \bibliographystyle{IEEEtranN}
-\bibliography{bib/references, bib/sots_references, bib/primary_studies, bib/cep, bib/architecture}
+\bibliography{bib/primary_studies, bib/references, bib/sots_references, bib/cep, bib/architecture}
+
+
+% ADD IF WANTING PS NUMBERS --------------
+% \clearpage
+% \printbibliography[title={References}]
+
 
 \label{NumDocumentPages}
 

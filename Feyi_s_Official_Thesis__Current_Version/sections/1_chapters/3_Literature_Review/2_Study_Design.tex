@@ -1,0 +1,103 @@
+\section{Study Design}\label{sec:literature-review-study}
+\label{sec:literature-review-study-design}
+Together, these research questions guide the extraction of key patterns, challenges, and design practices within existing SoTS literature. To answer them rigorously, the study followed a systematic review protocol aligned with the guidelines of \citet{kitchenham2007guidelines} and \citet{wohlin2020guidelines}. 
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/Literature Review/Study Design Diagram.drawio.pdf}}
+\caption{Overview of the study design and selection workflow used for the SoTS SLR.}
+\label{fig:literature_review_study_design_overview}
+\end{figure}
+
+As shown in \figref{fig:literature_review_study_design_overview}, a comprehensive search was conducted across Scopus, Web of Science, IEEE Xplore, and ACM Digital Library, identifying an initial corpus of 317 studies. After applying predefined inclusion and exclusion criteria, removing duplicates, and performing quality assessments, the set was further refined through forward and backward snowballing, resulting in a final pool of 80 high-quality primary studies.
+
+
+The study was conducted in five main phases:
+\subsection{Phases}
+\subsubsection{Planning and Scope Definition}\label{subsec:literature-review-study-phases-planning}
+The review was guided by the research questions established, which address the motivations, architectures, reliability, maturity, and technological foundations of SoTS. To ensure transparency and repeatability, a formal search and quality assessment protocol was established prior to data collection.
+
+A comprehensive search was conducted across four major indexing databases: Scopus, Web of Science, IEEE Xplore, and the ACM Digital Library. These works were limited to peer-reviewed publications within the \textit{Computer Science} and \textit{Engineering} domains. Grey literature (e.g., arXiv preprints, blog articles) was excluded. Searches were performed in paper titles, abstracts, and keywords.
+
+The final query combined the main study concepts, \textcolor{blue}{Digital Twins} and \textcolor{ForestGreen}{Systems of Systems}, with their most common synonyms identified during the preliminary investigation:
+
+\begin{footnotesize}
+\begin{Verbatim}[commandchars=\\\{\}]
+(\textcolor{blue}{"digital twin*"} AND \textcolor{ForestGreen}{"system* of systems"}) OR
+(\textcolor{RedViolet}{"aggregated digital twin*" OR}
+    \textcolor{RedViolet}{"system of digital twins" OR}
+    \textcolor{RedViolet}{"digital twin of systems" OR}
+    \textcolor{RedViolet}{"system* of twinned systems"})
+\end{Verbatim}
+\end{footnotesize}
+
+\textbf{Having defined the study scope and protocol, we next applied this strategy in a structured database search and screening process.}
+
+
+\subsubsection{Database Search and Screening}\label{subsec:literature-review-study-phases-screening}
+
+The query was executed on September 10, 2024. The search targetted peer reviewed publications including synonymous expressions for SoTS. It retrieved a total of \textbf{317} studies (176 from Scopus, 94 from WoS, 46 from IEEE, 1 from ACM). Duplicate removal was performed using both automated and manual methods in EndNote\footnote{\url{https://endnote.com/}}. We removed 121 references and retained \textbf{196} unique references. Subsequently, we applied the exclusion criteria (As detailed in \tabref{tab:literature_review_search_statistics}).
+
+The initial corpus retrieved was screened through automated and manual filtering to remove duplicates and out-of-scope papers. Each remaining study was independently assessed by two reviewers against predefined exclusion criteria (e.g., relevance, completeness, and clarity of SoS/DT descriptions). Inter-rater agreement and Cohen’s~\(\kappa\) were computed to verify the consistency of inclusion decisions.
+
+We used the following exclusion criteria to exclude primary studies that were not in the scope of our investigation. A primary study is excluded if it meets at least one exclusion criterion.
+
+\begin{enumerate}[\bfseries{E}1.]
+\itemsep0em
+\setcounter{enumi}{-1}
+    \item Not accessible (not in English or not available for download); not peer-reviewed (e.g., theses, grant proposals); not primary research (e.g., reviews, mappings).
+    \item Does not discuss DT.
+    \item Does not discuss SoS.
+    \item Off-topic.
+\end{enumerate}
+
+E0 was trivial to evaluate and therefore, one author evaluated each study against E0 and another author validated the decisions. In exclusion criteria E1--E3, each primary study was evaluated by two authors independently, based on the full reference (e.g. title, authors, venue) and the abstract. In case of a tie, a discussion was facilitated. In \tabref{tab:literature_review_search_statistics}, we report detailed figures of the search, selection and exclusion statistics, including inter-rater agreement and reliability metrics.
+We measured an inter-rater agreement (IRA) of 88.0\% and Cohen's $\kappa$ of 0.734 (substantial agreement). Most of the disagreements were due to different levels of leniency of the reviewers.
+
+\textbf{Eventually, we arrived at 81 unique relevant references.} In the next step, these references underwent a quality assessment.
+
+\input{tables/Literature Review/search_statistics.tex}
+
+\subsubsection{Selection and Quality Assessment}\label{subsec:literature-review-study-phases-selection}
+In line with the guidelines of \citet{kitchenham2007guidelines}, we defined a checklist to assess the quality of primary studies. Quality criteria were derived from the research questions. Each question was answered by ``yes'' (2 point), ``partially'' (1 points), or ``no'' (0 points), based on the full text. To retain a primary study, we required that it scored at least 1 point in each of the following quality checks:
+
+\begin{enumerate}[\bfseries{Q}1.]
+\itemsep0em
+    \item SoS is clearly described.
+    \item DT is clearly described.
+    \item The contributions are tangible (i.e., not conceptual).
+    \item Reporting quality is clear.
+\end{enumerate}
+
+The quality criteria have been evaluated by reading the full text of the primary study and judging whether the study provides sufficient and clear information that helps answer the research questions. Of the 81 tentatively included primary studies, we excluded 28 (22 due to insufficient Q1 or Q2, and 6 due to insufficient Q3; 0 studies to exclude due to insufficient Q4). This resulted in \textbf{53 primary studies} from the automated search phase (16.72\% overall inclusion rate).
+
+\textbf{In the next step, these 53 primary studies formed the basis of snowballing.}
+
+
+\subsubsection{Snowballing}\label{subsec:literature-review-study-phases-snowballing}
+
+We used \textit{forward} and \textit{backward} snowballing to enrich the corpus.
+Backward snowballing was conducted in two phases. First, every reference in the previously included primary studies was assessed by title, publication venue, and date. Of the 1\,666 references, 145 seemed to be relevant for our purposes. Second, the 145 potentially relevant references underwent the same evaluation process as previously included studies, i.e., two authors applied exclusion criteria and checked the quality of works. Forward snowballing was conducted via Google Scholar as per the recommendations of \citet{wohlin2020guidelines}.
+
+In the backward and forward snowballing, in total, we selected 38 potentially relevant references that underwent the same evaluation process as previous primary studies. (13 by backward snowballing and 25 by forward snowballing.)
+
+We measured an IRA of 94.4\% and a Cohen's $\kappa$ of 0.488. We measured these numbers on the primary studies that have been reviewed by two reviewers (731 total references: 145 backward, 586 forward). The $\kappa$ was somewhat low, although by definition, it represents ``moderate'' agreement. This number was due to the ambiguity of abstracts we encountered.
+
+\textbf{Eventually, we included 27 additional primary studies}.
+
+At the end of the first snowballing, we noted a rather low inclusion rate of 1.19\%. We interpreted this low number as sufficient evidence for saturation and we stopped with snowballing. Eventually, we screened 2\,569 potential studies.
+
+\begin{bottomlineframe}
+In total, we included \textbf{80 primary studies}.
+\end{bottomlineframe}
+
+
+
+\subsubsection{Data Extraction and Synthesis}
+Data were extracted from the 80 selected studies using a structured coding framework encompassing: (1) conceptual alignment between DT and SoS principles, (2) system architectures and modelling approaches, (3) reliability and other non-functional aspects, (4) research and technical maturity, and (5) implementation technologies.
+
+The analysis combined quantitative (frequency-based) and qualitative (content and narrative) synthesis methods~\cite{franzosi2010quantitative, rodgers2009testing}, enabling both thematic categorization and interpretive integration of findings. Vertical analysis was used to summarize evidence within categories, while horizontal analysis explored relations across them.
+
+Established taxonomies guided the classification process—\citet{nielsen2015systems} for SoS characteristics, \citet{kritzinger2018digital, david2024infonomics} for DT typologies, and \citet{avizienis2004basic} for the dependability-based interpretation of reliability and security. The framework was first piloted and refined before full-scale extraction and coding.
+
+To support transparency and replication, all data processing and aggregation steps were automated through custom Python scripts, which are provided in the replication package.\footnote{Replication package: \url{https://github.com/ssm-lab/system-of-twinned-systems-replication-package}}
