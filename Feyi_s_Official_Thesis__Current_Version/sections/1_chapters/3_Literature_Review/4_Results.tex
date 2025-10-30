@@ -1,21 +1,72 @@
 
 
 \section{Results}
+In this section, we report the key findings of our study on the state-of-the-art of SoTS.
 
-\subsection{Conceptual Motivation and Integration}
+\subsection{Conceptual Motivation and Integration} 
+
+We address why SoS and DTs are combined by analyzing the motivations (\secref{para:lt-rq1-motivations}), integration intents and application domains (\secref{para:lt-rq1-intents-domains}), and key development challenges (\secref{para:lt-rq1-challenges}) of SoTS.
+
+
+
+%------------------------------
 \subsubsection{RQ1: Why are DT and SoS combined?}
-\input{tables/Literature Review/RQs/rq1/domainsTable}
-\input{tables/Literature Review/RQs/rq1/intentsTable}
+\paragraph{Motivations.}\label{para:lt-rq1-motivations}
+As shown in \tabref{tab:motivations-table}, the motivations identified across the primary studies were grouped into four categories: optimization, integration, validation, and maintainability. Optimization was the most frequently reported driver (\xofyp{30}{80}), emphasizing improved coordination and decision-making through cross-system awareness. Studies in this group often applied SoTS for operational efficiency, such as coordinating UAV–USV landings to minimize turnaround time \cite{li2022cognitive}. Integration followed closely (\xofyp{25}{80}), focusing on linking heterogeneous DTs to enable unified data exchange and control, particularly in energy and manufacturing systems \cite{monsalve2021novel}. Validation (\xofyp{15}{80}) used SoTS as simulation-based environments for safe testing of interactions between autonomous components, for example in vehicle coordination scenarios \cite{dahmen2022modeling}. Finally, maintainability (\xofyp{10}{80}) appeared as a recurring secondary theme, highlighting predictive maintenance and lifecycle monitoring of complex assets. Overall, SoTS are motivated by the need to scale the precision, observability, and control of DTs to the distributed, multi-constituent level of SoS. Optimization and integration dominate as operational goals, while validation and maintainability represent emerging uses.
 \input{tables/Literature Review/RQs/rq1/motivations.tex}
-\input{tables/Literature Review/RQs/rq1/challenges_table}
 
-\subsubsection{RQ2: How are DT and Sos combined?}
+
+\paragraph{Intents and Application Domains.}\label{para:lt-rq1-intents-domains}
+\input{tables/Literature Review/RQs/rq1/intentsTable}
+Two distinct intents were identified across the primary studies (\tabref{tab:intents-table}:):
+(i) \textit{twinning a System of Systems.} Where a digital twin mirrors the entire SoS as a unified digital entity, and
+(ii) \textit{combining multiple digital twins into a system of systems.} Where several DTs interoperate as autonomous yet coordinated constituents.
+The latter dominates the literature (\xofyp{49}{80}), reflecting a clear preference for distributed coordination and data exchange rather than centralized representation.
+
+\input{tables/Literature Review/RQs/rq1/domainsTable}
+
+\figref{fig:sos-dt-intent} and \tabref{tab:domains-table} show that manufacturing is the most represented domain (\xofyp{32}{80}), where SoTS primarily support coordinated control across production lines and cyber-physical factory systems \cite{villalonga2021decision-making, novak2022digitalized, gollner2022collaborative}. Automotive (\xofyp{9}{80}) and military (\xofyp{4}{80}) applications typically adopt the twinning approach to achieve system-level situational awareness and mission coordination \cite{potteiger2023live}. Smart city implementations (\xofyp{6}{80}) emphasize multi-DT collaboration to integrate transportation, utilities, and safety infrastructures \cite{li2024comprehensive, human2023design}. A smaller number of studies target domain-specific intents: networking focuses exclusively on SoS twinning for holistic oversight \cite{dobie2024network, priyanta2024is}, whereas energy, healthcare, and construction use DT combination for distributed asset management. Overall, twinning is used where global visibility is required, while combination supports decentralized autonomy and adaptive collaboration across heterogeneous systems.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/Literature Review/rq1/intentOfSoSDT.pdf}
+    \caption{Intent of SoTS vs Domain\vspace{-1em}}
+    \caption*{{\color[HTML]{FF2882}\ding{110}} Combining DTs into a SoS~~~{\color[HTML]{85d4ff}\ding{110}} Twinning a SoS }
+    \label{fig:sos-dt-intent}
+\end{figure}
+
+
+\paragraph{Challenges.}\label{para:lt-rq1-challenges}
+\input{tables/Literature Review/RQs/rq1/challenges_table}
+Although SoTS offer clear benefits, their development remains constrained by persistent technical and organizational challenges. Operational challenges are the most frequently reported (\xofyp{60}{80}), led by interoperability (\xofyp{26}{80}), synchronization (\xofyp{11}{80}), real-time responsiveness (\xofyp{9}{80}), and uncertainty (\xofyp{8}{80}). These issues hinder consistency and coordination across independently managed DTs. Design challenges (\xofyp{33}{80}) focus on system complexity (\xofyp{12}{80}) and the lack of standardized architectures or interfaces (\xofyp{11}{80}). Integration with legacy systems and compliance with domain-specific regulations are additional recurring barriers, particularly in safety-critical contexts. Finally, non-functional challenges (\xofyp{22}{80}), especially reliability, scalability, and privacy, remain insufficiently addressed. Leaving dependability as a key challenge in evevating prototypes to operational deplyoments.
+
+
+\begin{conclusionframe}{RQ1: Why are DT and SoS combined?}
+Across studies, DT and SoS are combined to achieve coordinated optimization and cross-domain integration. This coupling allows SoTS to unify monitoring and control across distributed assets, though practical realization remains limited by interoperability, complexity, and the absence of common standards.
+\end{conclusionframe}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{RQ2: How are DT and Sos combined?} %-------------------------------
 % \input{tables/Literature Review/RQs/rq2/constituentUnitsTable}
 % \input{tables/Literature Review/RQs/rq2/coordinationExtractionTable}
 \input{tables/Literature Review/RQs/rq2/sotsTypeTable}
 
 
-\subsection{Technical Characterization.}
+\subsection{Technical Characterization.} %----------------------------------------
 \subsubsection{RQ3: What are the defining features of DTs within SoTS?}
 \input{tables/Literature Review/RQs/rq3/autonomyTable}
 % \input{tables/Literature Review/RQs/rq3/dtServicesTable}
@@ -23,8 +74,22 @@
 
 \subsubsection{RQ4: What are the defining features of SoS within SoTS?}
 \input{tables/Literature Review/RQs/rq4/emergenceTable}
+\begin{figure*}[htb]
+    \centering
+    % \includegraphics[width=0.9\linewidth]{figures/rq4/sosDimensions.pdf}
+     \includegraphics[width=\linewidth]{figures/Literature Review/rq4/sosDimensions.pdf}
+    \caption{SoS dimensions: 
+     {\color[HTML]{ff2882}\ding{108}} No,  
+     {\color[HTML]{d8d8d8}\ding{108}} Partial, 
+     {\color[HTML]{85d4ff}\ding{108}} Yes
+    } 
+    \label{fig:sos-dim}
+\end{figure*}
 
-\subsection{Reliability, Maturity, and Implementation.}
+
+
+
+\subsection{Reliability, Maturity, and Implementation.} %-------------------------
 \subsubsection{RQ5: How are non-functional properties such as reliability and security addressed in SoTS}
 \input{tables/Literature Review/RQs/rq5/reliabilityTable}
 \input{tables/Literature Review/RQs/rq5/securityTable}
@@ -35,6 +100,18 @@
 \input{tables/Literature Review/RQs/rq6/hierarchicalEvaluationTable}
 \input{tables/Literature Review/RQs/rq6/standards}
 \input{tables/Literature Review/RQs/rq6/trlTable}
+
+\begin{figure*}[htb]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/Literature Review/rq6/trlVsContributionType.pdf}
+    \caption{Distribution of contribution types across TRL levels}
+    \caption*{{
+    \color[HTML]{FF2882}\ding{110}} Conceptual
+    ~~~{\color[HTML]{85d4ff}\ding{110}} Technical
+    ~~~{\color[HTML]{d8d8d8}\ding{110}} Case Study
+    }
+    \label{fig:trl-v-cont}
+\end{figure*}
 
 \subsubsection{RQ7: What technologies and platforms are most frequently used?}
 \input{tables/Literature Review/RQs/rq7/hierarchicalFrameworksTable}
