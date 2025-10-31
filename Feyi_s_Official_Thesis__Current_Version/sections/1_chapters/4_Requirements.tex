@@ -1,3 +1,28 @@
 \chapter{Requirements}
 \label{ch:requirements}
+% Follow Real-time Collaborative Multi-Level Modeling by Conflict-Free Replicated Data Types
+
+CEP provides the computational foundation for managing continuous, distributed data streams in real time. As discussed in \secref{sec:background-cep}, CEP enables the correlation of events, detection of temporal patterns, and generation of higher-level insights from heterogeneous sources, capabilities that align closely with the operational needs of SoTS. Its event-driven paradigm is well-suited to the monitoring, coordination, and control demands of large-scale, dynamically interacting digital-physical ecosystems.
+
+However, the findings of the systematic study (\chref{ch:literature-review}) reveal that current SoTS implementations lack mechanisms for reliable operation, which limits their suitability for dependable CEP integration. This shortfall appears on two fronts. First, at the hardware and sensing layer, unreliable or missing sensor data, latency, and communication loss undermine the accuracy of event streams and consequently the dependability of decision-making.
+Second, at the architectural level, SoTS exhibit dynamic reconfiguration and compositional variability, where constituent systems can join, leave, or evolve at runtime. These conditions that challenge stability and consistent data propagation.
+
+Even with existing mitigation strategies in place, uncertainty cannot be fully prevented at the SoS level. Dynamic composition, emergent behaviour, and external disruptions such as packet loss, sensor degradation, and communication issues continually introduce incomplete, delayed, or noisy information. Reliability concerns are further amplified by the inherent heterogeneity and interdependencies of SoS, where local failures can propagate and disrupt global performance~\cite{ed2018deterministic}, making classical reliability methods insufficient~\cite{bukowski2016system}. This aligns with the resilience perspective that when prevention is impossible, a system must adapt to maintain acceptable performance under unexpected conditions~\cite{madni2020constructing}. As a result, dependable behaviour must be supported by mechanisms that can compensate for and operate on imperfect data, rather than relying solely on fault elimination.
+
+In parallel, CEP systems themselves are highly sensitive to the quality and reliability of their input data. Even minor uncertainty in event timing or sensor integrity can propagate through event correlation rules and pattern detection, leading to false activations or missed detections. The Uncertainty in CEP Taxonomy~\cite{wasserkrug2006taxonomy} (See \secref{subsec:background-cep-uncertainty}) distinguishes between two principal dimensions:
+\begin{itemize}[noitemsep, topsep=0pt]
+\item origin uncertainty, arising from noise, incompleteness, or inconsistency in observed streams; and
+\item Element uncertainty, arising from ambiguity in event patterns, thresholds, or decision logic.
+\end{itemize}
+
+
+This work focuses on the origin uncertainty quadrant, where the reliability of observed data directly determines the correctness of event detection. 
+
+The remainder of this chapter derives a structured set of requirements for a Reliability-Enhanced Complex Event Processing framework that uses compensation mechanisms to ensure dependable behaviour in SoTS. These requirements are systematically grounded in the empirical insights of the systematic study and form the conceptual and architectural foundation for the framework introduced in Chapter~\ref{ch:architecture}.
+
+\section{Extracting Requirements}\label{sec:requirements-extract}
+
+
+
+
 
