@@ -1,0 +1,54 @@
+
+\section{Key Takeaways for the Future of SoTS}\label{sec:literature-review-key-takeaways}
+
+The synthesis across RQ1–RQ7 reveals that SoTS research has matured conceptually but remains operationally and methodologically fragmented.
+While DTs and SoS are increasingly combined to address complex, distributed coordination problems, current work lacks the architectural cohesion, standardization, and dependability necessary for real-world deployment. The following subsections consolidate the main insights derived from the literature and provide recommendations for advancing reliable SoTS architectures.
+
+
+\subsubsection{Architecting SoTS}
+As identified in \tabref{tab:challenges-table}, the absence of explicit architectures and standards remains among the top design barriers.
+The dominance of acknowledged and directed configurations (\tabref{tab:sots-type-table}), found in over 70\% of cases, suggests an overreliance on control hierarchies rather than adaptive, dynamically coordinated systems. Collaborative and virtual SoTS, which would better capture distributed autonomy, account for less than 30\% of reported cases.
+
+Still, the frequent adoption of modeling formalisms such as SysML and UML (\tabref{tab:modeling-methods-structured-table}) suggests a growing effort toward structural clarity. Developing reference architectures will be key to advancing both technological and research maturity. Microservice-based architectures~\cite{bellavista2023requirements}, FMI/FMU-based co-simulation frameworks~\cite{bottjer2023review}, and standardized modeling conventions should form the foundation for future SoTS engineering.
+
+\begin{recoframe}{Recommendation 1}
+Develop architectural specifications and reference implementations for SoTS to ease their engineering and to allow higher levels of maturity in their research and development.
+\end{recoframe}
+
+\subsubsection{Standardization}
+Standardization remains an overlooked yet fundamental enabler of SoTS maturity. Less than half of the reviewed studies (\xofyp{36}{80}) adopt recognized standards (\tabref{tab:standards-table}), with most relying on data-layer conventions such as OPC UA, AAS, and RAMI 4.0 rather than comprehensive SoS-oriented frameworks. This absence of standardized reference models impedes interoperability and slows adoption in safety-critical domains such as automotive, manufacturing, and smart cities. While ISO 23247 lays a foundation for DT architectures, it provides limited guidance for dynamic, cross-organizational systems. Forthcoming extensions on digital thread and DT composition~\cite{liu2024ai,shao2024manufacturing} mark promising progress, but a broader convergence of SoS and DT standards remains necessary to address synchronization, orchestration, and dependability properly.
+
+\begin{recoframe}{Recommendation 2}
+Advance and align DT and SoS standardization efforts to enable interoperable SoTS ecosystems.
+\end{recoframe}
+
+\subsubsection{Managing Emergent Behavior in SoTS}
+Emergence, the defining property of SoS, remains underrepresented in SoTS research. While 77.5\% of studies address interdependence and 76.25\% address interoperability (\figref{fig:sos-dim}), only 37.5\% explicitly consider evolution or reconfiguration.
+Most emergent behaviors are weak and simulation-based (\tabref{tab:emergence-type-table}), reflecting predictable interactions rather than complex adaptive phenomena. DTs possess unique capabilities to observe and influence emergent dynamics through active experimentation, high-fidelity modeling, and continuous feedback~\cite{zeigler2018theory,mittal2023towards}. By purposefully adapting physical and digital components, SoTS can learn from emergent outcomes and enhance resilience. Incorporating runtime goal modeling (e.g., i*, KAOS)~~\cite{goncalves2025systematic, goncalves2018systematic} and faster-than-real-time simulation may further enable predictive management of emergence under uncertainty.
+
+\begin{recoframe}{Recommendation 3}
+Use DT sensing and simulation capabilities to detect, understand, and manage emergent behavior through runtime experimentation and adaptive modeling.
+\end{recoframe}
+
+\subsubsection{Human Factors}
+Human aspects remain underexplored in SoTS despite their presence in multiple domains (\tabref{tab:domains-table}). Most SoTS designs emphasize autonomy (\tabref{tab:autonomy-table}), overlooking the importance of human oversight, trust, and ethical accountability. Emerging paradigms like cyber-physical-human systems and digital human twins~\cite{miller2022unified,david2023digital} highlight the necessity of situating humans as active participants in system feedback loops. Future research should integrate human-centered engineering, participatory modeling, and ergonomic simulation approaches to ensure transparency and usability. Embedding humans as informed decision-makers rather than passive observers will enhance system dependability and acceptance in high-stakes environments.
+
+\begin{recoframe}{Recommendation 4}
+Integrate human-centered design and digital human representations into SoTS to improve transparency, trust, and operational safety.
+\end{recoframe}
+
+\subsubsection{Empirical Inquiries and Evaluation Methods}
+Empirical evidence in SoTS research remains limited.
+Validation-based studies dominate (\tabref{tab:evaluation-structured-table}), while real-world evaluations constitute less than 10\% of the literature. Most prototypes are validated in controlled or simulated environments rather than field deployments, leaving external validity largely untested. Expanding methodological diversity through design science, case study, and action research~\cite{wohlin2021case,dresch2015design} can improve the field’s rigor and industrial relevance. As shown in \tabref{tab:trl-table}, few studies exceed demonstration-level TRLs, emphasizing the need for stronger practice-based evaluation of SoTS frameworks.
+
+\begin{recoframe}{Recommendation 5}
+Promote empirical and field-based studies to evaluate SoTS performance, reliability, and adaptability under real-world operational conditions.
+\end{recoframe}
+
+\subsubsection{Reliability and Uncertainty Management}
+Dependability remains the principal unsolved challenge in SoTS.
+Reliability and security are the most frequently mentioned non-functional attributes (\tabref{tab:reliability-table}, \tabref{tab:security-table}), yet few studies model or validate them quantitatively. Most works assume reliability implicitly through architectural redundancy or simulation-based validation, without accounting for uncertainty or dynamic recovery. Future SoTS frameworks must operationalize reliability and uncertainty as explicit design constructs—linking sensor data integrity, event-stream confidence, and runtime fault recovery. Embedding adaptive reliability mechanisms will transform SoTS from merely integrated to truly dependable systems.
+
+\begin{recoframe}{Recommendation 6}
+Make reliability and uncertainty management first-class architectural concerns, incorporating runtime assessment and adaptive fault recovery into SoTS design.
+\end{recoframe}
