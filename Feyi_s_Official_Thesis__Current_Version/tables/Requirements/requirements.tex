@@ -1,0 +1,44 @@
+% \begin{table*}[ht]
+% \centering
+% \caption{Requirements for the Reliability-Enhanced CEP Framework}
+% \label{tab:reliability-requirements}
+% \footnotesize
+% \begin{tabular}{@{}p{0.8cm}p{9.8cm}p{3.5cm}@{}}
+% \toprule
+% \textbf{ID} & \textbf{Requirement Description} & \textbf{Source Section(s)} \\ 
+% \midrule
+% \textbf{R1} & Maintain \textbf{event detection and reasoning} when inputs are inconsistent or temporarily unavailable. & \secref{sec:background-cep}, \chref{ch:literature-review} \\
+
+% \textbf{R2} & \textbf{Quantify and propagate uncertainty} through CEP operations to support informed decisions. & \secref{subsec:background-cep-uncertainty} \\
+
+% \textbf{R3} & \textbf{Function when constituents join, leave, or change} during execution. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+
+% \textbf{R4} & \textbf{Operate under asynchronous or delayed messaging} without losing order or coherence. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+
+% \textbf{R5} & Provide \textbf{runtime indicators} to observe and assess reliable operation. & \secref{sec:background-dependability}, \chref{ch:evaluation} \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
+
+\begin{table*}[ht]
+\centering
+\caption{Requirements for the Reliability-Enhanced CEP Framework}
+\label{tab:reliability-requirements}
+\footnotesize
+\begin{tabular}{@{}p{0.8cm}p{9.8cm}p{3.5cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Requirement Description} & \textbf{Source Section(s)} \\ 
+\midrule
+\textbf{R1} & Accept \textbf{input events with confidence values} that reflect data quality or source reliability. & \secref{subsec:background-cep-uncertainty}, \chref{ch:literature-review} \\
+
+\textbf{R2} & Allow \textbf{event processing to consider confidence information} when evaluating or correlating events. & \secref{sec:background-cep}, \chref{ch:literature-review} \\
+
+\textbf{R3} & Support \textbf{plug-and-play composition}, enabling constituent twins to connect, disconnect, or update at runtime without manual reconfiguration. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+
+\textbf{R4} & Operate over \textbf{asynchronous and heterogeneous messaging frameworks} while preserving event consistency. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+
+\textbf{R5} & Provide \textbf{runtime indicators of reliability or confidence} to observe and evaluate system behaviour during operation. & \secref{sec:background-dependability}, \chref{ch:evaluation} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+

@@ -1,0 +1,30 @@
+\chapter{Architecture}\label{ch:architecture}
+
+The architecture of the proposed Reliability-Enhanced Complex Event Processing framework is designed to enable dependable event detection and reasoning within dynamically composed systems of twinned systems (SoTS).  
+Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter describes how the framework addresses these challenges through a lightweight, modular design.
+
+The remainder of this chapter defines the functional requirements guiding the design (\secref{sec:arch-reqs}), presents the overall system architecture and its components, and explains how each element contributes to maintaining reliable service under uncertainty.
+
+\section{Requirements}\label{sec:arch-reqs}
+As discussed in \secref{sec:background-cep}, complex event processing (CEP) offers the event-driven reasoning capabilities that systems of twinned systems (SoTS) require. Its ability to correlate distributed events, detect patterns, and derive higher-level insights aligns naturally with the operational needs of dynamic compositions of systems.
+
+However, while CEP is theoretically well suited to SoTS, such systems are inherently unreliable in practice. Dynamic composition, emergent behaviour, and communication disruptions, such as packet loss or sensor issues, routinely compromise the completeness and timeliness of observed data. CEP, in turn, is highly sensitive to such uncertainty: missing or inconsistent inputs can cascade through event-correlation logic, producing false activations or missed detections. These effects directly undermine the reliability of SoTS, defined as the continuity of correct service~\cite{avizienis2004basic}. Within this context, reliability refers to the sustained correctness of CEP  detection and despite intermittent or incomplete inputs.
+
+Although reliability has been widely discussed across SoTS research, most efforts do not formally verify the property. Few studies explicitly model or evaluate reliability of their systems, leaving open the question of how dependable service can be maintained when this is not considered. To achieve reliable CEP-enabled SoTS, system behaviour must remain correct and continuous even when data streams are partial or disrupted.
+
+Prevention alone is insufficient, aligning with the resilience perspective that systems must adapt to sustain acceptable performance under uncertain conditions~\cite{madni2020constructing, ed2018deterministic}. Dependable operation therefore requires purposeful compensation mechanisms that mitigate the effects of missing or noisy data rather than relying solely on redundancy or recovery after failure {bukowski2016system}.
+
+Within CEP, the Uncertainty Taxonomy~\cite{wasserkrug2006taxonomy} distinguishes two primary dimensions:
+\begin{itemize}[noitemsep, topsep=0pt]
+\item Origin uncertainty — arising from noise, incompleteness, or inconsistency in observed event streams.
+\item Element uncertainty — arising from ambiguity in event patterns, thresholds, or decision logic.
+\end{itemize}
+This research focuses on origin uncertainty. Addressing it is central to achieving reliable operation in CEP-driven SoTS. The remainder of this chapter derives the requirements for a Reliability-Enhanced Complex Event Processing framework for SoTS that introduces data-compensation mechanisms to maintain dependable performance under uncertain conditions. These requirements are grounded in the insights of the systematic study (\chref{ch:literature-review}).
+
+% CEP systems are also highly sensitive to input quality; even minor uncertainty in event timing or sensor integrity can propagate through correlation rules, causing false or missed detections. Despite existing mitigation strategies, uncertainty persists due to dynamic composition, emergent behaviour, and external disruptions such as packet loss and sensor degradation. Reliability is further challenged by the heterogeneity and interdependencies of SoS, where local faults can cascade and disrupt global performance~\cite{ed2018deterministic}. Classical reliability methods are therefore insufficient~\cite{bukowski2016system}. From a resilience perspective, when prevention is impossible, systems must adapt to maintain acceptable performance under unexpected conditions~\cite{madni2020constructing}. Thus, dependable operation requires mechanisms that can compensate for imperfect data rather than relying solely on fault elimination.
+
+
+\input{tables/Requirements/requirements.tex}
+
+
+
