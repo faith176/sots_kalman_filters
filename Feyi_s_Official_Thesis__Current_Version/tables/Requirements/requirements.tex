@@ -1,44 +1,25 @@
-% \begin{table*}[ht]
-% \centering
-% \caption{Requirements for the Reliability-Enhanced CEP Framework}
-% \label{tab:reliability-requirements}
-% \footnotesize
-% \begin{tabular}{@{}p{0.8cm}p{9.8cm}p{3.5cm}@{}}
-% \toprule
-% \textbf{ID} & \textbf{Requirement Description} & \textbf{Source Section(s)} \\ 
-% \midrule
-% \textbf{R1} & Maintain \textbf{event detection and reasoning} when inputs are inconsistent or temporarily unavailable. & \secref{sec:background-cep}, \chref{ch:literature-review} \\
-
-% \textbf{R2} & \textbf{Quantify and propagate uncertainty} through CEP operations to support informed decisions. & \secref{subsec:background-cep-uncertainty} \\
-
-% \textbf{R3} & \textbf{Function when constituents join, leave, or change} during execution. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
-
-% \textbf{R4} & \textbf{Operate under asynchronous or delayed messaging} without losing order or coherence. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
-
-% \textbf{R5} & Provide \textbf{runtime indicators} to observe and assess reliable operation. & \secref{sec:background-dependability}, \chref{ch:evaluation} \\
-% \bottomrule
-% \end{tabular}
-% \end{table*}
-
 \begin{table*}[ht]
 \centering
-\caption{Requirements for the Reliability-Enhanced CEP Framework}
-\label{tab:reliability-requirements}
+\caption{Requirements for the framework}
+\label{tab:reliability-architecture-requirements}
 \footnotesize
-\begin{tabular}{@{}p{0.8cm}p{9.8cm}p{3.5cm}@{}}
+\begin{tabular}{@{}p{0.8cm}p{10cm}p{3.5cm}@{}}
 \toprule
-\textbf{ID} & \textbf{Requirement Description} & \textbf{Source Section(s)} \\ 
+\textbf{ID} & \textbf{Requirement} & \textbf{Synthesized From} \\ 
 \midrule
-\textbf{R1} & Accept \textbf{input events with confidence values} that reflect data quality or source reliability. & \secref{subsec:background-cep-uncertainty}, \chref{ch:literature-review} \\
 
-\textbf{R2} & Allow \textbf{event processing to consider confidence information} when evaluating or correlating events. & \secref{sec:background-cep}, \chref{ch:literature-review} \\
+\textbf{R1} & Provide a \textbf{compensation mechanism} to handle missing or inconsistent event inputs through reconstruction or substitution. & \citet{avizienis2004basic}, \citet{cugola2015complex}, \chref{ch:literature-review} \\
 
-\textbf{R3} & Support \textbf{plug-and-play composition}, enabling constituent twins to connect, disconnect, or update at runtime without manual reconfiguration. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+\textbf{R2} & Enable \textbf{confidence modeling and propagation} so that events include quantitative confidence values maintained through the CEP pipeline. & \citet{cugola2015complex}, \citet{wasserkrug2006taxonomy}, \citet{hanmer2013patterns}, \secref{subsec:background-cep-uncertainty} \\
 
-\textbf{R4} & Operate over \textbf{asynchronous and heterogeneous messaging frameworks} while preserving event consistency. & \secref{sec:background-sots}, \chref{ch:literature-review} \\
+\textbf{R3} & Support \textbf{graceful degradation} by continuing partial event processing under uncertainty or data loss. & \citet{hanmer2013patterns}, \secref{subsec:literature-review-results-rq5} \\
 
-\textbf{R5} & Provide \textbf{runtime indicators of reliability or confidence} to observe and evaluate system behaviour during operation. & \secref{sec:background-dependability}, \chref{ch:evaluation} \\
+\textbf{R4} & Maintain a \textbf{modular and extensible architecture} composed of loosely coupled, replaceable components. & \secref{para:lt-rq2-sots-type}, \figref{fig:sos-dim} \\
+
+\textbf{R5} & Provide \textbf{runtime observability} through measurable indicators that reflect reliability and compensation performance. & \secref{subsec:literature-review-results-rq5} \\
+
+\textbf{R6} & Ensure \textbf{interoperability} through standardized data formats and lightweight communication protocols. & \secref{para:lt-rq1-challenges} \\
+
 \bottomrule
 \end{tabular}
 \end{table*}
-

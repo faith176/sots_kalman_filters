@@ -102,6 +102,9 @@ Faults are the underlying causes of errors and failures, defined by \citet{avizi
 
 Faults are commonly classified into three temporal categories: transient disturbances (e.g., electromagnetic interference), intermittent faults caused by unstable conditions, and permanent hardware or software defects. Each type requires tailored mitigation: retries and buffering for transient network disturbances, redundancy and multi-sensor fusion to preserve observability, and adaptive fault detection or repair to contain evolving errors. In engineering practice, these mitigation mechanisms must be reasoned about early in the design lifecycle to prevent systemic propagation, as emphasized in model-driven dependability approaches that embed fault handling and propagation constraints into high-level system models \cite{montecchi2011dependability}.
 
+% CEP systems are also highly sensitive to input quality; even minor uncertainty in event timing or sensor integrity can propagate through correlation rules, causing false or missed detections. Despite existing mitigation strategies, uncertainty persists due to dynamic composition, emergent behaviour, and external disruptions such as packet loss and sensor degradation. Reliability is further challenged by the heterogeneity and interdependencies of SoS, where local faults can cascade and disrupt global performance~\cite{ed2018deterministic}. Classical reliability methods are therefore insufficient~\cite{bukowski2016system}. From a resilience perspective, when prevention is impossible, systems must adapt to maintain acceptable performance under unexpected conditions~\cite{madni2020constructing}. Thus, dependable operation requires mechanisms that can compensate for imperfect data rather than relying solely on fault elimination.
+
+
 
 % -------------------------------------------------------------
 

@@ -1,0 +1,26 @@
+\begin{table*}[ht]
+\centering
+\caption{Comparison of CEP Frameworks and the Proposed Reliability-Enhanced CEP (RE-CEP)}
+\label{tab:cep-balanced-comparison}
+\small
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+\textbf{Framework} &
+\rotatebox{90}{Pattern Detection} &
+\rotatebox{90}{Temporal Reasoning} &
+\rotatebox{90}{Stream Processing} &
+\rotatebox{90}{Extensibility} &
+\rotatebox{90}{Uncertainty Modeling} &
+\rotatebox{90}{Compensation Mechanism} &
+\rotatebox{90}{Runtime Observability} &
+\rotatebox{90}{Reliability Focus} \\ 
+\midrule
+SASE~\citep{wu2006high} & Yes & Yes & Limited & No & No & No & No & No \\
+Cayuga~\citep{brenna2007cayuga} & Yes & Yes & Limited & Partial & No & No & No & No \\
+Esper~\citep{esper_reference} & Yes & Yes & Yes & Yes & No & No & No & No \\
+Siddhi~\citep{suhothayan2011siddhi} & Yes & Yes & Yes & Yes & No & No & No & No \\
+Apache Flink~\citep{carbone2015apache} & Yes & Yes & Yes & Yes & No & No & No & No \\
+\textbf{RE-CEP (proposed)} & Yes & Yes & Yes & \textbf{Yes (modular)} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table*}

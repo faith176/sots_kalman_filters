@@ -1,30 +1,54 @@
 \chapter{Architecture}\label{ch:architecture}
 
-The architecture of the proposed Reliability-Enhanced Complex Event Processing framework is designed to enable dependable event detection and reasoning within dynamically composed systems of twinned systems (SoTS).  
-Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter describes how the framework addresses these challenges through a lightweight, modular design.
+The architecture of the proposed framework is designed to enable reliable event detection and reasoning within dynamically composed Systems of Twinned Systems (SoTS).  
+Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter presents the architectural foundations of the framework and explains how its modular design supports reliable operation under uncertainty.
 
-The remainder of this chapter defines the functional requirements guiding the design (\secref{sec:arch-reqs}), presents the overall system architecture and its components, and explains how each element contributes to maintaining reliable service under uncertainty.
+The chapter first defines the architectural requirements guiding the design (\secref{sec:arch-reqs}), followed by an overview of the overall system structure and its components, detailing how each contributes to sustaining reliable service in the presence of imperfect data.
 
 \section{Requirements}\label{sec:arch-reqs}
-As discussed in \secref{sec:background-cep}, complex event processing (CEP) offers the event-driven reasoning capabilities that systems of twinned systems (SoTS) require. Its ability to correlate distributed events, detect patterns, and derive higher-level insights aligns naturally with the operational needs of dynamic compositions of systems.
 
-However, while CEP is theoretically well suited to SoTS, such systems are inherently unreliable in practice. Dynamic composition, emergent behaviour, and communication disruptions, such as packet loss or sensor issues, routinely compromise the completeness and timeliness of observed data. CEP, in turn, is highly sensitive to such uncertainty: missing or inconsistent inputs can cascade through event-correlation logic, producing false activations or missed detections. These effects directly undermine the reliability of SoTS, defined as the continuity of correct service~\cite{avizienis2004basic}. Within this context, reliability refers to the sustained correctness of CEP  detection and despite intermittent or incomplete inputs.
+As outlined in the background chapter~\secref{sec:background-cep}, Complex Event Processing (CEP) provides the event-driven reasoning capabilities that SoTS require. Such as correlating distributed events, detecting patterns, and deriving higher-level insights from heterogeneous sources. These capabilities make CEP a strong candidate for SoTS integration, yet its effectiveness depends on the reliability of incoming data streams.
 
-Although reliability has been widely discussed across SoTS research, most efforts do not formally verify the property. Few studies explicitly model or evaluate reliability of their systems, leaving open the question of how dependable service can be maintained when this is not considered. To achieve reliable CEP-enabled SoTS, system behaviour must remain correct and continuous even when data streams are partial or disrupted.
+In practice, SoTS are inherently unreliable. Dynamic composition, emergent behaviour, and communication disruptions frequently compromise the completeness of event data. CEP, in turn, is highly sensitive to such uncertainty: missing or inconsistent inputs can cascade through event-correlation logic, leading to false activations or missed detections. These effects directly undermine reliability, defined as the continuity of correct service~\cite{avizienis2004basic}. Within this context, reliability refers to the sustained correctness of CEP-based event detection and reasoning despite intermittent or incomplete inputs.
 
-Prevention alone is insufficient, aligning with the resilience perspective that systems must adapt to sustain acceptable performance under uncertain conditions~\cite{madni2020constructing, ed2018deterministic}. Dependable operation therefore requires purposeful compensation mechanisms that mitigate the effects of missing or noisy data rather than relying solely on redundancy or recovery after failure {bukowski2016system}.
+Although reliability is widely discussed in SoTS literature, few studies explicitly model or evaluate it. Most address reliability conceptually or at the architectural level, without verifying whether dependable behaviour is maintained when data becomes uncertain or incomplete. Achieving reliability in CEP-enabled SoTS therefore requires that system behaviour remain correct and continuous even when input streams are degraded.
+
+Although reliability is widely discussed in SoTS literature, few studies formally model or evaluate it. Most treat it conceptually or at the architectural level without verifying dependable behaviour under real disruptions. In CEP-enabled SoTS, this extends to data quality, where uncertainty or incompleteness in event streams directly threatens correct and continuous operation.
+
+Prevention alone is insufficient, aligning with the resilience perspective that systems must adapt to maintain acceptable performance under uncertain conditions~\cite{madni2020constructing, ed2018deterministic}. Dependable operation therefore requires purposeful compensation mechanisms. These should be implemented through architectural strategies that mitigate the effects of inconsistent or incomplete data, rather than relying solely on redundancy or post-failure recovery~\cite{bukowski2016system}.
+
 
 Within CEP, the Uncertainty Taxonomy~\cite{wasserkrug2006taxonomy} distinguishes two primary dimensions:
 \begin{itemize}[noitemsep, topsep=0pt]
-\item Origin uncertainty — arising from noise, incompleteness, or inconsistency in observed event streams.
-\item Element uncertainty — arising from ambiguity in event patterns, thresholds, or decision logic.
+    \item Origin uncertainty — arising from noise, incompleteness, or inconsistency in observed event streams.
+    \item Element uncertainty — arising from ambiguity in event patterns, thresholds, or decision logic.
 \end{itemize}
-This research focuses on origin uncertainty. Addressing it is central to achieving reliable operation in CEP-driven SoTS. The remainder of this chapter derives the requirements for a Reliability-Enhanced Complex Event Processing framework for SoTS that introduces data-compensation mechanisms to maintain dependable performance under uncertain conditions. These requirements are grounded in the insights of the systematic study (\chref{ch:literature-review}).
+This work focuses on origin uncertainty, as it directly impacts the reliability of event detection and system-level reasoning. Addressing this form of uncertainty is central to ensuring dependable operation in CEP-driven SoTS.
 
-% CEP systems are also highly sensitive to input quality; even minor uncertainty in event timing or sensor integrity can propagate through correlation rules, causing false or missed detections. Despite existing mitigation strategies, uncertainty persists due to dynamic composition, emergent behaviour, and external disruptions such as packet loss and sensor degradation. Reliability is further challenged by the heterogeneity and interdependencies of SoS, where local faults can cascade and disrupt global performance~\cite{ed2018deterministic}. Classical reliability methods are therefore insufficient~\cite{bukowski2016system}. From a resilience perspective, when prevention is impossible, systems must adapt to maintain acceptable performance under unexpected conditions~\cite{madni2020constructing}. Thus, dependable operation requires mechanisms that can compensate for imperfect data rather than relying solely on fault elimination.
-
+Following the uncertainty management principles proposed by \citet{cugola2015complex} and the dependability framework of \citet{avizienis2004basic}, the following section defines the architectural requirements for the framework (see \tabref{tab:reliability-architecture-requirements}). These requirements are further informed by the gaps identified in the systematic study (\chref{ch:literature-review}), particularly the limited runtime adaptability, lack of fault-compensation mechanisms, and absence of reliability evaluation in current SoTS implementations.
 
 \input{tables/Requirements/requirements.tex}
 
+Requirements \textbf{R1--R3} address the management of uncertainty within the CEP pipeline.  
+They follow the three-step process of identification, modeling, and propagation of uncertainty described by \citet{cugola2015complex} and translate these concepts into concrete architectural functions.  
+\textbf{R1} introduces a compensation mechanism for detecting and handling missing or inconsistent event inputs, ensuring the system can sustain operation by reconstructing or substituting incomplete information.  
+\textbf{R2} extends this by requiring explicit confidence modeling within the event structure, allowing reconstructed and observed events to carry quantitative confidence values that represent estimation uncertainty.  
+\textbf{R3} ensures that the system continues functioning under degraded conditions through graceful degradation, maintaining partial reasoning when complete input fidelity cannot be guaranteed.  
+Together, these requirements form the data-level foundation for dependable event-driven reasoning under imperfect information.
 
 
+Requirements \textbf{R4--R6} define the architectural qualities necessary to support reliable operation across dynamic SoTS environments.  
+\textbf{R4} emphasizes modularity and extensibility, ensuring that the framework’s components are loosely coupled and replaceable to accommodate heterogeneous configurations and evolving reliability mechanisms.  
+\textbf{R5} introduces runtime observability as a means to assess dependable behaviour, requiring measurable indicators such as reconstruction frequency and average confidence to be exposed for evaluation during execution.  
+Finally, \textbf{R6} ensures interoperability through standardized data formats and lightweight communication protocols, enabling seamless integration across distributed twins and middleware platforms.  
+Collectively, these architectural requirements ensure that the RE-CEP framework remains adaptable, transparent, and compatible across diverse SoTS implementations while maintaining reliable operation under uncertainty.
+
+
+The next section presents the overall architecture of the proposed framework, showing how these requirements are realized through a modular, confidence-aware event processing pipeline.
+
+\section{ttyty}\label{sec:mmlk}
+
+
+
+
+\input{tables/Architecture/framework_comparison.tex}
