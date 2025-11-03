@@ -49,19 +49,13 @@ Pearson Correlation ($\rho_{c,e}$) &
 Assesses the calibration between reconstruction confidence and actual reconstruction error. Computed as the correlation between predicted confidence and absolute error across all samples.
 A strong negative correlation ($\rho_{c,e} \approx -1$) indicates that confidence estimates are well aligned with prediction reliability. \\
 
-\addlinespace[0.4em]
-\textbf{Uncertainty Quality} &
-Normalized Estimation Error Squared (NEES) &
-Standard consistency test for stochastic estimators such as Kalman or Particle Filters. Defined as 
-$\mathrm{NEES} = (x - \hat{x})^\top P^{-1}(x - \hat{x})$,
-where $P$ is the estimated covariance. Values within the expected $\chi^2$ confidence bounds indicate well-calibrated uncertainty. \\
+% \addlinespace[0.4em]
+% \textbf{Uncertainty Quality} &
+% Normalized Estimation Error Squared (NEES) &
+% Standard consistency test for stochastic estimators such as Kalman or Particle Filters. Defined as 
+% $\mathrm{NEES} = (x - \hat{x})^\top P^{-1}(x - \hat{x})$,
+% where $P$ is the estimated covariance. Values within the expected $\chi^2$ confidence bounds indicate well-calibrated uncertainty. \\
 
-\addlinespace[0.4em]
-\textbf{Resilience under Fault Injection} &
-Graceful Degradation Index (GDI) &
-Quantifies the drop in event reasoning quality during faulted conditions relative to nominal operation. Computed as 
-$\mathrm{GDI} = \frac{F1_{\text{fault}}}{F1_{\text{nominal}}}$.
-A value near~1 indicates minimal degradation and strong fault tolerance. \\
 
 \bottomrule
 \end{tabular}

@@ -1,5 +1,5 @@
 \chapter{Results}\label{ch:results}
-This chapter presents the experimental evaluation of the proposed architecture. Building on the architectural design detailed in Chapter~\ref{ch:architecture}, this chapter quantitatively assesses the system’s ability to maintain event reasoning continuity and correctness when constituent systems intermittently fail or rejoin the SoTS.  
+This chapter presents the experimental evaluation of the proposed architecture. Building on the design detailed in Chapter~\ref{ch:architecture}, this chapter quantitatively assesses the system’s ability to maintain event reasoning continuity and correctness when constituent systems intermittently fail or rejoin the SoTS.  
 
 The chapter is organized in two main parts. The first part (\secref{sec:results-eval}) introduces the evaluation scenario, outlining the problem formulation, baseline configurations, simulation environment, and quantitative metrics used to assess performance. The second part (\secref{sec:results-res}) presents and analyzes the experimental findings, comparing the proposed architecture against baseline configurations.
 
@@ -89,6 +89,7 @@ No reconstruction or imputation is required, and all events are provided with pe
 To evaluate the architecture under controlled and repeatable conditions, the experiments use the Simulation of Urban Mobility (SUMO) framework~\cite{krajzewicz2012recent}. SUMO provides a traffic simulation environment that allows modeling of multiple road intersections and vehicle flows. 
 
 Each intersection is represented as a constituent system within the SoTS, equipped with a virtual sensor that publishes event data such as vehicle counts and average speeds. To emulate the dynamic composition of a SoTS, selected sensors are programmatically deactivated and later reactivated during runtime, producing transient data gaps that reflect constituent departures and rejoinings. 
+
 
 
 \section{Findings}\label{sec:results-res}

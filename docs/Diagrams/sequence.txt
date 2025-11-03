@@ -1,31 +1,39 @@
 @startuml
-actor Researcher as Rsr
-participant Stream as S
-participant Coordinator as C
-participant EventStream as ES
-participant Reconstructor as Rc
-participant Predictor as P
-participant "CEP Engine" as CEP
+title Process Flow of the Reliability-Enhanced CEP Framework
+
+actor Researcher
+
+participant Stream
+participant Coordinator
+participant EventStream
+participant Reconstructor
+participant Predictor
+participant ConfidenceModel
+participant CEPEngine
 
 == Event Generation ==
-Rsr -> S : Start gathering data
-S -> C : generate_event()
-C -> ES : publish(event, "observed")
+Researcher -> Stream: startDataCollection()
+Stream -> Coordinator: generateEvent()
+Coordinator -> EventStream: publish(event, "observed")
 
 == Reconstruction ==
-ES -> Rc : dispatch(event, "observed")
+EventStream -> Reconstructor: dispatch(event, "observed")
+
 alt Event observed
-    Rc -> Rc : consume_event(event)
-    Rc -> ES : publish(event+metadata, "reconstructed")
+    Reconstructor -> ConfidenceModel: computeConfidence(event)
+    ConfidenceModel --> Reconstructor: confidence
+    Reconstructor -> EventStream: publish(event + metadata, "reconstructed")
 else Event missing (gap detected)
-    C -> Rc : handle_timeout(missing_event)
-    Rc -> P : predict()
-    P --> Rc : value + confidence
-    Rc -> ES : publish(reconstructed_event, "reconstructed")
+    Coordinator -> Reconstructor: triggerReconstruction()
+    Reconstructor -> Predictor: predict()
+    Predictor --> Reconstructor: predicted_value
+    Reconstructor -> ConfidenceModel: computeConfidence(predicted_value)
+    ConfidenceModel --> Reconstructor: confidence
+    Reconstructor -> EventStream: publish(reconstructed_event, "reconstructed")
 end
 
 == CEP Processing ==
-ES -> CEP : dispatch(event, "reconstructed")
-CEP -> CEP : match patterns
-CEP --> Rsr : analyze logs
+EventStream -> CEPEngine: dispatch(event, "reconstructed")
+CEPEngine -> CEPEngine: matchPatterns()
+CEPEngine --> Researcher: logDetectedEvents()
 @enduml
