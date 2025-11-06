@@ -1,16 +1,14 @@
 \chapter{Results}\label{ch:results}
-This chapter presents the experimental evaluation of the proposed architecture. Building on the design detailed in Chapter~\ref{ch:architecture}, this chapter quantitatively assesses the system’s ability to maintain event reasoning continuity and correctness when constituent systems intermittently fail or rejoin the SoTS.  
+This chapter presents the experimental evaluation of the proposed architecture. Building on the design detailed in Chapter~\ref{ch:architecture}, this chapter assesses the system’s ability to maintain event reasoning continuity and correctness when constituent systems intermittently leave or rejoin the SoTS.  
 
 The chapter is organized in two main parts. The first part (\secref{sec:results-eval}) introduces the evaluation scenario, outlining the problem formulation, baseline configurations, simulation environment, and quantitative metrics used to assess performance. The second part (\secref{sec:results-res}) presents and analyzes the experimental findings, comparing the proposed architecture against baseline configurations.
 
 
 \section{Evaluation}\label{sec:results-eval}
-The following section defines the evaluation scenario used to examine how the proposed architecture sustains dependable event reasoning when constituents intermittently fail or rejoin the SoTS.
+The following section defines the evaluation scenario used to examine how the proposed architecture sustains dependable event reasoning during dynamic reconfiguration of the SoTS.
 
 \subsection{Problem Formulation}
 \label{subsec:results-eval-problem-formulation}
-
-The evaluation aims to quantify the extent to which the proposed reliability-enhanced Complex Event Processing (CEP) architecture sustains dependable event reasoning in a dynamic System of Twinned Systems (SoTS) environment subject to transient disruptions.
 
 Let the SoTS be represented as a set of constituent systems 
 $\mathcal{C} = \{ c_1, c_2, \dots, c_n \}$ 
@@ -45,13 +43,13 @@ Hence, for each evaluation run, we define two outcome sets:
 
 The evaluation problem can be expressed as:
 \begin{quote}
-\textit{Given a dynamic SoTS where constituent systems may temporarily fail or rejoin, evaluate whether the proposed architecture can preserve event reasoning correctness and continuity better than a baseline CEP system, under controlled fault injection.}
+\textit{Given a dynamic SoTS where constituent systems may temporarily leave or rejoin, evaluate whether the proposed architecture can preserve event reasoning correctness and continuity better than a baseline CEP system, under controlled fault injection.}
 \end{quote}
 
 
 \subsection{Metrics}\label{subsec:metrics}
 
-To quantitatively assess the performance of the architecture, we define a set of metrics that reflect both event-level correctness and system-level dependability (See \tabref{tab:metrics}). These metrics are grouped into six categories corresponding to key evaluation aspects of reconstruction accuracy, event reasoning performance, reliability continuity, timing behavior, uncertainty calibration, and resilience under fault injection. Each metric was selected to align with the objectives of RQ3 and RQ4, focusing on how effectively the architecture maintains correct and continuous event reasoning under transient disruptions. 
+To quantitatively assess the performance of the architecture, we define a set of metrics that reflect both event-level correctness and system-level dependability (See \tabref{tab:metrics}). These metrics are grouped into six categories corresponding to key evaluation aspects of reconstruction accuracy, event reasoning performance. Each metric was selected to align with the objectives of RQ3 and RQ4 (See \secref{sec:intro-research-questions}), focusing on how effectively the architecture maintains correct and continuous event reasoning under transient disruptions. 
 
 \input{tables/Results/metrics.tex}
 
@@ -87,9 +85,8 @@ No reconstruction or imputation is required, and all events are provided with pe
 
 \subsection{Simulation Environment}\label{subsec:results-eval-simulation-env}
 To evaluate the architecture under controlled and repeatable conditions, the experiments use the Simulation of Urban Mobility (SUMO) framework~\cite{krajzewicz2012recent}. SUMO provides a traffic simulation environment that allows modeling of multiple road intersections and vehicle flows. 
-
-Each intersection is represented as a constituent system within the SoTS, equipped with a virtual sensor that publishes event data such as vehicle counts and average speeds. To emulate the dynamic composition of a SoTS, selected sensors are programmatically deactivated and later reactivated during runtime, producing transient data gaps that reflect constituent departures and rejoinings. 
-
+.....
+Decide on this with Prof David
 
 
 \section{Findings}\label{sec:results-res}

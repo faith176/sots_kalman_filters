@@ -6,6 +6,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.optimize import linear_sum_assignment
 
+# can change it so that the patterns are picked up no matter what confidence, then have the evlautor run through multiple times and filter out things that are low confidence for each thresholds, its easier to run that way and I only need to define the patterns once
+
 # ================================================================
 # CONFIGURATION
 # ================================================================
