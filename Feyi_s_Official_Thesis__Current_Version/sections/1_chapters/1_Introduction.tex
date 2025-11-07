@@ -1,72 +1,44 @@
 \chapter{Introduction}\label{ch:introduction}
+The growing interconnection of systems and the drive toward autonomous operation are contributing to a sharp rise in system complexity \cite{incose2035}, both across and within individual systems. At the system level, independent systems are increasingly engineered to cooperate and achieve objectives that exceed their individual capabilities. Such arrangements are described as system of systems (SoS). SoS are large-scale, distributed collections of independently developed and managed systems that collaborate to fulfill higher-level goals while retaining operational independence \cite{maier1998architecting}. SoS evolve dynamically as their constituents join, leave, or reorganize in response to changing objectives, giving rise to emergent behaviours that cannot be achieved by individual systems alone \cite{nielsen2015systems}.
+Within each constituent system, internal complexity is also increasing as physical systems are integrated with digital layers that continuously measure, compute, and adjust system behaviour. Digital twins (DTs) represent this integration. A digital twin is a digital representation of a physical system that mirrors its real-time behaviour and state~\cite{kritzinger2018digital}. Through continuous data exchange between the physical and digital domains, DTs maintain awareness of system conditions \cite{pires2019digital,zhang2024digital}. This information enables analysis, in which models or algorithms interpret observed behaviour to estimate current performance or predict future states. DTs also support adaptation, where insights obtained from the digital representation are used to guide control actions or adjustments in the physical system \cite{leng2021digital}. As digital twins become more common, they enable coordinated monitoring and control among physical systems through their digital representations.
 
-The growing interconnectivity of systems and the drive toward autonomous operation are contributing to a sharp rise in system complexity~\cite{incose2035}.
-As these systems become more interlinked and data-dependent, ensuring their reliable operation has become increasingly challenging~\cite{ISED_DigitalInfrastructure}.
-Reliability, as defined by \citet{avizienis2004basic}, depends not only on the correctness of behaviour but also on the sustained continuity of service.
-Modern infrastructures no longer operate as isolated entities but as collaborative environments where data exchange and coordinated decisions drive collective behaviour~\cite{semeraro2021digital}.
-Developments such as digital twins (DTs) and systems of systems (SoS) exemplify this shift toward data-driven integration, extending traditional engineered systems with digital representations and autonomous interactions that enhance coordination and adaptability~\cite{gill2024toward,borth2019digital}.
-However, these same characteristics also intensify the challenge of maintaining reliable performance across distributed constituents~\cite{ed2018deterministic}.
-
-Digital twins maintain synchronized virtual representations of physical systems that reflect their real-time state and behaviour~\cite{kritzinger2018digital,leng2021digital}.
-They enable ongoing monitoring, simulation, and control, allowing systems to be optimized throughout their operational lifecycles~\cite{pires2019digital}.
-By maintaining a continuous link between the physical and digital domains, digital twins support adaptive operation across diverse applications~\cite{zhang2024digital}.
-When multiple twins interconnect, they exchange data and coordinate behaviour to achieve broader objectives.
-Such interactions begin to follow the principles of a system of systems, in which independently managed systems collaborate to achieve shared goals while preserving operational independence~\cite{maier1998architecting}.
-A system of systems evolves dynamically as its constituents join, leave, or reorganize in response to changing goals or environmental conditions.
-These interactions give rise to emergent behaviours that cannot be achieved by individual systems alone~\cite{nielsen2015systems}.
-The convergence of digital twins and systems of systems defines a new class of architectures: \textbf{systems of twinned systems (SoTS)}, which can be formally described as follows:
+The convergence of system-level coordination found in systems of systems and the internal digital representation enabled by digital twins gives rise to a new class of systems referred to in this thesis as \textbf{systems of twinned systems (SoTS)}, which can be formally described as follows:
 
 \begin{definitionframe}
 A system of twinned systems comprises digitally twinned systems organized according to system-of-systems principles, in which digital twins act as autonomous constituents that collaborate to achieve collective goals.
 \end{definitionframe}
 
-Systems of twinned systems integrate the high-fidelity synchronization of digital twins with the distributed composition and coordination of systems of systems.
-This integration enables coordinated adaptation and shared awareness across interconnected, heterogeneous environments.
+SoTS extend the principles of SoS coordination into the digital domain. Through their digital twins, constituent systems can be composed and coordinated virtually while maintaining control over their physical counterparts. This configuration enables collective behaviour to emerge without additional physical integration between systems. This capability supports coordinated adaptation and shared awareness across interconnected, heterogeneous environments.
 
-Systems of twinned systems operate through the exchange of information among constituent systems but also inherit the reliability challenges of both digital twins and systems of systems.
-Because constituent twins operate autonomously, temporary disconnections, communication delays, or changes in inter-system coordination can interrupt data flow and disrupt analysis.
-These reliability challenges arise at multiple layers within the system.
-At the sensing and communication layers, latency, drift, and intermittent faults are common and can compromise the availability of data~\cite{belgacem2025toward}.
-At the system level, dynamic reconfiguration or re-tasking of constituent systems can alter information exchange patterns and timing, leading to inconsistencies in collective behaviour~\cite{fang2020improving}.
-Without mechanisms for compensation, these disruptions can propagate through the system and undermine coordinated operation~\cite{avizienis2004basic,hanmer2013patterns}.
+SoTS operate through the continuous exchange of information among constituent twins. This coordination enables collective behaviour but also introduces periods of temporary unavailability that challenge reliable operation. Reliability, as defined by \citet{avizienis2004basic}, depends not only on the correctness of behaviour but also on the sustained continuity of service. SoTS face this challenge on two fronts, as they inherit reliability concerns from both SoS and DTs. Because constituent twins operate autonomously, temporary disconnections, communication delays, or changes in inter-system coordination can interrupt data flow and disrupt analysis, giving rise to reliability challenges across multiple layers of the system. At the sensing and communication layers, latency, drift, and intermittent faults are common and can compromise data availability \cite{belgacem2025toward}. At the system level, dynamic reconfiguration or re-tasking of constituent systems can alter information exchange patterns and timing, leading to inconsistencies in collective behaviour \cite{fang2020improving}. Without compensation mechanisms, such disruptions can propagate through the system and undermine coordinated operation \cite{hanmer2013patterns}
 
-Recognizing this limitation motivates the central question of this thesis:
+These limitations motivate the central question of this thesis:
 \textit{How can a system of twinned systems maintain reliable operation when data from constituent systems becomes temporarily unavailable?}
 
-To address this challenge, this research develops an architecture that incorporates a compensation mechanism to sustain operation during temporary data disruptions.
-When constituent inputs become unavailable, the mechanism reconstructs missing information using state-based estimation and quantifies the uncertainty associated with each predicted value.
-The resulting data streams contain both observed and reconstructed inputs, enabling downstream data-processing modules within the system to continue reasoning with awareness of uncertainty, defer actions if too uncertain, or gracefully degrade until normal operation resumes.
+Addressing this challenge requires an approach that allows SoTS to continue operating when constituent data becomes temporarily unavailable. This research develops an architecture that compensates for data disruptions by reconstructing missing information using state-based estimation and by quantifying the uncertainty associated with each prediction. The resulting data streams contain both observed and reconstructed inputs, allowing downstream modules to reason with awareness of uncertainty, defer actions when confidence is low, or gracefully degrade until normal operation resumes.
 
-The architecture is demonstrated within a complex event processing pipeline, where CEP serves as a reasoning system for analyzing collective behaviours among the constituents of systems of twinned systems.
-Most existing CEP systems assume complete and uninterrupted input streams, yet prior research has shown that explicitly handling uncertainty within event reasoning is necessary for automated and timely responses~\cite{wasserkrug2006taxonomy}.
-This implementation serves as a representative case for evaluating how the proposed architecture maintains continuity and correctness of reasoning when constituent data becomes temporarily unavailable.
-Controlled experiments simulate temporary data loss and reconfiguration to evaluate its effectiveness.
-Performance is measured through reconstruction accuracy and event-detection correctness relative to a baseline configuration.
+The architecture is demonstrated within a complex event processing (CEP) pipeline, where CEP serves as a reasoning mechanism for continuously interpreting event streams to detect meaningful patterns and collective behaviours among the constituents of SoTS. In this context, an event refers to a discrete observation or state change detected within a constituent system, such as a new sensor reading \cite{cugola2012processing}.
+CEP is a technique for analyzing sequences of such atomic events to infer higher-level situations that reflect emergent behaviour \cite{luckham2002power}. Most existing CEP implementations, however, assume complete and uninterrupted input streams. Prior research has shown that explicitly handling uncertainty within event reasoning is essential for enabling automated and timely responses under real-world conditions \cite{wasserkrug2006taxonomy}. This implementation provides a controlled environment for evaluating how the proposed architecture responds to temporary data unavailability within event processing. Experiments simulate temporary data loss and system reconfiguration to measure reconstruction accuracy and its effect on event detection, with results compared against a baseline configuration.
 
 \section*{Research Contributions}
 
-The purpose of this thesis is to enhance the reliable operation of systems of twinned systems when data from constituent systems becomes temporarily unavailable.
-It advances this goal through four main contributions:
+This thesis advances the reliable operation of systems of twinned systems through four main contributions that collectively define, analyze, design, and evaluate an implemented solution.
 
 \textbf{Contribution 1 – Characterizing the Class of Systems of Twinned Systems (Chapter~\ref{ch:background})}
-Introduces systems of twinned systems as a distinct class that extends systems of systems through digital twins, where the composition of virtualized constituents enables loose coupling and coordinated interaction among systems.
+Introduces SoTS as a distinct class that extends SoS through DTs, where the composition of virtualized constituents enables flexible coordination among distributed physical systems.
 The definition establishes a conceptual and structural foundation for understanding the organization, composition, and behaviour of SoTS.
 
 \textbf{Contribution 2 – Analyzing the State of the Art in Systems of Twinned Systems (Chapter~\ref{ch:literature-review})}
-Conducts a systematic study of the state of the art in systems of twinned systems, encompassing their conceptual foundations, architectural approaches, and methods of development.
-The synthesis consolidates current knowledge on how these systems are structured and operated, highlighting the role of reliable operation in SoTS environments.
+Conducts a systematic study of the state of the art in SoTS, encompassing their conceptual foundations, architectural approaches, and methods of development. The synthesis consolidates current knowledge on how these systems are structured and operated, emphasizing the role of reliable operation in SoTS environments.
 
 \textbf{Contribution 3 – Creating an Architecture for Reliable Operation in Systems of Twinned Systems (Chapter~\ref{ch:architecture})}
-Introduces an architecture that supports reliable operation in systems of twinned systems.
-It includes a preprocessing component positioned upstream of data-processing modules, where it detects data gaps, reconstructs missing values, and assigns confidence indicators that quantify the uncertainty of reconstructed information.
+Develops an architecture that supports reliable operation in SoTS by enabling continued functioning when data from constituent systems becomes temporarily unavailable.
+The architecture introduces a preprocessing component that detects data gaps, reconstructs missing values through state-based estimation, and assigns confidence indicators to express uncertainty in reconstructed data.
+
 
 \textbf{Contribution 4 – Evaluating the Reliable SoTS Architecture within a Complex Event Processing Pipeline (Chapter~\ref{ch:results})}
-Integrates the proposed architecture into a complex event processing pipeline to assess its ability to maintain consistent reasoning when input data from constituents becomes temporarily unavailable.
-Experiments simulate temporary disconnections representative of reconfiguration behaviour in systems of twinned systems.
-The evaluation measures reconstruction accuracy and event-detection correctness, comparing results against a baseline CEP pipeline to quantify improvements in continuity and correctness, reflecting the reliability achieved by the proposed architecture.
+Implements and integrates the proposed architecture within a complex event processing pipeline to evaluate its performance when experiencing peroids of temporary data unavailability. Experiments simulate constituent disconnections representative of reconfiguration behaviour in SoTS, with performance assessed through reconstruction accuracy and event-detection correctness relative to a baseline configuration.
 
 \vspace{1em}
 \noindent
-Together, these contributions establish both a theoretical foundation and a practical framework for reliable operation in systems of twinned systems.
-They define the class of systems (\chref{ch:background}), examine its current development (\chref{ch:literature-review}), and design and evaluate an architectural solution (\chref{ch:architecture}, \chref{ch:results}) that sustains correctness and continuity under temporary data disruptions.
-The discussion in \chref{ch:discussion} reflects on the implications of these results, and \chref{ch:conclusion} summarizes the key outcomes and outlines directions for future research on reliable systems of twinned systems.
+Together, these contributions establish a theoretical foundation and a practical implementation framework for reliable operation in systems of twinned systems. They define the class of systems (\chref{ch:background}), examine its current development (\chref{ch:literature-review}), and design, implement, and evaluate an operational architecture (\chref{ch:architecture}, \chref{ch:results}) that maintains reliability under temporary data disruptions. The discussion in \chref{ch:discussion} reflects on the implications of these results, while \chref{ch:conclusion} summarizes the key outcomes and outlines directions for future research on reliable systems of twinned systems.
