@@ -1,10 +1,8 @@
 \section{A Classification Framework for SoTS}\label{sec:literature-review-classification}
 
-To systematically organize and compare the various conceptualizations of SoTS, we devised a classification framework that integrates classical SoS theory~\cite{maier1998architecting, maier2014role} with the foundational concepts of DTs~\cite{kritzinger2018digital}. This framework enables the systematic description of how DTs and SoS principles are combined across different levels of coupling, autonomy, and coordination. We follow a mixed sample and case-based generalization approach~\cite{wieringa2015six}, which supports the development of middle-range theories that balance generality with empirical grounding. From the study corpus (\secref{sec:literature-review-study-design}), each case was decomposed into architectural abstractions to highlight similarities and recurring organizational patterns.
+To systematically organize how Digital Twins (DTs) and System-of-Systems (SoS) principles are combined, we developed a classification framework grounded in classical SoS theory~\cite{maier1998architecting, maier2014role} and foundational DT concepts~\cite{kritzinger2018digital}. Using a mixed sample–case generalization approach~\cite{wieringa2015six}, each study from the corpus (\secref{sec:literature-review-study-design}) was decomposed into architectural abstractions to reveal recurring organizational patterns.
 
 \subsection{Metamodel}\label{subsec:literature-review-classification-metamodel}
-
-The essential metamodel summarizing the typical organizational relationships in digitally twinned SoS is presented in \figref{fig:metamodel-sots}.
 
 \begin{figure}[h]
 \centering
@@ -14,98 +12,34 @@ The essential metamodel summarizing the typical organizational relationships in 
 \vspace{-1em}
 \end{figure}
 
-A \textit{System} forms the atomic building block of a SoS, defined as “an assemblage of constituent components that together produce behavior not achievable by the components individually”~\cite{maier1998architecting}. Systems can be hierarchically composed, with each sub-system acting as a constituent system that maintains its own operational and managerial independence.
-
-In the SoTS context, each constituent system can be represented by one or more \textit{Digital Twins}, virtual replicas synchronized with their corresponding \textit{Physical Twins}. The distinction between physical and digital entities follows the three-layer conceptualization of DT architectures~\cite{kritzinger2018digital}.
-
-A central difference between DTs and SoS lies in their coupling characteristics: SoS exhibit \textit{weak coupling}, where constituents can join or leave voluntarily and pursue local goals, while DTs are \textit{strongly coupled}, maintaining continuous feedback and control loops with their physical systems~\cite{maes1987concepts2}.
-
-Finally, a \textit{Controller} represents the coordinating role responsible for goal management and decision-making. In SoTS, this role is typically embodied by a higher-level DT that orchestrates or monitors other DTs. The color scheme introduced in \figref{fig:metamodel-sots} is consistently used in subsequent figures to distinguish digital, physical, and control components.
+The metamodel in \figref{fig:metamodel-sots} captures the core entities found in SoTS. A \textit{System} forms the fundamental SoS constituent and can be hierarchically composed. Each system may be represented by one or more \textit{Digital Twins} synchronized with their corresponding \textit{Physical Twins}. DTs follow typical layering structures~\cite{kritzinger2018digital}, while SoS constituents retain \textit{weak coupling} and operational independence. In contrast, DTs maintain \textit{strong coupling} with their physical systems through continuous feedback loops. A \textit{Controller} (often a higher-level DT) coordinates global objectives and decision-making. The color scheme introduced here is used consistently in all subsequent architectural figures.
 
 \subsection{Architectural Instances}\label{subsec:literature-review-classification-instances}
 
-Based on the metamodel, six recurring SoTS architectures were identified. Four correspond to Maier’s canonical SoS types: directed, acknowledged, collaborative, and virtual. While two represent new SoTS-specific variants that capture emerging forms of digital specialization: system of Specialized DTs and system of specialized DTs and Systems. Each architecture is illustrated with an example from real-world domains to contextualize its defining characteristics.
+\input{figures/Literature Review/Combined_Classifications}
+
+Six recurring SoTS architectures were identified (See \figref{fig:sots-architectures}). Four align with Maier’s canonical SoS types, directed, acknowledged, collaborative, and virtual, while two reflect emerging DT-centric specializations unique to SoTS. Each instance highlights a distinct pattern of authority, autonomy, and coordination among DTs and physical systems.
 
 \subsubsection{Directed SoTS}\label{sec:literature-review-classification-instance-directed}
 
-A directed SoTS (\figref{fig:framework-instance-directed}) inherits the strict hierarchy of directed SoS. A central controller, typically a higher-level DT, defines and enforces global goals, while constituent DTs operate semi-independently to fulfill assigned tasks. Control and communication follow a top-down orchestration pattern, enabling consistent and predictable behavior across the SoTS.
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 1.1cm 0.25cm},clip,width=0.55\linewidth]{figures/Literature Review/framework/instances/directed.pdf}
-\caption{Directed SoTS}
-\label{fig:framework-instance-directed}
-\vspace{-1.5em}
-\end{figure}
-
-\textbf{Example.} A smart city with a centralized command-and-control (C$^2$) DT exemplifies a directed SoTS. The city-level DT monitors and commands subordinate DT-enhanced systems—such as water networks, transportation, or waste management—each reflecting their respective physical infrastructures. Similarly, an emergency-response SoS with a DT acting as an operations hub can coordinate fire, police, and medical DTs in real time, directing their actions toward shared mission goals.
+Directed SoTS mirror the strict hierarchy of directed SoS. A central controller, typically a high-level DT, imposes global goals, while subordinate DTs execute tasks under top-down orchestration. This structure favors predictability and uniform coordination.
 
 \subsubsection{Acknowledged SoTS}\label{sec:literature-review-classification-instance-acknowledged}
 
-Acknowledged SoTS (\figref{fig:framework-instance-acknowledged}) retain a central DT that monitors constituent systems but lacks coercive authority. The controller coordinates high-level objectives, while individual DTs and their physical counterparts maintain autonomy over local goals and internal processes. Decision-making is cooperative and rule-driven, allowing goal alignment without direct control.
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 1.1cm 0.25cm},clip,width=0.55\linewidth]{figures/Literature Review/framework/instances/acknowledged.pdf}
-\caption{Acknowledged SoTS}
-\label{fig:framework-instance-acknowledged}
-\vspace{-1.5em}
-\end{figure}
-
-\textbf{Example.} A smart energy grid demonstrates this structure. A regulatory DT oversees distributed generators, storage units, and smart meters. While it ensures balance between supply and demand, it cannot dictate how local DTs—representing household systems or private producers—operate internally. Each constituent retains operational independence but adheres to system-wide coordination standards.
+Acknowledged SoTS retain a central DT but without coercive control. The controller aligns high-level objectives, while local DTs maintain autonomy over internal behavior. Coordination is cooperative and rule-based rather than command-driven.
 
 \subsubsection{Collaborative SoTS}\label{sec:literature-review-classification-instance-collaborative}
 
-Collaborative SoTS (\figref{fig:framework-instance-collaborative}) are decentralized ecosystems in which DT-enhanced constituents voluntarily cooperate to achieve shared goals. Coordination occurs through \textit{choreography}, peer-to-peer interactions among DTs—rather than top-down orchestration~\cite{peltz2003web}. Each DT can act as both a service provider and consumer, enabling dynamic goal negotiation and coordination.
-
-\begin{figure}[t]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 0.75cm 0.25cm},clip,width=0.55\linewidth]{figures/Literature Review/framework/instances/collaborative.pdf}
-\caption{Collaborative SoTS}
-\label{fig:framework-instance-collaborative}
-\vspace{-1.5em}
-\end{figure}
-
-\textbf{Example.} A platoon of autonomous vehicles represents a collaborative SoTS. Each car’s DT communicates with others to maintain spacing, share traffic updates, and avoid collisions—achieving coordinated, emergent behavior without centralized oversight. Coordination arises from local agreements rather than a single command authority.
+Collaborative SoTS remove centralized authority. DTs coordinate through peer-to-peer \textit{choreography}~\cite{peltz2003web}, forming voluntary coalitions to achieve shared objectives. Each DT may provide and consume services dynamically.
 
 \subsubsection{Virtual SoTS}\label{sec:literature-review-classification-instance-virtual}
 
-Virtual SoTS (\figref{fig:framework-instance-virtual}) extend collaboration to fully emergent systems. Constituents dynamically form and dissolve relationships based on situational awareness, pursuing local goals while adapting to shared contexts. Goal alignment is emergent, and coordination is opportunistic. This structure becomes feasible only when DTs possess high levels of autonomy and cognitive capability.
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 0.75cm 0.25cm},clip,width=0.55\linewidth]{figures/Literature Review/framework/instances/virtual.pdf}
-\caption{Virtual SoTS}
-\label{fig:framework-instance-virtual}
-\end{figure}
-
-\textbf{Example.} In disaster management, AI-enabled DTs representing drones, autonomous vehicles, and robotic agents may detect an emergency and self-organize to respond—cooperating to rescue victims or deliver supplies without explicit instructions. These DTs act as fully autonomous entities capable of interpreting context, negotiating roles, and forming transient coalitions.
+Virtual SoTS represent fully emergent ecosystems. DTs autonomously form and dissolve relationships based on context, situational awareness, and local goals. Coordination is opportunistic and adaptive, relying on high DT autonomy and cognition.
 
 \subsubsection{System of Specialized DTs}\label{sec:literature-review-classification-instance-spec-dt}
 
-A System of Specialized DTs (\figref{fig:framework-instance-spec-dt}) comprises multiple DTs twinning the same physical system, each focused on a specialized domain function. These DTs exchange information horizontally to ensure holistic representation and analysis, but coordination is loose and typically governed by pre-defined objectives.
-
-\begin{figure}[t]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 0.5cm 0.25cm},clip,width=0.45\linewidth]{figures/Literature Review/framework/instances/domainspec.pdf}
-\caption{System of Specialized DTs}
-\label{fig:framework-instance-spec-dt}
-\end{figure}
-
-\textbf{Example.} A single cyber-physical asset may be supported by a suite of specialized DTs: one modeling mechanical behavior, another monitoring electrical subsystems, and a third analyzing environmental effects. Together, these DTs provide complementary insights into the same physical system’s performance and reliability.
+A System of Specialized DTs consists of multiple DTs twinning the same physical system, each focused on a specific analytical or functional domain. Coordination is primarily horizontal among DTs to ensure holistic representation.
 
 \subsubsection{System of Specialized DTs and Specialized Systems}\label{sec:literature-review-classification-instance-spec-dt-and-system}
 
-The most general SoTS architecture (\figref{fig:framework-instance-spec-dt-and-system}) extends specialization across both digital and physical domains. Multiple DTs twin multiple heterogeneous systems, often with overlapping or interdependent scopes. Coordination occurs through shared standards or data schemas rather than strict control, enabling interoperability across specialized domains.
-
-\begin{figure}[h]
-\centering
-\includegraphics[trim={0.66cm 0.25cm 0.75cm 0.25cm},clip,width=0.55\linewidth]{figures/Literature Review/framework/instances/domainspec2.pdf}
-\caption{System of Specialized DTs and Specialized Systems}
-\label{fig:framework-instance-spec-dt-and-system}
-\end{figure}
-
-\textbf{Example.} An electro-mechanical system with distinct mechanical and electrical components may employ separate DTs for performance optimization and safety assurance. Each DT interacts with both its specialized subsystems and other DTs, forming a partially overlapping SoTS that integrates mechanical and electrical views into unified decision support.
-
-This classification framework bridges classical SoS architectures and digital twinning principles, highlighting how control, autonomy, and goal alignment manifest across varying levels of coupling. Directed and acknowledged SoTS emphasize centralized governance and monitoring, while collaborative and virtual SoTS rely on distributed coordination and emergent behavior. The two specialized patterns capture the growing modularization of digital twins, where specialization, both digital and physical, enables fine-grained modeling and domain-specific intelligence within broader interconnected systems.
-
+This general form extends specialization across both digital and physical layers. Multiple DTs twin heterogeneous systems, often with overlapping scopes. Coordination relies on shared data standards rather than hierarchy, enabling interoperability across specialized domains.
