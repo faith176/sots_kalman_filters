@@ -1,6 +1,57 @@
 \section{Results}\label{sec:literature-review-results}
-In this section, we report the key findings of our study on the state-of-the-art of SoTS.
+In this section, we report the key findings of our study on the state-of-the-art of SoTS. The analysis centers on the motivations for integrating DTs and SoS, the dominant architectural structures found in SoTS, the SoS dimensions most supported in practice, the treatment of reliability as a non-functional property, the technological maturity of the field as reflected by TRL levels, and the extent to which standards guide current implementations. Together, these findings identify both the strengths and the missing capabilities in existing approaches.
 
 
 
-TODO CONDENSE.....
+%---------------------------------------------
+\subsection{Motivations for Combining DTs and SoS}\label{subsec:literature-review-results-motivations}
+The motivations extracted from the primary studies fall into four categories: optimization, integration, validation, and maintainability, summarized in \tabref{tab:motivations-table}. Optimization is the most common driver (\xofyp{30}{80}), typically aiming to improve coordination and cross-system decision-making, such as reducing turnaround time in UAV–USV landing operations \cite{li2022cognitive}. Integration (\xofyp{25}{80}) focuses on unifying heterogeneous DTs to support coordinated management in domains like energy and manufacturing \cite{monsalve2021novel}. Validation studies (\xofyp{15}{80}) use SoTS to test multi-agent behaviours in controlled environments, including vehicle coordination \cite{dahmen2022modeling}. Maintainability (\xofyp{10}{80}) emphasizes predictive diagnostics and lifecycle monitoring. Overall, SoTS are pursued to extend the analytical precision and real-time awareness of DTs across distributed systems.
+
+\input{tables/Literature Review/RQs/rq1/motivations.tex}
+
+%---------------------------------------------
+\subsection{Architectural Structures in SoTS}\label{subsec:literature-review-results-architecture}
+To understand how DTs and SoS are combined, studies were classified using the SoTS framework from \secref{sec:literature-review-classification}. As shown in \tabref{tab:sots-type-table}, Acknowledged SoTS are most prevalent (\xofyp{31}{80}), pairing distributed autonomy with a coordinating DT. For example grid-scale Digital Twin Masters synchronizing local clients \cite{monsalve2021novel}. Directed SoTS (\xofyp{26}{80}) use a controlling DT to enforce shared objectives, common in infrastructure and factory settings \cite{reiche2021digital, li2024comprehensive}. Collaborative SoTS (\xofyp{19}{80}) use peer-to-peer coordination, such as DT agents negotiating production tasks \cite{vogel-heuser2021approach}. Virtual SoTS (\xofyp{4}{80}) remain emerging, explored in adaptive cyber-physical collectives \cite{esterle2021digital}. Overall, most implementations rely on centralized or semi-centralized coordination rather than fully decentralized forms.
+
+\input{tables/Literature Review/RQs/rq2/sotsTypeTable}
+
+%---------------------------------------------
+\subsection{SoS Dimensions Represented in SoTS}\label{subsec:literature-review-results-sos-characteristics}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.05\linewidth]{figures/Literature Review/rq4/sosDimensions.pdf}
+    \caption{Prevalence of SoS dimensions across SoTS studies.}
+    \label{fig:sos-dim}
+\end{figure}
+
+As shown in \figref{fig:sos-dim}, distribution (92.5\%) and independence (88.75\%) are the most consistently supported dimensions, reflecting SoTS’ focus on geographically dispersed and managerially independent constituents. Interoperability (76.25\%) and interdependence (77.5\%) are also strongly represented due to cross-DT data flows and exchange. In contrast, autonomy (47.5\%) and emergence (53.75\%) appear only partially, and dynamic dimensions, reconfiguration (43.75\%) and evolution (37.5\%), are least addressed. This indicates that while structural coordination is widely supported, runtime adaptation and long-term SoS behaviour remain underdeveloped.
+
+%---------------------------------------------
+\subsection{Reliability as a Non-Functional Property}\label{subsec:literature-review-results-reliability}
+\input{tables/Literature Review/RQs/rq5/reliabilityTable}
+Reliability was addressed in \xofyp{41}{80} studies but rarely beyond architectural mechanisms. As summarized in \tabref{tab:reliability-table}, common strategies include fallback to local twins during communication loss \cite{alam2017c2ps, larsen2024towards}, asynchronous messaging to tolerate intermittent connectivity \cite{acharya2023twins, liu2020web-based}, and recalibration loops for restoring synchronization \cite{esterle2021digital, villalonga2021decision-making}. However, only two studies formally modeled reliability, and just three validated it through fault injection or simulation \cite{park2020digital, saraeian2022digital}. 
+% Notably, almost none address reliability under temporary data unavailability—a critical challenge for dynamic SoTS and a key motivation for the architecture developed in this thesis.
+
+
+
+
+%---------------------------------------------
+\subsection{Technical Maturity of SoTS Research}
+\label{subsec:literature-review-results-trl}
+
+To assess the maturity of current SoTS work, each study was classified using 
+Technology Readiness Levels (TRLs)~\cite{mankins2009technology}, grouped into 
+five clusters ranging from early concept exploration (TRL~1–2) to fully 
+operational systems (TRL~9).
+
+\input{tables/Literature Review/RQs/rq6/trlTable}
+
+As shown in \tabref{tab:trl-table}, most SoTS research remains at low to mid-level maturity: demonstration prototypes dominate, followed by early-stage concept studies, with only a single work reaching operational deployment. This indicates that current SoTS implementations are largely validated in controlled or simulated environments rather than real operational settings.
+
+
+%---------------------------------------------
+\subsection{Adoption of Standards}\label{subsec:literature-review-results-standards}
+\input{tables/Literature Review/RQs/rq6/standards}
+
+Standard adoption remains uneven (\tabref{tab:standards-table}). OPC~UA is most frequently used (\xofyp{13}{80}) for secure, interoperable communication among DTs \cite{dobie2024network, joseph2021aggregated}. The Asset Administration Shell (IEC~63278) appears in (\xofyp{8}{80}) studies to provide structured asset representation \cite{gill2022method, gollner2022collaborative}, while RAMI~4.0 supports layered architectural alignment \cite{binder2021utilizing}. Domain-specific standards such as VANET, IPv6, ISO/IEC/IEEE~15288, ISA-95, and IEC~61850 appear sporadically, and security-oriented standards (e.g., GDPR, OAuth~2.0) are rare. Most studies reference standards as guidance rather than strict compliance frameworks, reflecting the early-stage maturity of SoTS practice.

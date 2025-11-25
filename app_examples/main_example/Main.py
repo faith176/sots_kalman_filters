@@ -1,6 +1,8 @@
 from app.Orchestrator import Orchestrator
 from app.core.bridge.JavaCEPBridge import JavaCEPBridge
 
+# Run with: python -m app_example.main_example.Main
+
 def main():
     orch = Orchestrator(
         pattern_cfg="patterns/main_example_patterns.json",

@@ -7,6 +7,8 @@ from pathlib import Path
 from .app_overrides.ExperimentOrchestrator import ExperimentOrchestrator
 from app.core.bridge.JavaCEPBridge import JavaCEPBridge
 
+# Run with: python -m app_example.experiment_example.Main
+
 LOG = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 

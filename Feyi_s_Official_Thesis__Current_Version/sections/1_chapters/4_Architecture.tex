@@ -1,5 +1,27 @@
 \chapter{Architecture}\label{ch:architecture}
 
+% 4.1 Middleware Meta-Model
+
+% Introduce the idea of this being a middleware for digital twisn
+
+% Insert requirements and where they are derived from 
+
+% Insert the UML showing the architecture
+
+% Describe key components (Event, Stream, Reconstructor, Predictor, ConfidenceModel, CEPEngine, Coordinator)
+
+% 4.2 Middleware Runtime and Data Flow
+
+% Describe the event pipeline (source → stream → reconstruction → CEP → output)
+% show the sequence and activity diagram
+
+% Mention the AAS shell and position this as a submodule to be inserted in it
+
+% 4.4 AAS-Aligned Digital Twin Representation 
+% Explain how each middleware component maps to AAS submodels
+% (RawData ↔ Stream/Event, Reconstruction ↔ Reconstructor/Predictor, etc.)
+
+
 The architecture of the proposed framework is designed to enable reliable event detection and reasoning within dynamically composed Systems of Twinned Systems (SoTS).  
 Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter presents the architectural foundations of the framework and explains how its design supports reliable operation under uncertainty.
 The chapter first defines the architectural requirements guiding the design (\secref{sec:arch-reqs}), followed by an overview of the overall system structure and its components.
@@ -39,21 +61,22 @@ Requirements \textbf{R4--R6} define the architectural qualities necessary to sup
 Finally, \textbf{R6} ensures interoperability through standardized data formats and lightweight communication protocols, enabling seamless integration across distributed twins and middleware platforms.  
 Collectively, these architectural requirements ensure that the framework remains adaptable, transparent, and compatible across diverse SoTS implementations while maintaining reliable operation under uncertainty.
 
-
-To position the proposed framework relative to existing CEP systems, Table~\ref{tab:cep-balanced-comparison} compares the prposed architecture against with commonly used engines discussed in \secref{subsec:background-cep-principles}. While traditional CEP platforms focus on pattern and stream processing, the framework extends these capabilities by incorporating reconstruction, confidence to address reliability challenges in SoTS environments.
-
-\input{tables/Architecture/framework_comparison.tex}
-
-
 \section{Framework}\label{sec:arch-framework}
-\figref{fig:metamodel} shows a meta model of the framework. The architecture is organized into three conceptual layers: messaging, processing, and data. This separation enables modularity, ensuring that components can be replaced or extended without altering the overall semantics of operation. The messaging layer abstracts communication and event exchange, decoupling the framework from specific middleware protocols (e.g., ZeroMQ, MQTT). The processing layer controls data compensation, confidence computation, and complex-event reasoning. The data layer formalizes the structure and semantics of events within the system.
+Intro of architecture 
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/Meta Model.drawio.pdf}}
-\caption{Framework Meta Model}
-\label{fig:metamodel}
+\fbox{\includegraphics[width=\textwidth]{figures/Architecture/UML.drawio.pdf}}
+\caption{Unified Modeling Language (UML) Diagram}
+\label{fig:implementation_uml}
 \end{figure}
+
+Figure~\ref{fig:implementation_uml} illustrates the implemented structure of the framework.
+Each module in the meta-model is instantiated as a concrete class, with inter-module communication handled entirely through ZeroMQ channels.
+The \textit{Coordinator} manages scheduling and timing, invoking the \textit{Reconstructor} whenever data is missing.
+The \textit{Reconstructor} interacts with the pluggable \textit{Predictor} to estimate values and append confidence metadata, which are serialized as JSON and published back to the event stream.
+The \textit{CEP Engine}, implemented via Esper, subscribes to the reconstructed stream to evaluate event patterns defined in EPL.
+
 
 
 \subsection{Messaging Layer}
@@ -182,32 +205,3 @@ This approach ensures that event processing remains decoupled from data generati
 It also allows Esper to be replaced by any other CEP system capable of consuming structured event streams (e.g., Siddhi or Flink CEP) with minimal reconfiguration, as long as the replacement follows the same event schema and channel interface.
 The CEP engine evaluates temporal and logical patterns across reconstructed events. Because each event includes confidence, pattern rules can incorporate confidence thresholds. For example, triggering alerts only when correlated events exceed a cumulative confidence value.
 
-
-\subsection{Implementation UML Overview}\label{subsec:arc-framework-uml}
-
-\label{sec:implementation-uml}
-
-Figure~\ref{fig:implementation_uml} illustrates the implemented structure of the framework.
-Each module in the meta-model is instantiated as a concrete class, with inter-module communication handled entirely through ZeroMQ channels.
-The \textit{Coordinator} manages scheduling and timing, invoking the \textit{Reconstructor} whenever data is missing.
-The \textit{Reconstructor} interacts with the pluggable \textit{Predictor} to estimate values and append confidence metadata, which are serialized as JSON and published back to the event stream.
-The \textit{CEP Engine}, implemented via Esper, subscribes to the reconstructed stream to evaluate event patterns defined in EPL.
-
-% \begin{figure}[H]
-% \centering
-% \fbox{
-%     \begin{minipage}[c][5cm][c]{0.85\textwidth}
-%     \centering
-%     \textbf{TODO: Export updated UML from drawio and place here.}
-%     \end{minipage}
-% }
-% \caption{Unified Modeling Language (UML) Diagram}
-% \label{fig:implementation_uml}
-% \end{figure}
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/UML.drawio.pdf}}
-\caption{Unified Modeling Language (UML) Diagram}
-\label{fig:implementation_uml}
-\end{figure}
