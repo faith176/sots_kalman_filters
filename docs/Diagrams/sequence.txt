@@ -1,5 +1,5 @@
 @startuml
-title Process Flow of the Reliability-Enhanced CEP Framework
+title Process Flow
 
 actor Researcher
 
@@ -8,7 +8,6 @@ participant Coordinator
 participant EventStream
 participant Reconstructor
 participant Predictor
-participant ConfidenceModel
 participant CEPEngine
 
 == Event Generation ==
@@ -20,15 +19,11 @@ Coordinator -> EventStream: publish(event, "observed")
 EventStream -> Reconstructor: dispatch(event, "observed")
 
 alt Event observed
-    Reconstructor -> ConfidenceModel: computeConfidence(event)
-    ConfidenceModel --> Reconstructor: confidence
     Reconstructor -> EventStream: publish(event + metadata, "reconstructed")
 else Event missing (gap detected)
     Coordinator -> Reconstructor: triggerReconstruction()
     Reconstructor -> Predictor: predict()
     Predictor --> Reconstructor: predicted_value
-    Reconstructor -> ConfidenceModel: computeConfidence(predicted_value)
-    ConfidenceModel --> Reconstructor: confidence
     Reconstructor -> EventStream: publish(reconstructed_event, "reconstructed")
 end
 

@@ -1,0 +1,23 @@
+\begin{table*}[ht]
+\centering
+\caption{Architectural Requirements for Handling Temporary Data Gaps in SoTS}
+\label{tab:architecture-requirements}
+\footnotesize
+\begin{tabular}{@{}p{0.8cm}p{10cm}p{3.5cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Synthesized From} \\ 
+\midrule
+
+\textbf{R1} & Provide a mechanism to \textbf{identify missing observations} by detecting when an expected event fails to arrive within its anticipated schedule. & \citet{cugola2015complex}, \citet{wasserkrug2006taxonomy} \\
+
+\textbf{R2} & Establish a \textbf{representation for occurrence uncertainty} so that reconstructed events include explicit confidence metadata. & \citet{wasserkrug2006taxonomy}, \citet{cugola2015complex} \\
+
+\textbf{R3} & Ensure \textbf{uncertainty propagation} so that reconstructed events carry their confidence values to downstream CEP operators without modifying query semantics. & \citet{cugola2015complex}, \chref{ch:literature-review}, \secref{sec:literature-review-key-takeaways}\\
+
+\textbf{R4} & Provide explicit support for \textbf{short-term reliability}, enabling event-driven reasoning to continue during temporary data unavailability. & \secref{subsec:literature-review-results-reliability}, \secref{sec:literature-review-key-takeaways} \\
+
+\textbf{R5} & Preserve \textbf{compatibility with existing CEP engines} by producing events that conform to standard formats and require no changes to CEP queries or operators. & \secref{subsec:literature-review-results-standards} \\
+
+\bottomrule
+\end{tabular}
+\end{table*}

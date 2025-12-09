@@ -1,0 +1,47 @@
+\chapter{Problem Statement, Analysis, and Motivation}
+\label{ch:motivation}
+
+\id{Problem formulation -- you want to put the formal parts here. Like Event e is ... and e.t is a time stamp...}
+
+\id{Requirement}
+
+This chapter develops the motivation for addressing temporary data gaps in event-driven systems, explains why these gaps become particularly problematic in SoTS, and outlines why DTS are well positioned to mitigate their effects. It also examines limitations of existing approaches, drawing on the findings of the systematic literature review in \chref{ch:literature-review}, and concludes by defining the scope within which the proposed architecture operates.
+
+\section{Temporary Data Gaps in Event-Driven Computation}
+
+A temporary data gap occurs when an observation expected at a known interval does not arrive in time for the computation that depends on it. These gaps interrupt the flow of information through an event-driven pipeline and leave downstream components operating with stale, incomplete, or inconsistent state. Sequence-based queries fail because required events are missing, window-based operators expire without receiving sufficient data, and systems that rely on time-aligned inputs lose coherence. Any system that assumes roughly periodic updates is vulnerable. In loosely coupled architectures the impact may remain confined to a single component, but in tightly integrated settings even brief lapses can propagate through dependent computations and degrade overall responsiveness.
+
+\section{Why SoTS Are Especially Vulnerable}
+
+SoTS amplify the effects of temporary gaps because of their interdependent structure. As shown in the literature review, most SoTS rely on continuous cross-twin data exchange, shared situational awareness, and coordinated reasoning across multiple DTs. At the same time, SoTS frequently experience runtime reconfiguration, mobility, and intermittent connectivity. These characteristics introduce natural points at which short gaps arise, yet existing implementations offer limited mechanisms for handling them. Because many twins depend on each other for synchronized views, a gap affecting one constituent can quickly influence others. This combination of high interdependence and limited runtime support for handling short-term missingness makes temporary data gaps a structural challenge for SoTS, particularly as they evolve toward more dynamic and adaptive behaviours.
+
+\section{Problem Statement}
+
+The discussion leads to the following problem:
+
+\begin{quote}
+\emph{Event-driven systems, and SoTS in particular, lack mechanisms that allow event-driven reasoning to continue when expected observations temporarily fail to arrive.}
+\end{quote}
+
+Current systems provide no way to express the absence of an expected observation, estimate what it should have been, or represent how confident the system is in such an estimate. Without this capability, SoTS remain vulnerable to short-term data unavailability even though many twins already maintain models capable of predicting short-term behaviour.
+
+
+\section{Limitations of Existing Event-Driven Approaches}
+
+Although temporary gaps occur frequently in practice, event-driven systems provide little support for representing or reasoning through intervals in which expected observations fail to arrive. Traditional CEP engines advance computation only when new events appear, and uncertainty-aware extensions handle only uncertainty in arriving events. As noted by \citet{alevizos2017probabilistic}, probabilistic CEP frameworks model noisy attributes, uncertain timestamps, or rule-level ambiguity but still assume uninterrupted event flows. Approaches based on Bayesian networks \citep{wasserkrug2010efficient, wasserkrug2012model}, interval-based timestamp reasoning \citep{zhang2013recognizing}, and lineage- or NFA-based probabilistic evaluation \citep{shen2008probabilistic, kawashima2010complex, chuanfei2010complex, wang2013complex} all require an input event to trigger reasoning and therefore cannot represent or compensate for missing observations. Frameworks such as CEP2U \citep{cugola2015introducing} and uncertainty-aware extensions to Esper and Flink \citep{moreno2019managing} enrich reasoning about partially observed events but remain inactive when the stream temporarily disappears.
+
+IoT-oriented work addresses missingness only through external preprocessing. \citet{gkoulis2025assessing} evaluate interpolation and smoothing strategies, and \citet{gkoulis2024hybrid} introduce a quality-aware CEP platform that injects synthetic values. However, reconstruction is performed outside the CEP semantics, meaning the processor cannot distinguish fabricated from genuine events and cannot propagate uncertainty about reconstructed values
+
+
+\section{Why Digital Twins Are Well Positioned to Address Data Gaps}
+
+Digital twins maintain internal models of the physical processes they represent. These models, whether based on filtering, forecasting, simulation, or domain physics, provide short-term predictions that remain temporally aligned with the underlying system. Such capabilities allow a DT to infer behaviour over brief intervals in which new observations are unavailable. However, current DT platforms primarily use these models for synchronization, control, or simulation. They do not provide mechanisms for feeding predicted values back into event-driven reasoning or for treating predictions as explicit substitutes for missing events. As a result, the modelling capabilities of DTs remain isolated from the event-processing pipelines that depend on them. The architectural contribution of this thesis is to integrate DT-driven reconstruction with event-driven reasoning so that predictive estimates can serve as temporary stand-ins when observations fail to arrive.
+
+\section{Scope of the Architecture}
+
+The solution proposed in this thesis targets short-duration gaps in event availability. It assumes that the sensing process continues to operate, but individual updates may be delayed or briefly unavailable. The architecture does not target long-term outages, permanent sensor failures, structurally missing data, or events with corrupted or invalid payloads. In these cases reconstruction is neither feasible nor conceptually aligned with the intended purpose of handling short-term gaps.
+The architecture also acknowledges that real-world streams may contain late, out-of-order, or backlogged events. These conditions do not trigger rollback. Late arrivals are forwarded immediately, and previously issued outputs are not revised. Buffered events received after reconnection are passed through intact. Reconstructed events remain part of the logical history and may be used to recalibrate predictive models, but they are not retroactively replaced.
+
+\section{Summary}
+
+This chapter has shown that temporary data gaps disrupt event-driven computation and that their effects are intensified in SoTS due to cross-twin dependencies and runtime instability. Existing CEP systems, including probabilistic variants, cannot reason about missing events because they only operate on received observations. Meanwhile, digital twins possess modelling and forecasting capabilities that could address this issue but are not integrated into event-driven reasoning pipelines. Together, these findings highlight a gap in current SoTS practice: the absence of a mechanism that allows complex event processing to operate when expected observations are briefly unavailable. The next chapter, \chref{ch:architecture}, introduces an architectural approach that integrates DT-driven reconstruction with event-driven processing to address this limitation.
