@@ -1,0 +1,90 @@
+\chapter{Background}\label{ch:background}
+This chapter details the foundations of digital twins (\secref{sec:background-dt}), system of systems (\secref{sec:background-sos}), dependable systems (\secref{sec:background-dependability}), and complex event processing (\secref{sec:background-cep}).
+
+\section{Digital Twins}\label{sec:background-dt}
+A Digital Twin (DT) is a high-fidelity virtual representation of a physical asset or system that remains continuously synchronized with its real-world counterpart through bi-directional data exchange and feedback control \cite{david2024infonomics}. DTs extend cyber-physical integration by enabling physical and digital entities to co-evolve: data from the physical system updates the virtual model, while the model can influence the physical system through predictive or corrective actions \cite{tao2018digital}. This synchronization, supported by IoT-enabled sensing and networked infrastructures, allows the DT to replicate both the structure and dynamic behaviour of its physical twin in real time.
+
+A DT consists of three primary components \cite{vanderhorn2021digital}:  
+(1) the physical reality, representing the system, its environment, and observable processes;  
+(2) a virtual representation, which abstracts this reality using physics-based or data-driven models; and  
+(3) the interconnections that enable ongoing information exchange between the two domains.  
+These interconnections support physical-to-virtual flows that update the virtual model with sensor data, and virtual-to-physical flows that return insights or control actions back to the system. Together, these flows establish the continuous synchronization that distinguishes DTs from conventional simulations or monitoring systems.
+To clarify the levels of digital representation, \citet{kritzinger2018digital} define three forms: a digital model, a digital shadow, and a digital twin. A digital model is a static representation without live data. A digital shadow supports one-way physical-to-digital updates. A digital twin achieves full bi-directional data exchange, enabling real-time monitoring, simulation, and control.
+
+% -------------------------------------------------------------
+
+\section{System of Systems}\label{sec:background-sos}
+A system of systems (SoS) is a collection of operationally and managerially independent systems that collaborate to achieve outcomes beyond their individual capabilities \cite{maier1998architecting}. Operational independence means each constituent system can function autonomously and continue to provide useful services outside the SoS. Managerial independence reflects that these systems are developed, owned, and governed under different authorities, coordinating voluntarily rather than through centralized control. From these principles arise several properties that distinguish SoS from traditional systems. Participation is dynamic and decentralized. Constituents may join, leave, or fail at any time, yet the SoS must remain stable through partial composition. Coordination is achieved through negotiated interactions among heterogeneous systems pursuing distinct objectives, giving rise to emergent behaviors that no individual constituent can produce alone. These behaviors allow the SoS to self-stabilize and adapt as conditions evolve.
+
+Subsequent perspectives expanded on this view. \citet{boardman2006system} framed SoS as purposeful organizations of systems united by overlapping objectives but governed through decentralized authority. Their work highlighted how autonomy, collaboration, and heterogeneous capabilities contribute to emergent behaviour in SoS. Building on these earlier foundations, \citet{nielsen2015systems} synthesized prior SoS characterizations into an eight-dimensional taxonomy for analyzing and engineering SoS. Autonomy and independence define the self-governance and operational freedom of constituent systems. Distribution, evolution, and reconfiguration describe how SoS are spatially dispersed, evolve over time, and adapt dynamically to change. Emergence and interdependence capture the collective behaviour that arises from system interactions and mutual reliance. Finally, interoperability reflects the ability of heterogeneous systems to exchange and use information effectively. Together, these dimensions provide a comprehensive conceptual framework for characterizing SoS organization and behaviour.
+
+% -------------------------------------------------------------
+
+
+
+\section{Dependable Systems}\label{sec:background-dependability}
+Dependability is the justified confidence that a system delivers correct service under stated conditions~\cite{avizienis2004basic}. Its core attributes capture complementary aspects of trustworthy behaviour and align with the quality characteristics defined in ISO/IEC 25010~\cite{ISO25010:2023}. Availability is the readiness of a system to deliver correct service when required, while reliability is the sustained delivery of correct service over time. Safety ensures that faults do not lead to unacceptable or harmful consequences, and integrity protects data and operations from corruption or improper modification. Maintainability describes how easily a system can be repaired, updated, or adapted while preserving correct service.
+
+Dependability is achieved through four engineering means: fault prevention, which reduces the introduction of faults during development; fault tolerance, which enables continued operation despite faults; fault removal, which identifies and eliminates faults through verification and maintenance; and fault forecasting, which estimates the likelihood and potential impact of failures. Together, these measures span the system lifecycle and provide a structured approach for designing and operating dependable software. A fault is defined as the underlying cause that may place a component into an erroneous state, potentially leading to failure~\cite{avizienis2004basic}. Faults may be transient, intermittent, or permanent, each requiring different mitigation strategies such as retries and buffering, redundancy, or repair mechanisms. Because faults can propagate through interacting components, dependability engineering emphasizes early analysis of failure modes and appropriate safeguards to maintain correct service under uncertainty and change.
+
+
+% -------------------------------------------------------------
+
+\section{Complex Event Processing}\label{sec:background-cep}
+Complex event processing (CEP) enables systems to identify meaningful patterns and relationships within continuous streams of events \cite{cugola2015complex}. CEP systems continuously process heterogeneous event data to detect conditions or correlations that signify higher-level phenomena. Each event typically carries a payload and timestamp, representing an observation in time. To extract knowledge from these streams, CEP engines register declarative queries or rules that define temporal and logical relationships among primitive events. These rules use operators such as selection, negation, aggregation, and sequencing to compose event patterns. When an incoming sequence satisfies the defined conditions, the engine emits a complex event that represents the detection of a significant situation within the observed system \citep{bok2018complex, gehani1992composite}. CEP has been widely adopted across domains that demand continuous situational awareness and rapid response. Its applications span business process monitoring, algorithmic trading, cybersecurity, sensor networks, and large-scale IoT infrastructures \citep{halle2017complex}.
+Practical CEP systems implement event-pattern semantics through engines that evaluate continuous queries over unbounded streams. Early systems such as SASE \citep{wu2006high} and Cayuga \citep{brenna2007cayuga} introduced the core model used today: representing events as tuples, compiling queries into finite-state machines, and incrementally evaluating temporal operators. Modern platforms build on these foundations. Esper \citep{esper_reference} maintains long-running continuous queries for low-latency pattern detection, Siddhi \citep{suhothayan2011siddhi} applies a modular pipeline for parallel evaluation, and distributed frameworks like Apache Flink \citep{carbone2015apache} integrate CEP operators into large-scale dataflow graphs.
+
+% -------------------------------------------------------------
+
+
+
+\section{Background}
+\subsection{Kalman Filtering}
+Kalman filters were first introduced by Kalman \cite{kalman1960filtering} in 1960, as part of his influential work on a recursive solution to the discrete data linear filtering problem. A Kalman filter is a recursive algorithm that estimates the state of a system while minimizing the mean squared error of the estimates \cite{bishop2001introduction}. A Kalman filter represents the system's state through a state vector, which represents the key attributes of a system at a given time. For example: 
+\[
+\vec{x}_k =
+\begin{bmatrix}
+\text{Humidity} \\
+\text{Temperature} \\
+\text{Voltage}
+\end{bmatrix}
+\]
+The uncertainty in these state estimates, along with the relationships between the uncertainties of the state variables, is represented by a covariance matrix. This matrix quantifies the degree of correlation between the different state variables:
+\[
+\Sigma_k =
+\begin{bmatrix}
+\Sigma_{\text{hh}} & \Sigma_{\text{ht}} & \Sigma_{\text{hv}} \\
+\Sigma_{\text{th}} & \Sigma_{\text{tt}} & \Sigma_{\text{tv}} \\
+\Sigma_{\text{vh}} & \Sigma_{\text{vt}} & \Sigma_{\text{vv}}
+\end{bmatrix}
+\]
+
+\subsubsection{Prediction Step}
+In the prediction step, the Kalman filter estimates the next state of the system based on the current state. This transition is represented through the state transition matrix \( \mathbf{F}_k \), which defines how the current state evolves into the next state. External influences are the factors that influence the system but are not related to the state. We add a control matrix \( \mathbf{B}_k \) and control vector \(\vec{u}_k\) as corrections to our prediction. We also need to account for uncertainty in the external influences that are not known. This noise is represented through covariance \( \mathbf{Q}_k \). The covariance matrix and state matrix are updated as follows:
+\[
+\vec{x}_{k|k-1} = \mathbf{F} \cdot \vec{x}_{k-1} + \mathbf{B} \cdot \vec{u}
+\]
+\[
+\Sigma_{k|k-1} = \mathbf{F} \cdot \Sigma_{k-1} \cdot \mathbf{F}^T + \mathbf{Q}
+\]
+
+\subsubsection{Update Step}
+In the update step, the Kalman filter refines its predicted state using actual system measurements. This step incorporates new information to correct the prediction made during the previous step.
+
+The relationship between the state and the measurements is defined by the measurement matrix \( \mathbf{H}_k \). The uncertainty in the measurements, represented as noise, is modelled by the measurement noise covariance matrix \( \mathbf{R}_k \), while the actual measurement readings are denoted as \( \vec{z}_k \)
+
+To determine how much weight to assign to the measurements versus the predictions, the \textbf{Kalman gain} \( \mathbf{K} \) is computed. The Kalman gain balances the trust between the measurements (when noise is low) and the model's predictions (when noise is high). It is calculated as follows:
+\[
+\mathbf{K} = \Sigma_{k|k-1} \cdot \mathbf{H}_k^T \cdot \left( \mathbf{H}_k \cdot \Sigma_{k|k-1} \cdot \mathbf{H}_k^T + \mathbf{R}_k \right)^{-1}
+\]
+
+Using the Kalman gain, the filter updates the state estimate and the covariance:
+
+\[
+\vec{x}_{k}' = \vec{x}_{k|k-1} + \mathbf{K}' \cdot \left( \vec{z}_k - \mathbf{H} \cdot \vec{x}_{k|k-1} \right)
+\]
+\[
+\Sigma_k' = \Sigma_{k|k-1} - \mathbf{K}' \cdot \mathbf{H}_k \cdot \Sigma_{k|k-1}
+\]
+
+These updated values are then fed back into the prediction step, completing the Kalman filter cycle. This iterative process allows the filter to continuously refine its estimates \cite{zarchan2015kalman}.
