@@ -7,6 +7,71 @@ The architecture of the proposed framework is designed to enable reliable event 
 The proposed architecture introduces a method for enabling event-driven systems, particularly those embedded within SoTS, to continue operating when expected observations temporarily fail to arrive. The core idea is to treat short-term data gaps as explicit, detectable conditions within the event pipeline and to provide a structured method for generating substitute observations whose quality is known. At a high level, the approach augments a standard event-driven pipeline with a reconstruction stage placed between the data source and the reasoning engine. This stage tracks the expected arrival schedule of each stream, detects when an observation fails to appear on time, and invokes a predictive model maintained by the digital twin to estimate what the missing observation would have been. The reconstructed event is emitted in the same structure as a normal observation but includes an additional confidence value reflecting the predictive model’s uncertainty. Both reconstructed and genuine events are forwarded to the CEP engine without requiring any changes to CEP queries or operators. The CEP engine processes the combined stream as usual, with the option to interpret confidence information when relevant.
 
 
+\section{Conceptual Foundations}
+\label{sec:architecture-conceptual-foundations}
+
+This section introduces the formal model of  the proposed architecture. It defines the structure of event streams, the notion of expected arrivals, the semantics of temporary data gaps, and the rules of reconstruction and confidence.
+
+\subsection{Event Model}
+
+In a SoTS, let
+\[
+\mathcal{D} = \{D_1, D_2, \ldots, D_n\}
+\]
+denote the set of digital-twin constituents. Each digital twin \(D_i\) performs a collection of computations,
+\[
+\mathcal{C}_i = \{c_{i1}, c_{i2}, \ldots\},
+\]
+such as complex event processing, anomaly detection, forecasting, or simulation-based analysis. These computations consume one or more input event streams originating from distributed event generators.
+
+Let \(\mathcal{G}\) be the set of event generators. Each generator \(g \in \mathcal{G}\) produces a sequence of timestamped events inserted into a dedicated arrival buffer \(Q_g\).
+An event is defined as a tuple
+\[
+e = (id,\, t_s,\, p),
+\]
+where \(id\) uniquely identifies the event instance, \(t_s\) is the source timestamp at which the underlying observation occurred, and \(p\) denotes the event payload.
+Events appear in \(Q_g\) according to wall-clock arrival order; downstream components interpret them according to their source timestamps.
+
+\subsection{Expected Arrival and Missingness}
+
+Each generator \(g\) is assumed to produce observations at a known sampling interval \(\Delta_g\).
+If the most recent event has timestamp \(t_{s-1}\), the next observation is expected at
+\[
+t_{\exp} = t_{s-1} + \Delta_g.
+\]
+
+A temporary data gap occurs when the expected observation does not appear within a tolerance window \(\varepsilon\). Formally, an event with timestamp \(t_s = t_{\exp}\) is considered \emph{missing} when
+\[
+t_{\mathrm{now}} > t_{\exp} + \varepsilon
+\]
+and no such event is present in \(Q_g\).
+
+\subsection{Reconstruction Semantics}
+
+When a data gap is detected, the architecture generates a substitute event \(\hat{e}\) that stands in place of the missing observation. A reconstructed event takes the form
+\[
+\hat{e} = (id',\, t_{\exp},\, \hat{p},\, \gamma),
+\]
+where:
+\begin{itemize}
+    \item \(t_{\exp}\) is the timestamp of the missing observation,
+    \item \(\hat{p}\) is the predicted payload computed by the DT's internal model,
+    \item \(\gamma \in [0,1]\) is a confidence value assigned by the predictive model,
+    \item \(id'\) uniquely identifies the synthetic event.
+\end{itemize}
+
+Reconstructed events are delivered to downstream consumers in the same manner as genuine events.
+
+\subsection{Confidence Semantics}
+
+The confidence value \(\gamma\) expresses the model's internal estimate of the plausibility of \(\hat{p}\).
+The architecture makes no assumptions about how confidence is computed, but it must satisfy:
+\begin{enumerate}
+    \item \(0 \le \gamma \le 1\),
+    \item downstream reasoning components may treat \(\gamma\) as an attribute for filtering, weighting, or annotating results.
+\end{enumerate}
+
+
 \subsection{Architectural Assumptions}
 
 The conceptual model operates under the following assumptions, which define the types of computations and data the architecture can support.
@@ -37,6 +102,7 @@ As highlighted by \citet{wasserkrug2006taxonomy}, uncertainty in active and even
 \end{enumerate}
 
 
+\input{tables/Architecture/requirements V2.tex}
 
 Temporary data gaps correspond to occurrence uncertainty originating from the data source: an event that should exist fails to appear on time, leaving its state undefined unless explicitly modelled. Unlike noisy or imprecise measurements, a missing event has no representation in the stream and thus cannot be reasoned about unless explicitly modelled. This absence disrupts temporal reasoning, sequence detection, and window-based operators in CEP systems. Building on the conceptual foundations, uncertainty taxonomy \cite{wasserkrug2006taxonomy}, dependability framework \cite{avizienis2004basic}, and the limitations identified in the literature review \chref{ch:literature-review}, the architecture must satisfy the following requirements ((Table~\ref{tab:architecture-requirements})):
 
