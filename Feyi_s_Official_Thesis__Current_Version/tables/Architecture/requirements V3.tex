@@ -1,30 +1,34 @@
 \begin{table*}[ht]
 \centering
-\caption{Architectural Requirements Derived from the Formal Event Semantics and Literature Review}
+\caption{Architectural Requirements}
 \label{tab:architecture-requirements}
 \footnotesize
-\begin{tabular}{@{}p{0.9cm}p{9.6cm}p{3.8cm}@{}}
+\begin{tabularx}{\textwidth}{@{}p{0.9cm}X p{1.7cm}p{3.1cm}@{}}
 \toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Derived From} \\ 
+\textbf{ID} &
+\textbf{Requirement} &
+\textbf{Formal Model Ref.} &
+\textbf{Supporting Literature} \\
 \midrule
 
 \textbf{R1} &
 The system shall provide a mechanism to \textbf{identify missing
-observations} by evaluating temporal expectations over event streams and
-detecting when an expected event fails to occur within its tolerance
-window. &
-\secref{sec:scheduling-missing};
+observations} by detecting when an expected event fails to occur within
+its tolerance window. &
+\secref{sec:scheduling-missing} &
+\citet{wasserkrug2006taxonomy},
 \citet{cugola2015complex},
-\citet{wasserkrug2006taxonomy}
+\secref{sec:literature-review-key-takeaways}
 \\
 
 \textbf{R2} &
 The system shall provide an \textbf{explicit representation for inferred
 observations} so that reconstructed events remain distinguishable from
 observed events through metadata. &
-\secref{sec:state-based-inference};
+\secref{sec:state-based-inference} &
 \citet{wasserkrug2006taxonomy},
-\citet{cugola2015complex}
+\citet{cugola2015complex},
+\secref{sec:literature-review-key-takeaways}
 \\
 
 \textbf{R3} &
@@ -32,7 +36,7 @@ The system shall support \textbf{uncertainty propagation} by attaching
 confidence metadata to reconstructed events, enabling downstream event
 processing to account for occurrence uncertainty without modifying
 query semantics. &
-\secref{sec:confidence-stream-augmentation};
+\secref{sec:confidence-stream-augmentation} &
 \citet{cugola2015complex},
 \chref{ch:literature-review},
 \secref{sec:literature-review-key-takeaways}
@@ -40,23 +44,23 @@ query semantics. &
 
 \textbf{R4} &
 The system shall enable \textbf{continued operation under temporary data
-unavailability} by supporting inference over missing observations rather
-than suspending event-driven reasoning. &
+unavailability} by supporting inference over missing observations in
+place of immediate suspension of event-driven processing. &
 \secref{sec:scheduling-missing},
-\secref{sec:state-based-inference},
+\secref{sec:state-based-inference} &
 \secref{subsec:literature-review-results-reliability},
 \secref{sec:literature-review-key-takeaways}
 \\
 
 \textbf{R5} &
-The system shall preserve \textbf{compatibility with existing CEP
-engines} by producing reconstructed events that conform to the same
-structural and temporal semantics as observed events. &
+The system shall preserve \textbf{compatibility with existing event-driven
+processing engines} by producing reconstructed events that conform to
+the same structural and temporal semantics as observed events. &
 \secref{sec:events-streams},
-\secref{sec:confidence-stream-augmentation},
-\secref{subsec:literature-review-results-standards}
+\secref{sec:confidence-stream-augmentation} &
+\secref{sec:literature-review-key-takeaways}
 \\
 
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table*}

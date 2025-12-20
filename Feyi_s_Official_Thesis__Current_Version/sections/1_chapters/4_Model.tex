@@ -1,12 +1,13 @@
-\chapter{Formal Semantics of Event Time and Absence}
-\label{ch:formal-semantics}
+\chapter{Formal Underpinnings of Event-Driven Operation Under Uncertainty}\label{ch:formal-semantics}
 
-This chapter defines a formal semantic model for event-driven systems operating under missing or delayed data. The model characterizes events, event streams, scheduling, and inference under missing observations. These semantics serve as the foundation for the architecture introduced in Chapter~\ref{ch:architecture}.
+The literature review in \chref{ch:literature-review} identifies a reliability gap in SoTS: while system behaviour depends on continuous streams of observational events, existing approaches provide limited support for maintaining correct and continuous operation when such streams are temporarily disrupted.
+Addressing this gap requires an explicit model of system operation that captures how events are generated, when they are expected to occur, and how system state may be inferred when expected events do not arrive.
+This chapter presents an abstract formal model for event-driven systems that enables confidence-aware processing under missing or delayed observations. This model provides the formal basis for the system architecture introduced in \chref{ch:architecture}.
 
-The focus of this chapter is on the semantics of event time and missing observations. While the model distinguishes between observed, late, and missing events, its primary concern is reasoning about events that fail to appear within their expected time windows.
 
-The treatment of late or out-of-order events beyond their classification is outside the scope of this thesis. This includes retroactive correction of reconstructed events, batch updates to predictors when delayed observations arrive, and reordering or reconciliation across multiple event streams. These topics are left for future work
-(\chref{ch:conclusion}).
+\paragraph{Scope}
+This chapter focuses on the formal modeling of event time and temporary observation unavailability in event-driven systems. The treatment of late or out-of-order events is limited to their classification and does not address retroactive corrections, reconciliation of reconstructed events, or reordering across multiple event streams. These aspects are beyond the scope of this thesis and are left for future work (\chref{ch:conclusion}).
+
 
 \section{Events, Streams, and Generators}
 \label{sec:events-streams}
@@ -15,14 +16,14 @@ An \emph{event} represents an observation about a system and is defined as
 \begin{equation}
 e = \langle id, t, v, m \rangle ,
 \end{equation}
-where $id$ identifies the event type, $t$ is the \emph{event time} indicating when the observed phenomenon occurred, $v$ is the observed or inferred value, and $m$ denotes metadata. Metadata records observational attributes such as provenance, confidence, and status.
+where $id$ identifies the event type, $t$ is the event time indicating when the observed phenomenon occurred, $v$ is the observed or inferred value, and $m$ represents metadata. Metadata records observational attributes such as provenance, confidence, and status.
 
 An \emph{event stream} is a sequence of events ordered by event time,
 \begin{equation}
 E = \langle e_1, e_2, \dots \rangle
 \quad \text{with} \quad t_1 \le t_2 \le \dots .
 \end{equation}
-Event streams represent partial observations of the underlying system: events may be observed, delayed, or entirely missing.
+
 
 Events originate from a finite set of \emph{event generators}
 $\mathcal{G}$. Each generator
@@ -34,21 +35,18 @@ $\Delta_g$. For each generator $g$, the system observes a corresponding event st
 
 \section{Scheduling and Missing Observations}
 \label{sec:scheduling-missing}
+According to \citet{wasserkrug2006taxonomy}, event streams are subject to occurrence uncertainty originating at their sources, such that observed event streams may represent only partial views of the underlying system behaviour. In event-driven systems, this uncertainty must be resolved at runtime to determine whether an expected observation has occurred or whether its absence should be interpreted as delay or missingness.
 
-Missingness in event streams is a form of occurrence uncertainty
-originating at the event source \cite{wasserkrug2006taxonomy}.
-Scheduling determines whether expected events have been observed based on their event times and the current system time.
+Event scheduling compares expected event times from event
+generators with the current system time to determine whether an
+observation is pending, late, or missing.
 
-Let $t_{\mathrm{now}}$ denote the current system time maintained by the
-processing system. For each generator $g$, let $t^{\mathrm{last}}_g$ be
-the event time of the most recent event from $E_g$ that has been
+Let $t_{\mathrm{now}}$ represent the current system time maintained by the processing system. For each generator $g$, let $t^{\mathrm{last}}_g$ be the event time of the most recent event from $E_g$ that has been
 accounted for by the system. The next expected event time is defined as
 \begin{equation}
 t^{\mathrm{exp}}_g = t^{\mathrm{last}}_g + \Delta_g .
 \end{equation}
-
 A tolerance window $\varepsilon_g$ represents the acceptable observation delay.
-
 
 Scheduling classifies each expected observation according to the set
 \begin{equation}
@@ -59,13 +57,13 @@ An expected event at time $t^{\mathrm{exp}}_g$ is classified as:
 \begin{itemize}
     \item \textsc{Observed} if there exists $e \in E_g$ such that
     $e.id = id_g$, $e.t = t^{\mathrm{exp}}_g$, and the observation delay
-    recorded in $m$ does not exceed $\varepsilon_g$;
+    recorded in $m$ does not exceed $\varepsilon_g$
     \item \textsc{Late} if such an event is observed but the recorded
-    observation delay exceeds $\varepsilon_g$;
+    observation delay exceeds $\varepsilon_g$
     \item \textsc{Pending} if $t_{\mathrm{now}} \le t^{\mathrm{exp}}_g +
-    \varepsilon_g$ and no such event has yet been observed;
+    \varepsilon_g$ and no such event has yet been observed
     \item \textsc{Missing} if $t_{\mathrm{now}} > t^{\mathrm{exp}}_g +
-    \varepsilon_g$ and no such event has been observed.
+    \varepsilon_g$ and no such event has been observed
 \end{itemize}
 
 \section{State-Based Prediction and Confidence}
@@ -90,9 +88,9 @@ Uncertainty associated with the prediction is represented through a confidence v
 \begin{equation}
 conf_g^{s} = \mathcal{C}\bigl(x_g^{s}\bigr),
 \end{equation}
-where $conf_g^{s}$ lies in an ordered confidence domain (e.g., $[0,1]$).
 When prediction is applied, the confidence value reflects the
-uncertainty encoded in the updated predictor state. When an event is observed directly, the corresponding confidence may be assigned its maximum value.
+uncertainty encoded in the updated predictor state. When an event is observed directly, the corresponding confidence may be assigned its maximum value. 
+% Representing uncertainty as event metadata follows requirements identified in prior work on uncertainty in event-driven processing \cite{cugola2015complex}.
 
 
 \section{Stream Augmentation}
@@ -103,73 +101,41 @@ When prediction is applied, the resulting estimate is used to create a reconstru
 \hat{e}_{g} =
 \langle id_g, t^{\mathrm{exp}}_g, \hat{v}_g, m_{\mathrm{pred}} \rangle ,
 \end{equation}
-where $m_{\mathrm{pred}}$ records reconstruction-related metadata, including confidence and provenance.
+where $m_{\mathrm{pred}}$ records confidence and provenance.
 
 Reconstructed events may then be inserted into an augmented event stream
 \begin{equation}
 E_g^{+} = E_g \cup \{ \hat{e}_{g} \}.
 \end{equation}
-Representing uncertainty as event metadata follows requirements identified in prior work on uncertainty in event-driven processing \cite{cugola2015complex}.
 
 % ------------------------------------------
-\section{Confidence-Aware Event Semantics}
+\section{Confidence-Aware Event Processing}
 \label{sec:confidence-aware-semantics}
 
-The augmented event streams defined in this chapter are intended to be
-consumed by downstream event-driven processing components, such as
-CEP engines. From a semantic perspective,
-reconstructed events are treated uniformly with observed events, while
+The augmented event streams $E_g^{+}$ produced by the model are intended
+to be consumed by downstream event-driven processing components.
+Reconstructed events are treated uniformly with observed events, while
 remaining distinguishable through confidence metadata.
 
-Let $e = \langle id, t, v, m \rangle$ be an event with associated
+Let $e = \langle id, t, v, m \rangle$ represent an event with associated
 confidence value $conf(e) \in [0,1]$. Event patterns and temporal
-relations are evaluated over event time as usual, independent of
-confidence. Confidence values may be incorporated into event semantics
+relations are evaluated solely over event time, independent of
+confidence. Confidence values may be incorporated into event processing
 through additional predicates or aggregation functions.
 
-For example, a confidence-aware event condition may require
+For example, a confidence-aware condition may require
 \begin{equation}
 conf(e) \ge \theta ,
 \end{equation}
 where $\theta$ is a confidence threshold, or aggregate confidence over a
-set of events may be computed using functions such as minimum, maximum,
-or average confidence.
+set of events may be computed using functions such as minimum, maximum, average, or most recent confidence confidence.
 
-These extensions allow uncertainty introduced by event reconstruction
-to be accounted for at the semantic level, without modifying the
-underlying temporal or structural interpretation of event streams.
-
+These mechanisms allow uncertainty introduced by reconstructed events
+to be accounted for explicitly, while preserving the structural and
+temporal semantics of event streams.
 
 
 \section{Formal Requirements}
 \label{sec:formal-requirements}
-
-Uncertainty in event-driven systems arises along multiple dimensions,
-including uncertainty about whether an event occurred and uncertainty
-introduced by inference processes \cite{wasserkrug2006taxonomy}. In this
-thesis, temporary data gaps correspond to occurrence uncertainty: an
-event that is expected to occur fails to appear within its anticipated
-time window.
-
-The formal semantics defined in this chapter introduce explicit notions
-of event time, missingness, predictive inference, and confidence
-representation. Any architecture realizing these semantics must satisfy
-the following requirements:
-
-\begin{itemize}
-    \item The system shall operate over discrete, timestamped events
-    governed by event-time semantics.
-    \item The system shall detect missing observations using bounded
-    timing windows.
-    \item The system shall explicitly represent missing observations.
-    \item The system shall associate reconstructed events with confidence
-    metadata.
-    \item The system shall treat reconstructed and observed events
-    uniformly at external interfaces.
-\end{itemize}
-
-Table~\ref{tab:architecture-requirements} elaborates these requirements
-and traces each one back to its semantic origin and supporting
-literature.
-
 \input{tables/Architecture/requirements V3.tex}
+From the formal model defined in this chapter, a set of architectural requirements can be derived for systems that aim to implement confidence-aware event processing under temporary data unavailability. These requirements are summarized in \tabref{tab:architecture-requirements}, which traces each requirement to the corresponding elements of the formal event model and supporting literature. In the next chapter, these requirements are instantiated in a concrete system architecture that realizes the proposed model.

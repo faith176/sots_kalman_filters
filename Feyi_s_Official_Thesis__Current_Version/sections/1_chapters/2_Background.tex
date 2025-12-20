@@ -13,14 +13,13 @@ Building on these foundations, \citet{nielsen2015systems} synthesized prior char
 % -------------------------------------------------------------
 \section{Digital Twins}\label{sec:background-dt}
 A Digital Twin (DT) is a high-fidelity virtual representation of a physical asset or system that remains continuously synchronized with its real-world counterpart through bi-directional data exchange and feedback control \cite{david2024infonomics}. DTs extend cyber-physical integration by enabling physical and digital entities to co-evolve: data from the physical system updates the virtual model, while the model can influence the physical system through predictive or corrective actions \cite{tao2018digital}. This synchronization, supported by IoT-enabled sensing and networked infrastructures, allows the DT to replicate both the structure and dynamic behaviour of its physical twin in real time.
-A DT comprises three primary components \cite{vanderhorn2021digital}: 
-\begin{enumerate}[nosep]
-    \item the \emph{physical system}, representing the asset, process, or environment being observed
-    \item the \emph{virtual representation}, which abstracts this reality using computational models and 
-    \item the \emph{interconnections} that enable continuous information exchange between the physical and digital components. 
-\end{enumerate}
 
-These interconnections support physical-to-virtual flows that update the digital state based on observations, as well as virtual-to-physical flows that communicate predictions, recommendations, or control signals back to the physical system.
+A DT comprises three primary components \cite{vanderhorn2021digital}:
+(i) the \emph{physical system}, representing the asset, process, or
+environment being observed; (ii) the \emph{virtual representation},
+which abstracts this reality using computational models; and (iii) the
+\emph{interconnections} that enable continuous information exchange
+between the physical and digital components. These interconnections support physical-to-virtual flows that update the digital state based on observations, as well as virtual-to-physical flows that communicate predictions, recommendations, or control signals back to the physical system.
 
 To clarify related forms of digital representation, \citet{kritzinger2018digital} distinguish between a digital model, a digital shadow, and a digital twin. A digital model represents a static computational representation of a physical system without live data connectivity, while a digital shadow supports one-way updates from the physical system to the digital representation. A digital twin, in contrast, maintains a recurring, bidirectional exchange that enables continuous synchronization and supports operational services.
 
