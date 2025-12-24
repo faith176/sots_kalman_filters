@@ -7,40 +7,6 @@ The architecture of the proposed framework is designed to enable reliable event 
 The proposed architecture introduces a method for enabling event-driven systems, particularly those embedded within SoTS, to continue operating when expected observations temporarily fail to arrive. The core idea is to treat short-term data gaps as explicit, detectable conditions within the event pipeline and to provide a structured method for generating substitute observations whose quality is known. At a high level, the approach augments a standard event-driven pipeline with a reconstruction stage placed between the data source and the reasoning engine. This stage tracks the expected arrival schedule of each stream, detects when an observation fails to appear on time, and invokes a predictive model maintained by the digital twin to estimate what the missing observation would have been. The reconstructed event is emitted in the same structure as a normal observation but includes an additional confidence value reflecting the predictive model’s uncertainty. Both reconstructed and genuine events are forwarded to the CEP engine without requiring any changes to CEP queries or operators. The CEP engine processes the combined stream as usual, with the option to interpret confidence information when relevant.
 
 
-\subsection{Architectural Assumptions}
-
-The conceptual model operates under the following assumptions, which define the types of computations and data the architecture can support.
-
-\paragraph*{Event-based semantics}
-All inputs are discrete, timestamped events. The architecture does not use any domain-specific interpretation of the payload; the meaning of the data is external to the framework.
-
-\paragraph*{Data-agnostic reconstruction}
-The reconstruction mechanism does not rely on the physical semantics or structure of the payload. It assumes only that payloads can be represented numerically and predicted over short horizons. This abstraction allows the architecture to remain independent of domain-specific models.
-
-\paragraph*{Model fidelity and validity}
-Digital-twin predictive models are assumed to operate within a validated fidelity regime, meaning their short-term forecasts are reliable within a defined operating range and have known error behaviour. While the architecture does not use a specific modelling technique, it assumes that each DT model has undergone appropriate verification and validation for its domain, ensuring its predictions are suitable for use during temporary data gaps.
-
-\paragraph*{Known expected timing}
-Each generator \(g\) has a known or learnable expected interval \(\Delta_g\), enabling the detection of temporary data gaps.
-
-\paragraph*{Short-duration missingness}
-Gaps are assumed to be brief interruptions rather than long-term outages or structural missingness. Long-duration failures fall outside the intended scope of the reconstruction mechanism.
-
-
-
-\section{Architectural Requirements}\label{sec:architecture-reqs}
-As highlighted by \citet{wasserkrug2006taxonomy}, uncertainty in active and event-driven systems arises along two dimensions:
-
-\begin{enumerate}
-    \item Element uncertainty, concerning what about the event is uncertain — including occurrence uncertainty (did the event actually happen?) and attribute uncertainty (is its timestamp or payload precise?).
-    \item Origin uncertainty, describing where uncertainty arises — either from the data sources (sensor failures, communication delays) or from inference processes (ambiguities in the CEP rules or derived events).
-\end{enumerate}
-
-
-
-Temporary data gaps correspond to occurrence uncertainty originating from the data source: an event that should exist fails to appear on time, leaving its state undefined unless explicitly modelled. Unlike noisy or imprecise measurements, a missing event has no representation in the stream and thus cannot be reasoned about unless explicitly modelled. This absence disrupts temporal reasoning, sequence detection, and window-based operators in CEP systems. Building on the conceptual foundations, uncertainty taxonomy \cite{wasserkrug2006taxonomy}, dependability framework \cite{avizienis2004basic}, and the limitations identified in the literature review \chref{ch:literature-review}, the architecture must satisfy the following requirements ((Table~\ref{tab:architecture-requirements})):
-
-
 \section{Architecture Overview}\label{sec:arch-framework}
 
 \begin{figure}[H]

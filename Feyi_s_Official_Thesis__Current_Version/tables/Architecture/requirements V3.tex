@@ -7,14 +7,12 @@
 \toprule
 \textbf{ID} &
 \textbf{Requirement} &
-\textbf{Formal Model Ref.} &
+\textbf{Connection to Model} &
 \textbf{Supporting Literature} \\
 \midrule
 
 \textbf{R1} &
-The system shall provide a mechanism to \textbf{identify missing
-observations} by detecting when an expected event fails to occur within
-its tolerance window. &
+The system shall provide a mechanism to \textbf{identify missing observations at runtime} by classifying expected events based on event time and tolerance windows. &
 \secref{sec:scheduling-missing} &
 \citet{wasserkrug2006taxonomy},
 \citet{cugola2015complex},
@@ -22,30 +20,24 @@ its tolerance window. &
 \\
 
 \textbf{R2} &
-The system shall provide an \textbf{explicit representation for inferred
-observations} so that reconstructed events remain distinguishable from
-observed events through metadata. &
-\secref{sec:state-based-inference} &
+The system shall provide an \textbf{explicit representation for derived observations} such that derived events remain distinguishable from observed events through metadata. &
+\secref{sec:state-based-inference},
+\secref{sec:confidence-stream-augmentation} &
 \citet{wasserkrug2006taxonomy},
 \citet{cugola2015complex},
 \secref{sec:literature-review-key-takeaways}
 \\
 
 \textbf{R3} &
-The system shall support \textbf{uncertainty propagation} by attaching
-confidence metadata to reconstructed events, enabling downstream event
-processing to account for occurrence uncertainty without modifying
-query semantics. &
-\secref{sec:confidence-stream-augmentation} &
+The system shall support \textbf{explicit confidence representation} by attaching confidence metadata to derived events, enabling downstream event processing to account for uncertainty without altering event-time semantics. &
+\secref{sec:confidence-stream-augmentation},
+\secref{sec:confidence-aware-semantics} &
 \citet{cugola2015complex},
-\chref{ch:literature-review},
 \secref{sec:literature-review-key-takeaways}
 \\
 
 \textbf{R4} &
-The system shall enable \textbf{continued operation under temporary data
-unavailability} by supporting inference over missing observations in
-place of immediate suspension of event-driven processing. &
+The system shall enable \textbf{continued operation under temporary data unavailability} by supporting inference over observations classified as missing rather than suspending event-driven processing. &
 \secref{sec:scheduling-missing},
 \secref{sec:state-based-inference} &
 \secref{subsec:literature-review-results-reliability},
@@ -53,11 +45,10 @@ place of immediate suspension of event-driven processing. &
 \\
 
 \textbf{R5} &
-The system shall preserve \textbf{compatibility with existing event-driven
-processing engines} by producing reconstructed events that conform to
-the same structural and temporal semantics as observed events. &
+The system shall maintain \textbf{compatibility with existing event-driven processing engines} by producing derived events that conform to the same structural and event-time semantics as observed events. &
 \secref{sec:events-streams},
-\secref{sec:confidence-stream-augmentation} &
+\secref{sec:confidence-stream-augmentation},
+\secref{sec:confidence-aware-semantics} &
 \secref{sec:literature-review-key-takeaways}
 \\
 
