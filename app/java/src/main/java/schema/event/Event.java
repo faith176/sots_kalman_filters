@@ -23,10 +23,10 @@ public class Event {
     private Double eventTs;
 
     @JsonProperty("value")
-    private Object value;
+    private Double value;
 
     @JsonProperty("confidence")
-    private Object confidence;
+    private Double confidence;
 
     @JsonProperty("event_status")
     private String eventStatus;
@@ -69,11 +69,11 @@ public class Event {
     public Double getEventTs() { return eventTs; }
     public void setEventTs(Double eventTs) { this.eventTs = eventTs; }
 
-    public Object getValue() { return value; }
-    public void setValue(Object value) { this.value = value; }
+    public Double getValue() { return value; }
+    public void setValue(Double value) { this.value = value; }
 
-    public Object getConfidence() { return confidence; }
-    public void setConfidence(Object confidence) { this.confidence = confidence; }
+    public Double getConfidence() { return confidence; }
+    public void setConfidence(Double confidence) { this.confidence = confidence; }
 
     public String getEventStatus() { return eventStatus; }
     public void setEventStatus(String eventStatus) { this.eventStatus = eventStatus; }

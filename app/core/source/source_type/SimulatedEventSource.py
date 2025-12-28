@@ -7,16 +7,13 @@ from typing import Any, Optional
 from ..EventSourceRegistry import register_source_type
 from ..EventSource import EventSource
 from ...runtime.EventStream import EventStream
-from ...communication.comm_types.ZMQClient import ZMQClient
 
 __author__ = "Feyi Adesanya"
-
 
 @register_source_type("simulated")
 class SimulatedEventSource(EventSource):
     """
     Simulated sensor producing drifting noisy values with optional drops.
-    Owns its own timing loop.
     """
 
     def __init__(
@@ -105,7 +102,7 @@ class SimulatedEventSource(EventSource):
         # simulate dropouts (absence, not malformed events)
         if self.generated_count > self.mandatory_count:
             if random.random() < self.drop_chance:
-                logging.info(f"[EVENT SOURCE-{self.id}] SKIPPING EVENT for {now}")
+                logging.debug(f"[EVENT SOURCE-{self.id}] SKIPPING EVENT for {now}")
                 return None
 
         return self.emit({

@@ -65,7 +65,7 @@ class Reconstructor:
             source_id=self.source_id,
         )
 
-        logging.info(
+        logging.debug(
             f"[RECONSTRUCTOR-{self.source_id}] Reconstructed event "
             f"at {expected_ts:.3f}"
         )

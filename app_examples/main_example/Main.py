@@ -5,17 +5,7 @@ from app.core.processor.EventProcessor import EventProcessor
 
 def main():
     orch = Orchestrator(
-        pattern_cfg="patterns/main_example_patterns.json",
-        log_dir="data/logs/main_example",
-        streams_cfg="app_examples/main_example/configs/streams.json",
-        predictors_cfg="app_examples/main_example/configs/predictors.json",
-        base_run_name="run",
-        bridge=EventProcessor,
-        bridge_kwargs={
-            "jar_name": "sots-uncertainty-aware-cep-0.0.1-SNAPSHOT.jar",
-            "java_dir": "app/java",
-            "rebuild": True
-        }
+        config_path="app_examples/main_example/configs/config.json"
     )
     orch.start()
 

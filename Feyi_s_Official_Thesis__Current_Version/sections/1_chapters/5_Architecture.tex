@@ -17,13 +17,10 @@ An \emph{Event} represents an observation produced by an event source.  Events a
 To support reliable operation under such conditions, the architecture introduces explicit coordination and estimation elements. A \emph{Coordinator} monitors the arrival of events from each source and determines whether events arrive on time or are missing. When an expected event is absent from the \emph{EventStream}, a \emph{Reconstructor} uses a \emph{Predictor} to synthesize a replacement event. An \emph{Event Processor} consumes both observed and reconstructed events to evaluate event patterns.
 
 
-
-
 \section{Component Architecture and Responsibilities}
 \label{sec:architecture-components}
 
-Figure~\ref{fig:component-model} presents the component model of the system, showing the major architectural elements and the interfaces through which they interact.
-The architecture separates concerns across coordination, estimation, and event processing. Communication between components occurs exclusively through defined interfaces, allowing components to be replaced or reconfigured independently. Event movement is isolated to the \emph{EventStream}, decoupling event producers, coordination logic, and downstream processing. The responsibilities and interactions of each component are described below.
+Figure~\ref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{EventStream}, which serves as the sole mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
 
 \begin{figure}[t]
     \centering
@@ -32,26 +29,23 @@ The architecture separates concerns across coordination, estimation, and event p
     \label{fig:component-model}
 \end{figure}
 
-
 \paragraph{Event Source}
-An event source represents an external system or sensor that produces observations of a monitored process. Its responsibilities are limited to generating raw observations and encapsulating them as events, which are emitted into the event stream.
+An event source represents an external system, sensor, or data generator that produces observations of a monitored process. Its responsibility is to generate observations and encapsulate them as events that conform to the system’s event schema. These observed events are emitted into the event stream for downstream processing.
 
 \paragraph{Event Stream}
-The event stream provides a transport abstraction for events emitted by event sources. It preserves event ordering and serves as the shared interface through which events are delivered to coordination, reconstruction, and processing elements of the system.
+The event stream provides a transport and routing abstraction for all events in the system. It acts as a shared event bus through which observed and reconstructed events are delivered to coordination, reconstruction, and processing components.
 
 \paragraph{Coordinator}
-The coordinator monitors the arrival of events in the event stream for each event source. It tracks when events are expected to occur and determines whether events arrive on time or are missing. Based on this classification, the coordinator may request reconstruction when an expected event does not arrive within the configured tolerance.
+The coordinator is responsible for monitoring the arrival of observed events and reasoning about their expected timing. For each event source, it maintains an expected schedule derived from configuration parameters such as reporting interval and tolerance. Based on this schedule, the coordinator identifies missing observations and initiates reconstruction when expected events do not arrive within the configured time window.
 
 \paragraph{Reconstructor}
-Each event source is associated with a dedicated reconstructor, which acts as the primary consumer of events for that source. Observed events are forwarded by the reconstructor to its associated predictor for state updates. 
-When an expected observation is missing, reconstruction is initiated only at the request of the coordinator. 
-Given an expected event time, the reconstructor queries the predictor to obtain an estimated value and associated confidence, and then constructs a replacement event that is emitted into the event stream.
+Each event source is associated with a reconstructor that manages reconstruction for that source. The reconstructor updates its internal state using observed events and performs reconstruction when notified of missing observations. For a missing event, it obtains an estimated value and associated confidence from its predictor, constructs a reconstructed event, and emits it into the event stream.
 
 \paragraph{Predictor}
-Each reconstructor is paired with a dedicated predictor that maintains an internal representation of the state associated with its event source and supports state estimation over time. The predictor is invoked by the reconstructor to incorporate observed values or to produce estimates and associated uncertainty when observations are missing.
+A predictor maintains an internal representation of the state associated with a specific event source. It supports state updates using observed values and state extrapolation to produce estimates when observations are missing. Predictors also provide uncertainty measures associated with their estimates, enabling confidence-aware processing.
 
 \paragraph{Event Processor}
-The event processor evaluates event patterns over the incoming event stream. Observed and reconstructed events are treated uniformly. Confidence associated with events may be incorporated into query evaluation.
+The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence information associated with events may be incorporated into pattern evaluation to support uncertainty-aware detection.
 
 
 \section{Event Processing and Reconstruction Flow}

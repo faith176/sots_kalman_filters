@@ -5,6 +5,9 @@ from ..Server import Server
 __author__ = "Feyi Adesanya"
 # python -m app.messaging.comm_types.ZMQServer --log debug
 
+from ..ServerRegistry import register_server_type
+
+@register_server_type("zmq")
 class ZMQServer(Server):
     def __init__(self, pub_endpoint="tcp://*:5557", pull_endpoint="tcp://*:5558"):
         super().__init__()

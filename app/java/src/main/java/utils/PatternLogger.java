@@ -45,7 +45,7 @@ public class PatternLogger implements AutoCloseable {
 
         List<String> nestedEventGroups = record.getEventsNested().stream()
                 .map(inner -> inner.stream()
-                        .map(Event::getEventId)
+                        .map(Event::getId)
                         .filter(Objects::nonNull)
                         .collect(Collectors.joining(";", "[", "]")))
                 .collect(Collectors.toList());

@@ -9,6 +9,7 @@ import psutil
 
 __author__ = "Feyi Adesanya"
 
+# mvn clean package -DskipTests
 class EventProcessor:
     def __init__(self, pattern_cfg, run_dir,
                  jar_name="sots-uncertainty-aware-cep-0.0.1-SNAPSHOT.jar",
@@ -65,7 +66,7 @@ def build_java(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        # shell=True
+        shell=True, # change to false
     )
 
     if result.returncode != 0:
@@ -119,7 +120,7 @@ def stop_java(proc):
     except Exception as e:
         logging.error(f"[MAIN] Failed to stop Java process: {e}")
 
-    # Safety net — kill all leftover Java processes (shouldn’t normally happen)
+    # kill all leftover Java processes
     for p in psutil.process_iter(attrs=["pid", "name"]):
         if "java" in p.info["name"].lower():
             logging.warning(f"[MAIN] Found stray Java process (PID {p.pid}), terminating...")

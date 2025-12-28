@@ -21,7 +21,7 @@ class BaseLogger(EventConsumer):
         pass
 
     @abstractmethod
-    def stop(self):
+    def close(self):
         pass
 
     def __enter__(self):
@@ -95,7 +95,7 @@ class CSVLogger(BaseLogger):
             self.csvfile.flush()
             self._last_flush = time.time()
 
-    def stop(self, timeout=None):
+    def close(self, timeout=None):
         """Signal stop and wait until all queued events are written."""
         self._stop_event.set()
         self.thread.join(timeout=timeout)

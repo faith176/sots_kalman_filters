@@ -7,5 +7,4 @@ pandas==2.3.0
 pytest==8.4.1
 scipy==1.15.3
 filterpy==1.4.5
-basyx-python-sdk==1.2.1
 
