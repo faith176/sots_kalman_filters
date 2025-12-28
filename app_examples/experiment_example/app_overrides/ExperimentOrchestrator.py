@@ -6,7 +6,7 @@ from app.core.communication.comm_types.ZMQClient import ZMQClient
 from app.core.communication.comm_types.ZMQServer import ZMQServer
 from app.core.runtime.EventStream import EventStream
 from app.core.utils.EventListener.Logger import CSVLogger
-from app.core.bridge.JavaCEPBridge import JavaCEPBridge
+from app.core.bridge.EventProcessor import EventProcessor
 from .core.runtime.ExperimentCoordinator import ExperimentCoordinator
 
 LOG = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class ExperimentOrchestrator:
     def __init__(self, pattern_cfg, log_dir, streams_cfg, predictors_cfg,
                  base_run_name, dataset_name=None,
                  client_type=ZMQClient, server_type=ZMQServer,
-                 bridge=JavaCEPBridge, bridge_kwargs=None,
+                 bridge=EventProcessor, bridge_kwargs=None,
                  log_matches="False"):
         # --- basic attributes
         self.pattern_cfg = pattern_cfg

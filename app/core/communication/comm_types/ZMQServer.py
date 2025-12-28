@@ -3,7 +3,7 @@ import logging
 from ..Server import Server
 
 __author__ = "Feyi Adesanya"
-
+# python -m app.messaging.comm_types.ZMQServer --log debug
 
 class ZMQServer(Server):
     def __init__(self, pub_endpoint="tcp://*:5557", pull_endpoint="tcp://*:5558"):
@@ -124,3 +124,17 @@ class ZMQServer(Server):
                 logging.warning(f"[ZMQServer] Context termination warning: {e}")
         except Exception as e:
             logging.warning(f"[ZMQServer] Error during cleanup: {e}")
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+
+    server = ZMQServer()
+
+    try:
+        server.run(in_thread=False)
+    except KeyboardInterrupt:
+        logging.info("[ZMQServer] Keyboard interrupt received, shutting down.")
+        server.stop()

@@ -1,5 +1,5 @@
 from app.Orchestrator import Orchestrator
-from app.core.bridge.JavaCEPBridge import JavaCEPBridge
+from app.core.processor.EventProcessor import EventProcessor
 
 # Run with: python -m app_example.main_example.Main
 
@@ -10,7 +10,7 @@ def main():
         streams_cfg="app_examples/main_example/configs/streams.json",
         predictors_cfg="app_examples/main_example/configs/predictors.json",
         base_run_name="run",
-        bridge=JavaCEPBridge,
+        bridge=EventProcessor,
         bridge_kwargs={
             "jar_name": "sots-uncertainty-aware-cep-0.0.1-SNAPSHOT.jar",
             "java_dir": "app/java",

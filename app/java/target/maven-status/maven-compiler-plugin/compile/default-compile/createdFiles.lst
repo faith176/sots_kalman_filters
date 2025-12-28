@@ -1,14 +1,7 @@
-utils\PatternLogger.class
-patterns\esper\EsperPatternManager$ConfidenceRule.class
-app\Main.class
-patterns\esper\EsperPatternManager$PatternDef.class
-schema\pattern\ComplexPattern.class
-schema\pattern\Pattern.class
-patterns\esper\EsperPatternManager.class
-schema\pattern\AtomicPattern.class
 cep\esper\EsperCEPEngine.class
-communication\Client.class
 patterns\PatternManager.class
 cep\CEPEngine.class
-runtime\EventStream.class
+app\Main.class
 schema\event\Event.class
+schema\pattern\ComplexPattern.class
+schema\pattern\Pattern.class

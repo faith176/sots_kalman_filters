@@ -1,0 +1,50 @@
+\chapter{Implementation}\label{ch:implementation}
+
+demonstrate feasibility
+Overview
+    programming lanagaueg, streaming frameowkr, cep engine used
+
+event representation
+    data strucvture, seralization format, metadata encoding
+stream processing pipeline
+    threading mode, buffering, ordering
+coordinator implementation  
+    timeout, clock management, late event handling
+reconstructuion logic
+    event sysnthesis, timestamp assignment, source attribution
+predictor implementation
+    Kalman filter stats, state vector definition, noise parameter selectionm
+confidence computation
+    prediction evaluation, numerical stability, performance considerations
+CEP
+    query examples, confidence aware predicates, compatibility
+performance considerations
+    latency, throughoutput, state size
+Limitations
+    parameter sensitivity
+    computational overhead
+    scalability constrants
+
+
+\section{Implementation}\label{sec:implementation}
+Python~3.10 is used for the reconstruction layer. It provides extensive libraries for numerical computation and state-estimation methods, and its flexibility supports rapid prototyping of predictive components.
+
+The CEP engine is implemented in Java~21 using the Esper library. The project is built with Maven (version~3.6), which compiles and packages the engine into a self-contained executable JAR. Esper provides an efficient runtime for evaluating continuous event queries, enabling low-latency processing of both observed and reconstructed events.
+
+To connect the Python-based reconstruction layer with the Java-based CEP engine, the system uses lightweight message passing through ZeroMQ~\cite{zeromq_org}. This design keeps the components decoupled, allowing each subsystem to evolve, be replaced, or be scaled independently without modifying the other.
+
+
+\subsection{Libraries and Tools}
+Several libraries support the implementation:
+
+\begin{itemize}
+    \item \textbf{NumPy} and \textbf{pandas} for numerical computation and time-indexed event manipulation.
+    \item \textbf{SciPy} for interpolation and auxiliary statistical routines.
+    \item \textbf{FilterPy} for implementing the Kalman filter used by the predictor.
+    \item \textbf{matplotlib} for evaluation plot visualizations.
+    \item \textbf{pytest} for automated testing.
+    \item \textbf{Esper} (Java) serves as the CEP engine, executing continuous queries and time-windowed pattern detection without modification to its query model.
+    \item \textbf{ZeroMQ (pyzmq)} provides asynchronous publish–subscribe communication between components
+\end{itemize}
+
+The system is modular: predictors, communication mechanisms, and CEP engines can be replaced without altering the architecture, allowing the framework to be adapted to different SoTS environments and technology stacks.

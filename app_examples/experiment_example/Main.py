@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 from .app_overrides.ExperimentOrchestrator import ExperimentOrchestrator
-from app.core.bridge.JavaCEPBridge import JavaCEPBridge
+from app.core.bridge.EventProcessor import EventProcessor
 
 # Run with: python -m app_example.experiment_example.Main
 
@@ -41,7 +41,7 @@ DATASETS = [
 
 class ExperimentBatchOrchestrator:
     def __init__(self, base_data_dir, log_dir, predictors_cfg, pattern_cfg,
-                 bridge_class=JavaCEPBridge, bridge_kwargs=None, attributes=ATTRIBUTES_KF):
+                 bridge_class=EventProcessor, bridge_kwargs=None, attributes=ATTRIBUTES_KF):
         self.base_data_dir = Path(base_data_dir)
         self.log_dir = Path(log_dir)
         self.predictors_cfg = predictors_cfg

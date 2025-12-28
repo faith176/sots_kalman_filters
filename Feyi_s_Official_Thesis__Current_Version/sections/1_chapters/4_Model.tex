@@ -1,15 +1,20 @@
-\chapter{Foundations of Event-Driven Operation with Missing Observations}\label{ch:semantics}
+\chapter{Foundations of Event Driven Operation with Missing Observations}\label{ch:model}
 
-The literature review in \chref{ch:literature-review} identifies a reliability gap in SoTS: while system behaviour depends on continuous streams of observational events, existing approaches provide limited support for maintaining correct and continuous operation when such streams are temporarily disrupted.
+The literature review (\secref{sec:literature-review-key-takeaways}) identifies a reliability gap in SoTS: while system behaviour depends on continuous streams of events, existing approaches provide limited support for maintaining correct and continuous operation when such streams are temporarily disrupted.
 Addressing this gap requires an explicit model of system operation that captures how events are generated, when they are expected to occur, and how system state may be inferred when expected events do not arrive.
-This chapter presents an abstract model for event-driven systems that enables confidence-aware processing under missing or delayed observations. This model provides the basis for the system architecture introduced in \chref{ch:architecture}.
+This chapter presents an abstract model for event driven systems that enables confidence-aware processing under missing or delayed events. This model provides the basis for the system architecture introduced in \chref{ch:architecture}.
+
+\section{Requirements}
+\label{sec:requirements}
+\input{tables/Architecture/requirements V3.tex}
+The model developed in this chapter is derived from a set of requirements identified in the literature on uncertainty-aware event processing and reliable software architectures, as well as from the findings of the literature review. These requirements are summarized in \tabref{tab:architecture-requirements}, which traces each requirement to the corresponding elements of the proposed event model and to supporting literature. In the next chapter (\chref{ch:architecture}), these requirements are instantiated in a concrete system architecture that realizes the model.
+
 
 \paragraph{Model Scope and Assumptions}
-This chapter models events and temporary observation unavailability in event-driven systems. All system inputs are assumed to be discrete, timestamped events.
-Each event generator is assumed to expose a known expected interval $\Delta_g$, enabling the detection of missing observations through event time and tolerance windows. Missing observations are assumed to be short-duration interruptions rather than long-term outages, justifying the use of short-term prediction in place of observation.
+All system inputs are assumed to be discrete, timestamped events.
+Each event source is assumed to expose a known expected interval $\Delta_s$, enabling the detection of missing observations through event time and tolerance windows. Missing observations are assumed to be short-duration interruptions rather than long-term outages, justifying the use of short-term prediction in place of observation.
 Reconstruction mechanisms are data-agnostic and require only numerical event values suitable for short-term prediction. Predictors are assumed to expose information about the uncertainty of their estimates over the reconstruction time range.
 The treatment of late events is limited to classification. Retroactive correction, reconciliation under delayed observations, and reordering across multiple event streams are excluded from the model and left for future work (\chref{ch:conclusion}).
-
 
 
 \section{Event Model and Stream Semantics}
@@ -17,156 +22,135 @@ The treatment of late events is limited to classification. Retroactive correctio
 
 An \emph{event} represents an observation about an underlying system or process being monitored and is defined as
 \begin{equation}
-e = \langle id, type, src, t, v, m \rangle ,
+e = \langle id, type, src, t, v, conf, m \rangle ,
 \end{equation}
 \noindent
-where $id$ uniquely identifies the event, $type$ represents the class of the event, $src$ identifies the source of the event, $t$ is the event time indicating when the observed phenomenon occurred, $v$ is the observed or inferred value, and $m$ represents metadata.
+where $id$ uniquely identifies the event, $type$ represents the class of the event, $src$ identifies the source of the event, $t$ is the event time indicating
+when the observed phenomenon occurred, $v$ is the observed or inferred value, $conf \in \mathcal{C}$ is a confidence value associated with the event, and $m$ represents auxiliary metadata.
 
-An \emph{event stream} $E$ is a sequence of events, where each event $e \in E$ is associated with an event time $t(e)$.
+An \emph{event stream} $E$ is a sequence of events
 \begin{equation}
 E = \langle e_1, e_2, \dots \rangle .
 \end{equation}
 
-Events originate from a set of \emph{event generators} $\mathcal{G}$. Each generator produces events at a specified expected sampling interval $\Delta_g$.
+Events originate from a set of \emph{event sources} $\mathcal{S}$, which correspond to external systems or processes being observed and produce values $v$ as observations over time. Each event source $s \in \mathcal{S}$ is characterized by an identifier, an event type, and an expected sampling interval:
 \begin{equation}
-g = \langle id_g, type_g, \Delta_g \rangle
+s = \langle id_s, type_s, \Delta_s \rangle .
 \end{equation}
 \noindent
-where $id_g$ uniquely identifies the event generator. For each event $e$ produced by generator $g$, the source attribute is set to $e.src = id_g$ and the type attribute is set to $e.type = type_g$.
+The expected sampling interval $\Delta_s$ specifies the time between successive observations.
 
-Events produced by generators are made available to downstream components through the event stream $E$. \emph{Event consumers} form a set $\mathcal{C}$, where each consumer $c \in \mathcal{C}$ observes and reacts to events from the event stream $E$.
+Event sources act as \emph{event generators} by formatting observations as events and publishing them to the event stream $E$. For each event $e$ originating from source $s$, the source attribute is set to $e.src = id_s$, and the type attribute is set to $e.type = type_s$. Observed events are assigned a maximal confidence value according to the confidence scale $\mathcal{C}$.
+Events published to the stream are made available to downstream \emph{event consumers}, which observe and react to events in $E$.
 
 
 
-\section{Scheduling and Missing Observations}
-\label{sec:scheduling-missing} % Who acts
-According to \citet{wasserkrug2006taxonomy}, event streams are subject to occurrence uncertainty originating at their sources, such that observed event streams may represent only partial views of the underlying system behaviour. In event-driven systems, this uncertainty must be resolved at runtime to determine whether an expected observation has occurred or whether its absence should be interpreted as a delay or missingness.
 
-Let $\kappa$ represent a coordinating component that observes the event stream $E$ and has access to the expected sampling intervals $\Delta_g$ of event
-generators $g \in \mathcal{G}$. Using the current system time $t_{\mathrm{now}}$, $\kappa$ compares expected event times with the appearance of events in the event stream to classify the status of expected observations.
+\section{Handling Missing Events}
+\label{sec:scheduling-missing}
 
-For each generator $g \in \mathcal{G}$, let $t^{\mathrm{last}}_g$ represent the event time of the most recent event in $E$ produced by $g$ that has been accounted for
-by $\kappa$. The next expected event time for generator $g$ is defined as
+According to \citet{wasserkrug2006taxonomy}, event streams are subject to occurrence uncertainty originating at their sources, such that observed event streams may represent only partial views of the underlying system behaviour. In event driven systems, this uncertainty must be resolved at runtime to determine whether an expected observation has occurred or whether its absence should be interpreted as a delay or as missing.
+
+Let $\kappa$ be an \emph{event consumer} that has access to the expected sampling intervals $\Delta_s$ of event sources $s \in \mathcal{S}$. Using the current system time $t_{\mathrm{now}}$, $\kappa$ compares expected observation times with the appearance of events in the event stream to classify the status of expected observations.
+
+For each source $s \in \mathcal{S}$, let $t^{\mathrm{last}}_s$ represent the event time of the most recent event in $E$ originating from $s$ that has been accounted for by $\kappa$. The next expected observation time for source $s$ is defined as
 \begin{equation}
-t^{\mathrm{exp}}_g = t^{\mathrm{last}}_g + \Delta_g .
+t^{\mathrm{exp}}_s = t^{\mathrm{last}}_s + \Delta_s .
 \end{equation}
-A tolerance window $\varepsilon_g$ is associated with generator $g$ and defines the acceptable deviation from the expected event time.
-
+A tolerance window $\varepsilon_s$ is associated with source $s$ and defines the acceptable deviation from the expected observation time.
 
 Each expected observation is classified according to the set
 \begin{equation}
-\mathcal{S} = \{\textsc{Observed}, \textsc{Late}, \textsc{Missing}\}.
+\mathcal{O} = \{\textsc{Observed}, \textsc{Late}, \textsc{Missing}\}.
 \end{equation}
 
-An expected observation for generator $g$ at time $t^{\mathrm{exp}}_g$ is classified as:
+An expected observation for source $s$ at time $t^{\mathrm{exp}}_s$ is classified as:
 \begin{itemize}
-    \item \textsc{Observed} if there exists an event $e \in E$ such that
-    $e.src = id_g$, $e.type = type_g$, and
-    $\lvert e.t - t^{\mathrm{exp}}_g \rvert \le \varepsilon_g$.
-
-    \item \textsc{Late} if there exists an event $e \in E$ such that
-    $e.src = id_g$, $e.type = type_g$, and
-    $\lvert e.t - t^{\mathrm{exp}}_g \rvert > \varepsilon_g$.
-
-    \item \textsc{Missing} if $t_{\mathrm{now}} >
-    t^{\mathrm{exp}}_g + \varepsilon_g$ and no such event has been observed.
+    \item \textsc{Observed} if there exists an event $e \in E$ such that $e.src = id_s$, $e.type = type_s$, and $\lvert e.t - t^{\mathrm{exp}}_s \rvert \le \varepsilon_s$.
+    \item \textsc{Late} if there exists an event $e \in E$ such that $e.src = id_s$, $e.type = type_s$, and $\lvert e.t - t^{\mathrm{exp}}_s \rvert > \varepsilon_s$.
+    \item \textsc{Missing} if $t_{\mathrm{now}} > t^{\mathrm{exp}}_s + \varepsilon_s$ and no such event has been observed.
 \end{itemize}
 \noindent
-Once an expected observation is classified as \textsc{Missing}, the model does not retroactively revise this classification upon later event arrival. Classification
-reflects the information available at the time of evaluation.
+Once an expected observation is classified as \textsc{Missing}, the model does not retroactively revise this classification upon later event arrival. Classification reflects the information available at the time of evaluation.
 
 
-\section{State-Based Prediction and Confidence}
-\label{sec:state-based-inference} % How its done
 
-For each generator $g \in \mathcal{G}$, a state-based predictor is associated with $g$ and maintains an internal state $x_g$. The predictor is invoked by $\kappa$ to advance its state using observed events and to perform prediction when an expected observation is classified as \textsc{Missing}.
 
-The predictor provides two operations:
+\section{Event Reconstruction and State-Based Inference}
+\label{sec:state-based-inference}
+
+For each event source $s \in \mathcal{S}$, let $r_s$ represent an \emph{event reconstruction mechanism} that acts as both an \emph{event consumer} and an \emph{event generator}. The behaviour of $r_s$ is governed by the classification of expected observations determined in \secref{sec:scheduling-missing}.
+Each reconstructor $r_s$ contains a predictor with internal state $x_s$. As an event consumer, $r_s$ processes observed events associated with source $s$ in order to update this predictor state. As an event generator, $r_s$ emits reconstructed events corresponding to expected observations that are classified as missing.
+
+The predictor supports two operations:
 \begin{align}
-\mathcal{U}_g\bigl(x_g^{s-1}, e_g^{s}\bigr)
+\mathcal{U}_s\bigl(x_s^{i-1}, v_s^{i}\bigr)
 &\quad\text{(update)}, \\
-\hat{v}_g^{s} = \mathcal{P}_g\bigl(x_g^{s-1}\bigr)
+\hat{v}_s^{i} = \mathcal{P}_s\bigl(x_s^{i-1}\bigr)
 &\quad\text{(prediction)}.
 \end{align}
 
-Each index $s$ corresponds to a successive expected observation for generator $g$. At each step, exactly one operation is applied based on the classification of the expected observation. If the status is \textsc{Observed}, the update operation $\mathcal{U}_g$ incorporates the event and advances the internal state from $x_g^{s-1}$ to $x_g^{s}$. If the status is \textsc{Missing}, the prediction operation $\mathcal{P}_g$ produces an estimate $\hat{v}_g^{s}$ from the previous state and advances the state in the absence of an observation. 
-% This separation follows standard formulations of state-based estimation \cite{simon2006optimal}.
+Each index $i$ corresponds to a successive expected observation for source $s$. When the expected observation is classified as \textsc{Observed}, the update operation $\mathcal{U}_s$ is applied, advancing the predictor state using the observed value $v_s^{i}$. When the expected observation is classified as \textsc{Missing}, the prediction operation $\mathcal{P}_s$ is applied, producing an estimated value $\hat{v}_s^{i}$ in the absence of an observation. Exactly one operation is applied at each step.
 
-Uncertainty associated with prediction is represented through a confidence value derived from the predictor state. A confidence function is defined as
+Uncertainty associated with inference is represented through a confidence value derived from the predictor state. A confidence function is defined as
 \begin{equation}
-conf_g^{s} = \mathcal{C}\bigl(x_g^{s}\bigr).
+conf_s^{i} = \mathcal{C}\bigl(x_s^{i}\bigr),
 \end{equation}
-When prediction is applied, the confidence value reflects the uncertainty encoded in the updated predictor state. When an event is observed directly, the corresponding confidence may be assigned its maximum value.
-
-% Representing uncertainty as event metadata follows requirements identified in prior work on uncertainty in event-driven processing \cite{cugola2015complex}.
-
+\noindent
+where confidence reflects the uncertainty accumulated by the predictor when operating without direct observation.
 
 \section{Stream Augmentation}
 \label{sec:confidence-stream-augmentation}
 
-When an expected observation is classified as \textsc{Missing}, the predictor produces an estimated value that is materialized as a derived event and inserted into the event stream. This allows downstream components to continue operating over a temporally complete, partially inferred event sequence.
-
-For each expected observation associated with generator $g$, a derived event is constructed as
+When an expected observation associated with source $s \in \mathcal{S}$ is classified as \textsc{Missing}, the reconstructor produces a replacement event defined as
 \begin{equation}
-\hat{e}_g =
-\langle id, type_g, id_g, t^{\mathrm{exp}}_g, \hat{v}_g, m_{\mathrm{pred}} \rangle ,
+\hat{e}_s^{i} =
+\langle id, type_s, id_s, t^{\mathrm{exp}}_s, \hat{v}_s^{i}, conf_s^{i}, m_{\mathrm{pred}} \rangle ,
 \end{equation}
 \noindent
-where $\hat{v}_g$ represents the predicted value, and $m_{\mathrm{pred}}$ records metadata indicating that the event was derived rather than directly observed, including the confidence value $conf_g^{s}$ produced by the predictor.
+where $\hat{v}_s^{i}$ is the inferred value produced by the predictor, $conf_s^{i}$ is the associated confidence value derived from the predictor state, and $m_{\mathrm{pred}}$ records metadata indicating that the event was reconstructed rather than directly observed.
 
-When an expected observation is classified as \textsc{Observed}, the corresponding observed event may be augmented with confidence metadata. In both cases, observed and derived events share the same structural representation and differ only in their metadata.
+Reconstructed events are emitted into the event stream in the same manner as observed events. Observed and reconstructed events share a common structural representation, enabling uniform processing by downstream \emph{event consumers} and the incorporation of confidence-based queries.
 
-Derived events are inserted into the event stream to form an augmented stream
+The event stream is then extended to an augmented stream
 \begin{equation}
-E^{+} = E \cup \{ \hat{e}_g \},
-\end{equation} 
-which provides a temporally complete view of system behaviour. Downstream event consumers may distinguish observed and derived events through metadata, while processing them uniformly with respect to event time and type.
+E^{+} = E \cup \{ \hat{e}_s^{i} \},
+\end{equation}
+
 
 
 
 % ------------------------------------------
 \section{Confidence-Aware Event Processing}
 \label{sec:confidence-aware-semantics}
-The augmented event stream $E^{+}$ produced by the model is intended to be consumed by downstream event-driven processing components, such as CEP engines. Let $e$ represent an event in $E^{+}$ with an associated confidence value $conf(e) \in [0,1]$ encoded in its metadata. Event patterns and temporal relations may incorporate confidence values through additional predicates or aggregation functions.
 
-For example, a confidence-aware condition may require
+The augmented event stream $E^{+}$ produced by the model is intended to be consumed by downstream event driven processing components. An \emph{event processor} is modeled as an \emph{event consumer} that observes events from $E^{+}$ and evaluates event patterns and temporal relations over the stream.
+
+Let $e \in E^{+}$ be an event with an associated confidence value $conf(e) \in \mathcal{C}$. Event patterns and temporal relations may incorporate confidence values through additional predicates or aggregation functions, allowing processing logic to regulate pattern evaluation based on the confidence associated with inferred events.
+
+At a basic level, confidence-aware processing may require individual events to satisfy a threshold condition
 \begin{equation}
 conf(e) \ge \theta ,
 \end{equation}
 \noindent
-where $\theta$ is a confidence threshold. Aggregate confidence over a set of events may also be computed using functions such as minimum, maximum, average, or most recent confidence. These mechanisms allow uncertainty introduced by derived events to be accounted for explicitly, while preserving the structural and temporal semantics of event-driven processing.
+where $\theta$ is an application-defined confidence threshold. Such conditions allow event processors to suppress low-confidence events or to rank candidate matches according to their associated confidence values.
 
+More complex patterns may combine the confidence of multiple events. Consider, for example, a temporal pattern requiring an event of type $A$ to be followed by an event of type $B$ within a time window $\tau$. Let $e_A$ and $e_B$ denote the corresponding events, with associated confidence values $conf(e_A)$ and $conf(e_B)$. The confidence of the composite pattern may be approximated by an aggregation function, for example
+\begin{equation}
+conf(A \rightarrow B) = conf(e_A) \cdot conf(e_B).
+\end{equation}
+Alternative aggregation strategies may also be used, including minimum, maximum, average, or recency-based confidence, depending on application requirements.
 
-\section{Requirements}
-\label{sec:requirements}
-\input{tables/Architecture/requirements V3.tex}
-From the model defined in this chapter, a set of architectural requirements can be derived for systems that aim to implement confidence-aware event processing under temporary data unavailability. These requirements are summarized in \tabref{tab:architecture-requirements}, which traces each requirement to the corresponding elements of the event model and supporting literature. In the next chapter (\chref{ch:architecture}), these requirements are instantiated in a concrete system architecture that realizes the proposed model.
+These mechanisms enable uncertainty introduced by reconstructed events to be accounted for explicitly during pattern evaluation, while preserving the structural and temporal semantics of event driven processing. In particular, confidence-aware processing supports threshold-based triggering, prioritization, and ranking of detected event patterns without requiring changes to the underlying event processing model.
 
+\section{Model's Contribution to Reliable Event Processing}
+\label{sec:reliability-implications}
+Event driven systems operating in open environments are subject to disruptions at their data sources. Such disruptions give rise to occurrence uncertainty, in which expected events fail to appear in the event stream \cite{wasserkrug2006taxonomy}. In traditional CEP systems, the absence of expected observations is not explicitly represented, resulting in incomplete event streams that can compromise higher-level reasoning.
 
-\section{Reliability Semantics under Missing Observations}
-\label{sec:reliability-semantics}
+From the perspective of dependability theory \cite{avizienis2004basic}, missing observations represent faults at the boundary between the external environment and the event processing system, arising when expected observations from event sources fail to enter the event stream. These faults can introduce errors in the system’s representation of the observed process, as reflected by the event stream, leading to incomplete or inconsistent event histories. Because CEP pattern evaluation relies on the presence and ordering of events over time, even brief gaps in low-level event streams can invalidate temporal conditions and result in incorrect or missed detection of complex events.
 
-The event model defined in this chapter provides a semantic foundation for
-reliable operation in event-driven systems under temporary observation
-unavailability. In this context, reliability is understood as the ability of the
-system to continue producing semantically meaningful outputs despite missing
-inputs, while explicitly characterizing the uncertainty introduced by inference.
+Reliability, as defined by \citet{avizienis2004basic}, is the ability of a system to continuously deliver correct service. In event-driven systems, continuity of correct service depends on maintaining an up-to-date representation of the observed process through the event stream. Traditional CEP engines advance computation only when new events arrive; consequently, when expected events do not appear, gaps persist in the stream and may violate temporal conditions, thereby undermining reliable service delivery.
 
-By classifying expected observations at runtime and materializing derived events
-in place of missing observations, the model preserves the temporal continuity of
-the event stream. This ensures that downstream event-driven processing can
-proceed without suspension, maintaining continuity of service even when
-observations are temporarily unavailable.
+Existing uncertainty-aware CEP frameworks primarily address uncertainty in arriving events, including noisy attribute values, uncertain timestamps, and rule-level ambiguity, while continuing to assume uninterrupted event flows \citep{alevizos2017probabilistic}. Probabilistic approaches based on Bayesian networks, interval-based temporal reasoning, and lineage- or NFA-based models require the arrival of input events to trigger computation and therefore cannot represent or reason about missing observations \citep{wasserkrug2010efficient, wasserkrug2012model, zhang2013recognizing, shen2008probabilistic, kawashima2010complex, chuanfei2010complex, wang2013complex}. Similarly, uncertainty-aware extensions to existing CEP engines enrich reasoning over partially observed events, but remain inactive when the event stream temporarily disappears \citep{cugola2015introducing, moreno2019managing}.
 
-Correctness is addressed by distinguishing observed and derived events through
-metadata and by attaching confidence values that reflect the uncertainty of
-predicted observations. As a result, the model does not conceal data absence, but
-makes it explicit and measurable, allowing downstream components to reason about
-uncertainty without altering event-time semantics.
-
-Taken together, these properties support reliable event-driven operation by
-preserving temporal structure, enabling continued processing, and making the
-effects of missing data explicit rather than implicit. The model therefore
-addresses the reliability gap identified in the literature by providing semantic
-mechanisms for operating under incomplete observation.
-
+The model proposed in this chapter addresses this limitation by explicitly detecting when expected events fail to arrive and responding to these absences through event reconstruction. Replacement events are generated using prediction so that each expected observation is represented in the event stream, preventing missing events from interrupting event processing and preserving continuity of operation. At the same time, uncertainty introduced by reconstruction is explicitly represented through confidence values attached to events, allowing event processors to reason about the correctness of reconstructed events and to evaluate patterns using confidence-based predicates, thresholds, or ranking strategies while remaining aware of the quality of inferred data. Together, these mechanisms constitute a \emph{fault-tolerant} approach \citep{avizienis2004basic}, in which missing events are detected and recovered from through reconstruction and confidence-aware processing, thereby preserving reliability under temporary data disruptions.

@@ -5,11 +5,12 @@ import logging
 from ...schema.Event import Event
 from ...runtime.EventConsumer import EventConsumer
 LOG = logging.getLogger(__name__)
-"""
-Logger: Event consumer that logs to CSV files.
-Subscribes to topics of interest.
-"""
-class BaseLogger(EventConsumer, ABC):
+
+
+class BaseLogger(EventConsumer):
+    """
+    Event consumer that logs all events on the event stream to a CSV file
+    """
     def __init__(self, run_dir: str):
         os.makedirs(run_dir, exist_ok=True)
         self.run_dir = run_dir
@@ -20,7 +21,7 @@ class BaseLogger(EventConsumer, ABC):
         pass
 
     @abstractmethod
-    def close(self):
+    def stop(self):
         pass
 
     def __enter__(self):
@@ -28,6 +29,7 @@ class BaseLogger(EventConsumer, ABC):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
 
 class CSVLogger(BaseLogger):
     def __init__(self, run_dir, flush_every=5000, flush_interval=0.05):
@@ -62,6 +64,7 @@ class CSVLogger(BaseLogger):
             self._queue.put(event, block=False)
         except queue.Full:
             # Optional: log a warning or drop silently
+            logging.warning("logger queue full")
             pass
 
     def _writer_loop(self):
@@ -92,7 +95,7 @@ class CSVLogger(BaseLogger):
             self.csvfile.flush()
             self._last_flush = time.time()
 
-    def close(self, timeout=None):
+    def stop(self, timeout=None):
         """Signal stop and wait until all queued events are written."""
         self._stop_event.set()
         self.thread.join(timeout=timeout)
@@ -100,4 +103,5 @@ class CSVLogger(BaseLogger):
             print("[WARN] Logger thread did not finish before timeout.")
         self.csvfile.flush()
         self.csvfile.close()
+        logging.info("[LOGGER] Shutting down...")
 
