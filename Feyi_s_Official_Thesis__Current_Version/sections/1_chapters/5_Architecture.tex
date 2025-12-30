@@ -94,3 +94,31 @@ The event processor interacts with the event stream using a conventional event-d
 
 By confining confidence handling to query logic and metadata access, the architecture preserves compatibility with existing CEP engines. Confidence-aware event processing can therefore be introduced incrementally, alongside traditional event processing queries, without requiring changes to core CEP infrastructure.
 
+
+
+
+
+\section{Positioning in Digital Twin Architecture}
+ISO 23247 defines specific requirements for software to be deployed in digital twins. In this scenario you have a SoTS impelmented through a system controlling or observing digital twins in specifci places, the data streams though here which influences CEP processing on the SoTS level, when incstructions are executed or twins are swapping missions the data coming in may temporarily pause and if its a continioius process it needs to be infered
+
+
+
+
+
+Implementation
+this specifically suppirots the cross language architecture implemented for this project. On two fronts one side of this require stronger statisticall preprocessing ability which python has many libraries for and on the other side we need strong architecture for event processing which esper comes into play, when it comes to CEP Java is the dominant lanaguigaes due to its architectural ability (cite reasons why). Thus it madse sense to connect the two of the them, this connection is done through an eventstream. With this we define two interfaces EventConsumer and EventGenerator which define how componbents in the architecture interact with the event stream.
+
+To implement the eventstream we use a ZQM events bus as an implementation of the Eventstream, the server class is an abstraction of XQY, the eventstream acts as a client that connects to the same endpoints of the server and can connect to it, this allows implementations of eventstream to exist in other lanaguigaes in the same format and still bve able to pick up the messages. with this seperation the goal is to support horizontal applicability, more components such as visualization, ect can be added cleanly without having to modify or strongly couple to other components
+
+the event schema is realized as a dict/JSON containing the following information, it follows a scehma that can be validating using XYZ library to ensure no malformed events enter the event stream
+
+the coordinator handles scheduling using the a algorithm in this case The Coordinator operates as a discrete-event scheduler over expected observation deadlines. 
+
+the predictor choosens for this implementatiomn is a kalman filter, in event driven state estimatuion kalman filters are commonly used for XYZ. Kalman filters also capture uncertainty through covariance
+
+in terms of CEP engine we use esper due to its strong processing capabilities and concurrent execution. To support the detection of complex events patterns we define complex events that can made up of atomic events and complex events. the first in the hierarchy is simple ecomplex events made of only atomic events, which are easily defined in esper. these complex events can be represented using aggregations of atomic event confidence and which keeps moving upwards in the path, with these we push back complex events into the esper can now define more complex events based on the aggregation method chosen
+
+
+
+
+
