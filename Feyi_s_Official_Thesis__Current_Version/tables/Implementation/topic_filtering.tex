@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{ZMQ topic structure and subscription patterns}
+\label{tab:zmq-topics}
+\begin{tabularx}{\textwidth}{p{4.5cm} X X}
+\toprule
+\textbf{Topic pattern} & \textbf{Event type} & \textbf{Example subscribers} \\
+\midrule
+\texttt{*} &
+All events (observed and reconstructed) &
+Event processor \\
+
+\texttt{observed.<source\_id>} &
+Observed events from a specific source &
+Coordinator, Analytics components \\
+
+\texttt{observed.*} &
+Observed events from all sources &
+Coordinator \\
+
+\texttt{reconstructed.<source\_id>} &
+Reconstructed events for a specific source &
+Event processor, Visualization components \\
+\bottomrule
+\end{tabularx}
+\end{table}

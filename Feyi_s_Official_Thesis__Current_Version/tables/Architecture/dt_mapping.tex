@@ -1,0 +1,58 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Mapping of proposed framework components to ISO~23247-2 functional entities}
+\label{tab:iso23247-fe-mapping-compact}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{p{2.4cm} p{3.1cm} p{2.5cm} X}
+\toprule
+\textbf{Framework component} &
+\textbf{Functional entity (ISO~23247-2)} &
+\textbf{Role} &
+\textbf{Description} \\
+\midrule
+
+Event source &
+Data collecting FE (6.2.1.1) &
+OME data acquisition &
+Acquires data from OMEs and exposes it to the device communication domain. \\
+
+Event serialization and schema mapping &
+Data translation FE (6.5.3) &
+Event standardization &
+Transforms acquired data into a standardized event representation for exchange across digital twin and user domains. \\
+
+Event stream &
+Digital representation FE (6.3.1.3) &
+Event-based representation &
+Provides a standardized event stream that serves as the digital representation of the OME for analytic and service components within the digital twin entity. \\
+
+Coordinator &
+Synchronization FE (6.3.1.1) &
+Event timing supervision &
+Monitors expected event timing and detects missing or delayed observations to support digital twin synchronization. \\
+
+Reconstructor &
+Synchronization FE (6.3.1.1) &
+Event completion &
+Generates inferred events to fill gaps caused by missing observations during digital twin synchronization. \\
+
+Predictor &
+Simulation FE (6.3.2.1) &
+State estimation &
+Maintains an internal state model of the OME and predicts future system behaviour in an event-driven manner. \\
+
+Confidence assessment &
+Data assurance FE (6.5.1) &
+Data quality evaluation &
+Quantifies the quality and uncertainty of reconstructed events supporting digital twin services. \\
+
+Event processor &
+Analytic service FE (6.3.2.2) &
+Complex event processing &
+Processes event streams to support analytics and computation within the digital twin domain. \\
+
+
+\bottomrule
+\end{tabularx}
+\end{table}

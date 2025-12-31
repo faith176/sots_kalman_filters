@@ -4,7 +4,8 @@ This chapter presents the architecture of the proposed reliable event processing
 
 \section{Architectural Overview}
 \label{sec:architecture-overview}
-At a high level, the system is organized around the processing of events originating from external sources. These events are propagated through an event stream, where their arrival is monitored to determine whether they should be forwarded directly for processing or reconstructed when expected observations are missing. Reconstructed events carry metadata that indicates the confidence of the underlying estimates, allowing this information to be taken into account during event processing. \figref{fig:domain-model} presents the domain model of the architecture, showing the key conceptual entities and their relationships.
+At a high level, the system is organized around the processing of events originating from external sources. These events are propagated through an event stream, where their arrival is monitored to determine whether they should be forwarded directly for processing or reconstructed when expected observations are missing. Reconstructed events carry the confidence of the estimates, allowing this information to be taken into account during event processing. \figref{fig:domain-model} presents the domain model of the architecture, showing the key conceptual entities and their relationships.
+
 
 \begin{figure}[t]
     \centering
@@ -13,14 +14,15 @@ At a high level, the system is organized around the processing of events origina
     \label{fig:domain-model}
 \end{figure}
 
-An \emph{Event} represents an observation produced by an event source.  Events are propagated using an \emph{EventStream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specifc intervals but are assumed to be unreliable, allowing events to be absent.
-To support reliable operation under such conditions, the architecture introduces explicit coordination and estimation elements. A \emph{Coordinator} monitors the arrival of events from each source and determines whether events arrive on time or are missing. When an expected event is absent from the \emph{EventStream}, a \emph{Reconstructor} uses a \emph{Predictor} to synthesize a replacement event. An \emph{Event Processor} consumes both observed and reconstructed events to evaluate event patterns.
+An \emph{Event} represents an observation produced by an event source.  Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specifc intervals but are assumed to be unreliable, allowing events to be absent.
+To support reliable operation under such conditions, the architecture introduces explicit coordination and estimation elements. A \emph{Coordinator} monitors the arrival of events from each source and determines whether events arrive on time or are missing. When an expected event is absent from the \emph{Event Stream}, a \emph{Reconstructor} uses a \emph{Predictor} to synthesize a replacement event. An \emph{Event Processor} consumes both observed and reconstructed events to evaluate \emph{Event Patterns}. 
+Event patterns represent higher-level abstractions over streams of events. An \emph{Atomic Event Pattern} captures a basic behavioural condition over one or more events. A \emph{Complex Event Pattern} represents a composition of atomic and complex event patterns, enabling the detection of higher-level situations formed by multiple correlated behaviours occurring.
 
 
 \section{Component Architecture and Responsibilities}
 \label{sec:architecture-components}
 
-Figure~\ref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{EventStream}, which serves as the sole mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
+Figure~\ref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{Event Stream}, which serves as the mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
 
 \begin{figure}[t]
     \centering
@@ -39,13 +41,13 @@ The event stream provides a transport and routing abstraction for all events in 
 The coordinator is responsible for monitoring the arrival of observed events and reasoning about their expected timing. For each event source, it maintains an expected schedule derived from configuration parameters such as reporting interval and tolerance. Based on this schedule, the coordinator identifies missing observations and initiates reconstruction when expected events do not arrive within the configured time window.
 
 \paragraph{Reconstructor}
-Each event source is associated with a reconstructor that manages reconstruction for that source. The reconstructor updates its internal state using observed events and performs reconstruction when notified of missing observations. For a missing event, it obtains an estimated value and associated confidence from its predictor, constructs a reconstructed event, and emits it into the event stream.
+Each event source is associated with a reconstructor that manages reconstruction for that source. The reconstructor forwards observed events to its associated predictor for state update and performs reconstruction when notified of missing observations. For a missing event, it obtains an estimated value and associated confidence from its predictor, constructs a reconstructed event, and emits it into the event stream.
 
 \paragraph{Predictor}
 A predictor maintains an internal representation of the state associated with a specific event source. It supports state updates using observed values and state extrapolation to produce estimates when observations are missing. Predictors also provide uncertainty measures associated with their estimates, enabling confidence-aware processing.
 
 \paragraph{Event Processor}
-The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence information associated with events may be incorporated into pattern evaluation to support uncertainty-aware detection.
+The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence associated with events may be incorporated into pattern evaluation. This allows pattern detection to account for uncertainty introduced by reconstructed observations.
 
 
 \section{Event Processing and Reconstruction Flow}
@@ -68,57 +70,26 @@ When an observation is produced by an event source, it is encapsulated as an eve
 If an expected event does not arrive within the expected time, the coordinator detects the absence and requests reconstruction. The reconstructor queries the predictor to obtain an estimated value and confidence for the expected time and emits a reconstructed event.
 
 
+\section{Positioning the Framework within Digital Twin Architectures}
+\label{sec:dt-positioning}
 
-\section{Confidence-Aware Event Processing}
-\label{sec:architecture-confidence-aware-cep}
+As discussed in the literature review (\secref{subsec:literature-review-results-standards}), standards adoption in SoTS remains fragmented, with most studies emphasizing communication- and data-oriented standards rather than comprehensive digital twin reference architectures. In this context, the proposed framework is designed to be deployed within individual digital twins while remaining compatible with standardized interfaces and representations, enabling its composition across multiple twins in SoTS.
 
-The introduction of reconstructed events necessarily introduces uncertainty into the event stream. Rather than treating this uncertainty implicitly, the proposed architecture exposes it explicitly through confidence metadata, enabling event processing logic to take reconstruction reliability into account.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Architecture/ISO 23247.drawio.pdf}
+    \caption{Positioning of the proposed framework within the ISO~23247 reference architecture.}
+    \label{fig:iso23247-mapping}
+\end{figure}
 
-Confidence-aware event processing is achieved without modifying the core complex event processing (CEP) engine. Instead, confidence is represented as metadata associated with events and made available to queries through existing event access mechanisms. This design ensures that traditional event processing semantics are preserved while enabling additional reasoning when confidence information is present.
+ISO~23247 defines a domain- and entity-based reference architecture for digital twins in manufacturing, separating observable manufacturing elements (OMEs), device communication, digital twin, user, and cross-system concerns. The proposed framework is positioned primarily within the digital twin domain, where it extends synchronization, simulation, and analytic functionality to operate reliably under missing or delayed event data.
 
-\subsection{Confidence Representation at the Event Level}
+Observations from OMEs are acquired by an event source component in the device communication entity, instantiating the data collecting functional entity. These observations are transformed into a standardized event representation by a serialization and schema-mapping component positioned in the cross-system entity as a realization of the data translation functional entity, enabling interoperability.
 
-Confidence information associated with reconstructed events reflects the uncertainty of inferred values produced by the predictor. The architecture does not prescribe a specific confidence model; confidence may be represented as a scalar value, a vector of values, or a structured object, depending on the estimation technique and application requirements.
+Within the digital twin entity, the digital representation of an OME is realized as a standardized event stream, which serves as the primary interface between synchronization, simulation, and analytic services. Synchronization is handled by the coordinator and reconstructor components, which supervise event timing and generate inferred events when expected observations are absent, extending ISO~23247 synchronization mechanisms to explicitly account for event absence.
 
-By representing confidence as metadata rather than as part of the core event payload, the architecture maintains backward compatibility with existing event consumers. Event processing logic that does not interpret confidence metadata continues to operate unchanged, while confidence-aware queries may selectively access this information.
+The predictor component instantiates the simulation functional entity. Data quality and uncertainty are then addressed by a dedicated confidence assessment function, realizing the data assurance functional entity within the cross-system entity. Analytic functionality is realized by the event processor within the analytic service functional entity.
 
-\subsection{Mapping Confidence to Query Semantics}
+\figref{fig:iso23247-mapping} shows where the framework components fit within the ISO~23247 reference architecture, while \tabref{tab:iso23247-fe-mapping-compact} maps them to functional entities. Together, they show that the framework aligns with ISO-defined boundaries and supports reliable, event-driven composition of digital twins in SoTS.
 
-At the query level, confidence information may be mapped to event processing semantics in different ways. For example, confidence may be used to filter events based on threshold criteria, to rank alternative event matches, or to weight event contributions in composite patterns. The architecture deliberately separates confidence representation from its interpretation, allowing different confidence handling strategies to be employed without modifying estimation or reconstruction components.
-
-This separation supports flexibility in how confidence is used across different applications and processing contexts, and avoids coupling event processing logic to a particular estimation technique.
-
-\subsection{Integration with CEP Engines}
-
-The event processor interacts with the event stream using a conventional event-driven model, such as push-based or pull-based query evaluation, depending on the underlying CEP engine. Confidence metadata is accessed through query expressions when required, but the event processor does not assume any extensions to the CEP engine itself.
-
-By confining confidence handling to query logic and metadata access, the architecture preserves compatibility with existing CEP engines. Confidence-aware event processing can therefore be introduced incrementally, alongside traditional event processing queries, without requiring changes to core CEP infrastructure.
-
-
-
-
-
-\section{Positioning in Digital Twin Architecture}
-ISO 23247 defines specific requirements for software to be deployed in digital twins. In this scenario you have a SoTS impelmented through a system controlling or observing digital twins in specifci places, the data streams though here which influences CEP processing on the SoTS level, when incstructions are executed or twins are swapping missions the data coming in may temporarily pause and if its a continioius process it needs to be infered
-
-
-
-
-
-Implementation
-this specifically suppirots the cross language architecture implemented for this project. On two fronts one side of this require stronger statisticall preprocessing ability which python has many libraries for and on the other side we need strong architecture for event processing which esper comes into play, when it comes to CEP Java is the dominant lanaguigaes due to its architectural ability (cite reasons why). Thus it madse sense to connect the two of the them, this connection is done through an eventstream. With this we define two interfaces EventConsumer and EventGenerator which define how componbents in the architecture interact with the event stream.
-
-To implement the eventstream we use a ZQM events bus as an implementation of the Eventstream, the server class is an abstraction of XQY, the eventstream acts as a client that connects to the same endpoints of the server and can connect to it, this allows implementations of eventstream to exist in other lanaguigaes in the same format and still bve able to pick up the messages. with this seperation the goal is to support horizontal applicability, more components such as visualization, ect can be added cleanly without having to modify or strongly couple to other components
-
-the event schema is realized as a dict/JSON containing the following information, it follows a scehma that can be validating using XYZ library to ensure no malformed events enter the event stream
-
-the coordinator handles scheduling using the a algorithm in this case The Coordinator operates as a discrete-event scheduler over expected observation deadlines. 
-
-the predictor choosens for this implementatiomn is a kalman filter, in event driven state estimatuion kalman filters are commonly used for XYZ. Kalman filters also capture uncertainty through covariance
-
-in terms of CEP engine we use esper due to its strong processing capabilities and concurrent execution. To support the detection of complex events patterns we define complex events that can made up of atomic events and complex events. the first in the hierarchy is simple ecomplex events made of only atomic events, which are easily defined in esper. these complex events can be represented using aggregations of atomic event confidence and which keeps moving upwards in the path, with these we push back complex events into the esper can now define more complex events based on the aggregation method chosen
-
-
-
-
-
+\input{tables/Architecture/dt_mapping.tex}

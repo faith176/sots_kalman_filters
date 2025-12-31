@@ -1,50 +1,135 @@
 \chapter{Implementation}\label{ch:implementation}
 
-demonstrate feasibility
-Overview
-    programming lanagaueg, streaming frameowkr, cep engine used
+% demonstrate feasibility
+% Overview
+%     programming lanagaueg, streaming frameowkr, cep engine used
 
-event representation
-    data strucvture, seralization format, metadata encoding
-stream processing pipeline
-    threading mode, buffering, ordering
-coordinator implementation  
-    timeout, clock management, late event handling
-reconstructuion logic
-    event sysnthesis, timestamp assignment, source attribution
-predictor implementation
-    Kalman filter stats, state vector definition, noise parameter selectionm
-confidence computation
-    prediction evaluation, numerical stability, performance considerations
-CEP
-    query examples, confidence aware predicates, compatibility
-performance considerations
-    latency, throughoutput, state size
-Limitations
-    parameter sensitivity
-    computational overhead
-    scalability constrants
-
-
-\section{Implementation}\label{sec:implementation}
-Python~3.10 is used for the reconstruction layer. It provides extensive libraries for numerical computation and state-estimation methods, and its flexibility supports rapid prototyping of predictive components.
-
-The CEP engine is implemented in Java~21 using the Esper library. The project is built with Maven (version~3.6), which compiles and packages the engine into a self-contained executable JAR. Esper provides an efficient runtime for evaluating continuous event queries, enabling low-latency processing of both observed and reconstructed events.
-
-To connect the Python-based reconstruction layer with the Java-based CEP engine, the system uses lightweight message passing through ZeroMQ~\cite{zeromq_org}. This design keeps the components decoupled, allowing each subsystem to evolve, be replaced, or be scaled independently without modifying the other.
+% event representation
+%     data strucvture, seralization format, metadata encoding
+% stream processing pipeline
+%     threading mode, buffering, ordering
+% coordinator implementation  
+%     timeout, clock management, late event handling
+% reconstructuion logic
+%     event sysnthesis, timestamp assignment, source attribution
+% predictor implementation
+%     Kalman filter stats, state vector definition, noise parameter selectionm
+% confidence computation
+%     prediction evaluation, numerical stability, performance considerations
+% CEP
+%     query examples, confidence aware predicates, compatibility
+% performance considerations
+%     latency, throughoutput, state size
+% Limitations
+%     parameter sensitivity
+%     computational overhead
+%     scalability constrants
 
 
-\subsection{Libraries and Tools}
-Several libraries support the implementation:
 
-\begin{itemize}
-    \item \textbf{NumPy} and \textbf{pandas} for numerical computation and time-indexed event manipulation.
-    \item \textbf{SciPy} for interpolation and auxiliary statistical routines.
-    \item \textbf{FilterPy} for implementing the Kalman filter used by the predictor.
-    \item \textbf{matplotlib} for evaluation plot visualizations.
-    \item \textbf{pytest} for automated testing.
-    \item \textbf{Esper} (Java) serves as the CEP engine, executing continuous queries and time-windowed pattern detection without modification to its query model.
-    \item \textbf{ZeroMQ (pyzmq)} provides asynchronous publish–subscribe communication between components
-\end{itemize}
 
-The system is modular: predictors, communication mechanisms, and CEP engines can be replaced without altering the architecture, allowing the framework to be adapted to different SoTS environments and technology stacks.
+
+
+
+
+\section{Implementation}
+\label{sec:implementation}
+This chapter demonstrates the feasibility of the proposed architecture through a concrete implementation of the concepts introduced in \chref{ch:architecture}.
+
+\subsection{Implementation Overview}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Implementation/UML Model.drawio.pdf}
+    \caption{UML model of the implemented system.}
+    \label{fig:uml-model}
+\end{figure}
+
+Figure~\ref{fig:uml-model} presents the UML class diagram of the implemented system. The implementation follows a distributed, event-driven pipeline. Coordination, reconstruction, prediction, and confidence computation are implemented in Python~3.10, while complex event processing is implemented in Java~21 using the Esper CEP engine \cite{esper_reference}.
+
+This division reflects practical considerations. Python provides a flexible environment for numerical computation, state estimation, and rapid prototyping of reconstruction logic, while Java offers mature, high-performance support for complex event processing through Esper. Communication between components is achieved using ZeroMQ (ZQM) \cite{zeromq_org}, which provides lightweight, language-agnostic message passing between components.
+
+
+
+\subsection{Event Stream Implementation}
+
+The event stream provides the primary mechanism for propagating events throughout the system. Events are serialized into a standardized JSON payload (Listing~\ref{lst:event-json}), enforcing a consistent schema across all event types and implementation languages. Reconstructed events are injected into the same event stream as observed events and require no special handling by downstream consumers, ensuring a uniform processing model throughout the pipeline.
+
+\begin{lstlisting}[language=json, caption={Example standardized event payload}, label={lst:event-json}]
+{
+  "event_id": "e7c1b9f4-42b1-4d3b-a6a9-9f82d3f1c021",
+  "source_id": "sensor_A",
+  "event_type": "temperature",
+  "timestamp": "2024-03-21T14:32:05.120Z",
+  "confidence": 1,
+  "value": 73.4,
+  "metadata": {
+    "reconstructed": false,
+  }
+}
+\end{lstlisting}
+
+A ZMQ server relays event messages by receiving published payloads from client components and forwarding them to subscribed clients.
+Subscribed clients process incoming events through registered callback handlers.
+
+The system uses ZMQ topic filtering to separate observed and reconstructed events at the messaging level (\tabref{tab:zmq-topics}). Observed events are published under topics of the form \texttt{observed.<source\_id>}, while reconstructed events are published under \texttt{reconstructed.<source\_id>}. Components subscribe selectively based on their responsibilities, allowing them to receive only the subset of events relevant to their function rather than parsing and discarding irrelevant events.
+
+\input{tables/Implementation/topic_filtering.tex}
+
+This mechanism is important for the coordinator, which monitors event timing to detect missing observations. By subscribing to observed event topics, the coordinator avoids inadvertently consuming reconstructed events injected later by the reconstructor, preventing feedback loops and ensuring correct detection of missing data.
+
+
+
+\subsection{Prediction and Confidence Implementation}\label{sec:pred-conf}
+
+
+\subsection{Event Processing Implementation}\label{sec:event-processing}
+Complex event processing is implemented using the Esper CEP engine, a production-grade complex event processing platform. 
+To support confidence-aware processing, the implementation distinguishes between atomic and complex event patterns. Atomic patterns define predicates over events, such as threshold violations or state conditions, and may incorporate confidence constraints to filter uncertain observations. Complex patterns compose previously detected patterns, enabling higher-level reasoning over sequences of events.
+
+Atomic patterns are defined using standard EPL and may include conditions on event confidence. Listing~\ref{lst:atomic-patterns} shows example atomic pattern definitions expressed in EPL.
+
+\begin{lstlisting}[language=json, caption={Example atomic event pattern definitions}, label={lst:atomic-patterns}]
+[
+  {
+    "name": "Overspeeding",
+    "type": "atomic",
+    "epl": "@Name('Overspeeding') select e from Event as e where e.src='speed-1' and e.value > 25 and confidence > 0.75"
+  },
+  {
+    "name": "EngineOverheat",
+    "type": "atomic",
+    "epl": "@Name('EngineOverheat') select e from Event as e where e.src='engine-temp-1' and e.value > 25 and confidence > 0.75"
+  },
+  {
+    "name": "LowFuel",
+    "type": "atomic",
+    "epl": "@Name('LowFuel') select e from Event as e where e.src='fuel-1' and e.value < 40 and confidence > 0.75"
+  }
+]
+\end{lstlisting}
+
+Detected patterns, including both atomic and complex patterns, are re-injected into Esper as pattern records, allowing subsequent patterns to consume earlier detections. This enables a pattern-of-patterns processing model in which complex patterns are constructed incrementally from simpler ones. Listing~\ref{lst:complex-patterns} shows example complex pattern definitions, including specifications of how confidence is aggregated across events in a detected pattern.
+
+\begin{lstlisting}[language=json, caption={Example complex event pattern definitions with confidence aggregation}, label={lst:complex-patterns}]
+[
+  {
+    "name": "HighSpeedOverheat",
+    "type": "complex",
+    "epl": "@Name('HighSpeedOverheat') select a as over, b as heat from pattern [every a=PatternRecordStream(patternName='Overspeeding' and confidence > 0.75) -> b=PatternRecordStream(patternName='EngineOverheat' and confidence > 0.85)]",
+    "confidence": { "aggregation": "avg" }
+  },
+  {
+    "name": "CrazyEvent",
+    "type": "complex",
+    "epl": "@Name('CrazyEvent') select a as over, b as heat from pattern [every a=PatternRecordStream(patternName='HighSpeedOverheat' and confidence > 0.75) -> b=PatternRecordStream(patternName='EngineOverheat' and confidence > 0.85)]",
+    "confidence": { "aggregation": "min" }
+  }
+]
+\end{lstlisting}
+
+Confidence aggregation is performed outside the CEP engine using simple strategies such as minimum, maximum, average, or latest confidence. Patterns detected on safety-critical services may require maximum confidence, fault-detection patterns may use minimum confidence to reflect worst-case uncertainty, and trend-based patterns may aggregate confidence using the average to smooth individual fluctuations.
+
+Confidence-aware predicates may be applied at both atomic and complex levels, enabling queries to reason explicitly about event occurrences while accounting for input uncertainty. Existing queries can be updated to require maximum confidence, restricting evaluation to observed events only and preserving backward compatibility with conventional CEP usage.
+
+
