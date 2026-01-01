@@ -1,38 +1,52 @@
-\input{tables/Literature Review/RQs/rq1/challenges_table.tex}
-
 \section{Key Takeaway for the Future of SoTS}\label{sec:literature-review-key-takeaways}
+This section synthesizes the findings of the literature review to identify the central gaps that limit current SoTS research and practice. While the results in \secref{sec:literature-review-results} describe the combination of DT and SoS, the analysis here interprets what those results imply for the future development of SoTS. Each takeaway highlights a recurring issue observed across the surveyed studies and explains why addressing it is essential for enabling SoTS to operate in realistic, dynamic environments.
 
-The results of the literature review show that SoTS are conceptually well motivated but technically immature. While DTs and SoS are increasingly combined to address complex, distributed coordination problems, existing work lacks the architectural cohesion, standardization, and reliability required for real-world deployment. The following synthesized takeaways outline the main gaps and opportunities that shape the future development of reliable SoTS.
 
 %------------------------------------------------------------
-\subsection*{Reliability Is Mentioned Often but Evaluated Rarely}
+\subsection*{The Emerging Reliability Gap in SoTS}
 
-Reliability is one of the most frequently discussed non-functional properties (\tabref{tab:reliability-table}), yet few studies model it explicitly or validate it experimentally. Most rely on architectural assumptions, such as redundancy or local fallback, without addressing runtime uncertainty, synchronization failures, or dynamic fault recovery.
-Recurring challenges, particularly uncertainty, real-time constraints, and scalability (\tabref{tab:challenges-table}), signal ongoing difficulty in maintaining consistent SoTS behaviour as conditions change. Strict timing requirements, evolving missions, negotiation among autonomous components, and delays in information exchange can each destabilize coordination and collective functioning. Current SoTS lack explicit mechanisms to preserve reliable operation when configurations shift or when constituent systems behave unpredictably.
+Taken together, the results of the review point to a consistent pattern: SoTS assume that the data needed for their operation will be available when required, yet provide few mechanisms to continue operating effectively when it is not. The motivations identified in \secref{subsec:literature-review-results-motivations} all assume that systems will have access to the data required to perform their intended functions. Likewise, the architectural structures in \secref{subsec:literature-review-results-architecture} depend on relationships between coordinating and local twins that must remain aligned for the broader system to achieve its objectives. The most prominent SoS dimensions, distribution and independence, highlighted in \secref{subsec:literature-review-results-sos-characteristics}, further emphasize that SoTS operate across dispersed, autonomous constituents whose behaviour cannot be centrally enforced. Together, these findings characterize an operational setting in which maintaining system functionality is inherently challenging, and where existing work provides limited support for ensuring reliable system behaviour.
+
+
+Reliability is mentioned frequently in the literature, but as shown in \secref{subsec:literature-review-results-reliability}, it is rarely treated as a property that must be preserved under changing or uncertain conditions. Instead, most approaches implicitly assume that systems will remain synchronized, communication will remain available, and information will arrive when needed. This framing largely ignores reliability as a characteristic of ongoing system behaviour that must be actively maintained. In SoTS, however, behaviour evolves continuously and depends on the quality and consistency of incoming information. Under such conditions, correctness may deteriorate gradually as inputs become incomplete, delayed, or inconsistent, even though the system remains operational.
+
+
+The limited attention to dynamic SoS characteristics such as reconfiguration and evolution, again evident in \secref{subsec:literature-review-results-sos-characteristics}, indicates that many studies conceptualize SoTS as operating in stable settings despite the inherent instability of distributed and autonomous systems. The uneven adoption of standards described in \secref{subsec:literature-review-results-standards} shows progress toward interoperability, but provides little assurance that correct behaviour will be maintained at runtime when expected interactions or observations are disrupted. As a result, existing approaches offer limited means to reason about correctness over time.
+
+Considered as a whole, the literature shows that although the structural and conceptual foundations of SoTS are becoming clearer, the operational capabilities needed to maintain reliable functioning are not yet developed. The primary goals that motivate SoTS, enhanced coordination, shared situational awareness, and informed decision-making, depend on system behaviour that remains correct and continuous even as conditions change. Yet current approaches provide limited support for preserving such behaviour when systems reconfigure, when the data they depend on is disrupted, or when operating environments become unstable. This gap represents a central limitation that must be addressed for SoTS to progress beyond prototype demonstrations and operate reliably in practice.
 
 \begin{recoframe}{Recommendation}
-Treat reliability as a first-class architectural concern by introducing explicit mechanisms for assessing system state at runtime, managing uncertainty, and recovering from disruptions to maintain operation under changing conditions.
+Treat reliability as a primary architectural concern in SoTS, as current approaches depend on stable interactions across distributed constituents without providing mechanisms to ensure them. Future work should introduce explicit support for maintaining reliable behaviour under changing conditions so that SoTS can operate beyond controlled prototype environments.
 \end{recoframe}
 
+% Taken together, the results of the review point to a consistent pattern: SoTS assume that the data needed for their operation will be available when required, yet provide few mechanisms to continue operating effectively when it is not. The motivations identified in \secref{subsec:literature-review-results-motivations} all assume that systems will have access to the data required to perform their intended functions. Likewise, the architectural structures in \secref{subsec:literature-review-results-architecture} depend on relationships between coordinating and local twins that must remain aligned for the broader system to achieve its objectives. The most prominent SoS dimensions, distribution and independence, highlighted in \secref{subsec:literature-review-results-sos-characteristics}, further emphasize that SoTS operate across dispersed, autonomous constituents whose behaviour cannot be centrally enforced. Together, these findings characterize an operational setting in which maintaining system functionality is inherently challenging, and where existing work provides limited support for ensuring reliable system behaviour.
 
 
+% Reliability is mentioned frequently, but as shown in \secref{subsec:literature-review-results-reliability}, it is rarely treated as a property that must be preserved under changing or uncertain conditions. Instead, most approaches implicitly assume that systems will remain synchronized, communication will remain available, and information will arrive when needed. The limited attention to dynamic SoS characteristics such as reconfiguration and evolution, again evident in \secref{subsec:literature-review-results-sos-characteristics}, indicates that many studies conceptualize SoTS as operating in stable settings despite the inherent instability of distributed and autonomous systems. The uneven adoption of standards described in \secref{subsec:literature-review-results-standards} shows progress toward interoperability but provides little assurance of reliable behaviour at runtime.
 
-\section{Additional Reccomendations}
+% Considered as a whole, the literature shows that although the structural and conceptual foundations of SoTS are becoming clearer, the operational capabilities needed to maintain reliable functioning are not yet developed. The primary goals that motivate SoTS, enhanced coordination, shared situational awareness, and informed decision-making, depend on system behaviour that remains correct and continuous even as conditions change. Yet current approaches offer limited support for ensuring that such behaviour is preserved when systems reconfigure, when the data they depend on is disrupted, or when operating environments become unstable. This gap represents a central limitation that must be addressed for SoTS to progress beyond prototype demonstrations and operate reliably in practice.
+
+
+\subsection{Additional Reccomendations}
+The reliability gap identified above is part of a broader set of limitations observed in the current SoTS landscape. The following additional recommendations synthesize further themes that emerged across the review and highlight structural, methodological, and standardization challenges that hinder the development of scalable SoTS.
+
+\input{tables/Literature Review/RQs/rq1/challenges_table.tex}
+
 %------------------------------------------------------------
 \subsection*{Architectural Foundations Remain Underdeveloped}
 
-Across the surveyed studies, acknowledged and directed SoTS dominate (\tabref{tab:sots-type-table}), indicating an overreliance on central coordination rather than scalable, distributed autonomy. Collaborative and virtual SoTS, those most aligned with adaptive, multi-actor coordination, appear far less frequently. This imbalance reflects broader issues identified in \tabref{tab:challenges-table}, including the lack of explicit architectural specifications, increasing system complexity as coordination scales, and persistent challenges related to emergent behaviours and uncertainty.
-Although some studies use structured modeling approaches such as SysML or UML, they rarely develop reusable architectures suitable for cross-organizational or dynamically reconfigurable settings. Advancing SoTS therefore requires stronger architectural foundations that explicitly support autonomy, coordination, and multi-twin integration.
+The review shows that the architectural foundations of SoTS remain limited, particularly in their ability to support scalable and autonomous system compositions. As reported in \secref{subsec:literature-review-results-architecture}, acknowledged and directed SoTS dominate current work (\tabref{tab:sots-type-table}), reflecting a reliance on central coordination rather than distributed autonomy. Collaborative and virtual SoTS, which are more aligned with adaptive and multi-actor configurations, appear far less frequently. This imbalance corresponds with the challenges identified in \secref{subsec:literature-review-results-motivations} and \tabref{tab:challenges-table}, where increasing system complexity, unclear architectural boundaries, and persistent coordination difficulties were recurring concerns. Although some studies adopt modeling frameworks such as SysML or UML, these approaches rarely produce reusable architectures suited to cross-organizational or dynamically reconfigurable environments. Taken together, the results indicate that SoTS require stronger architectural foundations that explicitly support autonomy, coordination, and the integration of multiple twins at scale.
 
 \begin{extrarecoframe}{Recommendation}
 Develop explicit architectural specifications and reusable reference models to support scalable, autonomous, and dynamically coordinated SoTS.
 \end{extrarecoframe}
 
 
+
 %------------------------------------------------------------
 \subsection*{Standard Adoption Is Growing but Fragmented}
 
-Less than half of the reviewed studies cite recognized standards (\tabref{tab:standards-table}). Where standards are used, they are concentrated at the data and communication layers (e.g., OPC UA, AAS, RAMI~4.0), while broader SoS-oriented frameworks remain largely absent. This fragmentation limits interoperability, reduces cross-system compatibility, and complicates deployment in safety-critical contexts. More comprehensive, standardization is required to achieve consistent integration across systems. In particular, standards must address interfaces, semantics, coordination logic, and lifecycle management.
+The literature reveals increasing but uneven use of standards in SoTS, demonstrating progress toward interoperability but also exposing fragmentation across systems. As shown in \secref{subsec:literature-review-results-standards}, fewer than half of the studies reference recognized standards, and those that do tend to focus on data and communication layers, such as OPC~UA, the Asset Administration Shell, and RAMI~4.0 (\tabref{tab:standards-table}). Broader SoS-oriented frameworks appear inconsistently, and most studies use standards as general guidance rather than fully adopting them as integration constraints. This fragmented landscape limits cross-system compatibility, complicates multi-organizational deployment, and constrains the ability to compose heterogeneous twins into larger SoTS. These trends indicate a need for more comprehensive and aligned standardization efforts that address interfaces, semantics, coordination patterns, and lifecycle considerations.
 
 \begin{extrarecoframe}{Recommendation}
 Advance and align DT- and SoS-oriented standards to support interoperable, multi-system SoTS ecosystems.
@@ -42,25 +56,25 @@ Advance and align DT- and SoS-oriented standards to support interoperable, multi
 %------------------------------------------------------------
 \subsection*{Dynamic SoS Properties Are Weakly Represented}
 
-The SoS dimensions analysis (\figref{fig:sos-dim}) shows strong support for structural dimensions such as distribution, independence, and interoperability, but limited coverage of dynamic properties such as reconfiguration and evolution. Emergent behaviour, central to SoS, appears primarily in weak or simulation-based forms, with little treatment of strong or adaptive emergence. 
-Given their continuous sensing, prediction, and simulation capabilities, DTs are well suited to support runtime adaptation and emergent behavior management. However, current work rarely exploits these capabilities beyond controlled simulations.
+Dynamic SoS characteristics remain insufficiently supported in current SoTS research. As observed in \secref{subsec:literature-review-results-sos-characteristics}, structural dimensions such as distribution and independence appear frequently, while dynamic dimensions such as reconfiguration and evolution are addressed far less often. Emergent behaviour, a defining aspect of SoS, is typically examined only in controlled or simulation-based settings, with limited attention to strong or adaptive forms of emergence. These results show that current SoTS implementations often rely on static coordination patterns, even though the distributed and autonomous nature of SoS makes runtime change unavoidable. Digital Twins are well positioned to address this limitation, as they offer sensing, prediction, and simulation capabilities that could support runtime detection and interpretation of changing conditions. However, the review indicates that these capabilities are underutilized in practice.
 
 \begin{extrarecoframe}{Recommendation}
-Make use of DT sensing and simulation capabilities to detect, interpret, and manage emergent and reconfigurable behaviour at runtime.
+Use DT sensing and simulation capabilities to detect, interpret, and manage emergent and reconfigurable behaviour at runtime.
 \end{extrarecoframe}
 
 
 %------------------------------------------------------------
 \subsection*{Research Maturity Remains Low}
 
-As shown in \tabref{tab:trl-table}, most SoTS work is validated only in simulation or controlled laboratory settings, with very few studies evaluated under real operational conditions. This, combined with the prevalence of centralized and prototype-level architectures, limits confidence in how SoTS perform in practice. Challenges related to adoption, regulatory constraints, and compatibility with legacy systems further emphasize the need for stronger empirical grounding.
+The maturity of SoTS research remains low, limiting confidence in how current approaches perform under real conditions. As shown in \secref{subsec:literature-review-results-trl}, most studies fall within the lower Technology Readiness Levels (\tabref{tab:trl-table}) and rely on simulations or controlled laboratory experiments. Only one study reports operational deployment, and few examine SoTS behaviour under realistic or adversarial conditions. This limited empirical grounding constrains understanding of system performance, reliability, and adaptability, especially when scaled across organizational or physical boundaries. The review also highlights barriers related to regulatory requirements, integration with legacy systems, and multi-stakeholder coordination. Addressing these limitations requires stronger evidence obtained through field-based studies, case study evaluations, and validation in settings that reflect the complexity of real-world SoTS applications.
 
 \begin{extrarecoframe}{Recommendation}
-Increase empirical, field-based evaluations and establish stronger evidence for SoTS performance, reliability, and adaptability in real operational environments.
+Increase empirical, field-based evaluations to establish stronger evidence for SoTS performance, reliability, and adaptability in real operational environments.
 \end{extrarecoframe}
 
-
-
 %------------------------------------------------------------
-% \subsection*{Conclusion}
-% Across motivations, architectures, SoS characteristics, reliability practices, and standards adoption, the literature portrays SoTS as a promising but not yet reliably functioning class of systems. Although the field has matured conceptually, practical realization remains uneven: architectural coherence, standard alignment, explicit reliability and uncertainty mechanisms, and empirical validation all lag behind the rapid integration of DT and SoS principles. As a result, most SoTS remain isolated prototypes rather than robust, real-world infrastructures. Collectively, these recurring gaps show that reliability cannot be assumed but must be explicitly engineered.
+
+
+
+\section{Conclusion}
+These takeaways show that SoTS research is advancing in scope but remains limited in standardization, dynamic capability, and empirical grounding. Addressing these gaps is essential for enabling SoTS to move from early-stage prototypes toward deployable systems capable of operating in uncertain and rapidly changing environments. The next chapter builds on these observations to develop an architectural approach that responds directly to the reliability challenges identified here while aligning with the broader needs for scalable, adaptable, and well-structured SoTS.

@@ -1,5 +1,5 @@
 \chapter{System Architecture}\label{ch:architecture}
-This chapter presents the architecture of the proposed reliable event processing system developed in \chref{ch:model}. The architecture defines the system’s structural organization, the responsibilities of its components, and the flow of events through the system under both normal operation and conditions involving missing observations.
+This chapter presents the architecture of the event processing system proposed in \chref{ch:model} to support reliable operation. The architecture defines the system’s structural organization, the responsibilities of its components, and the flow of events under both normal operation and conditions involving missing observations.
 
 
 \section{Architectural Overview}
@@ -14,7 +14,7 @@ At a high level, the system is organized around the processing of events origina
     \label{fig:domain-model}
 \end{figure}
 
-An \emph{Event} represents an observation produced by an event source.  Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specifc intervals but are assumed to be unreliable, allowing events to be absent.
+An \emph{Event} represents an observation produced by an event source.  Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specific intervals but are assumed to be unreliable, allowing events to be absent.
 To support reliable operation under such conditions, the architecture introduces explicit coordination and estimation elements. A \emph{Coordinator} monitors the arrival of events from each source and determines whether events arrive on time or are missing. When an expected event is absent from the \emph{Event Stream}, a \emph{Reconstructor} uses a \emph{Predictor} to synthesize a replacement event. An \emph{Event Processor} consumes both observed and reconstructed events to evaluate \emph{Event Patterns}. 
 Event patterns represent higher-level abstractions over streams of events. An \emph{Atomic Event Pattern} captures a basic behavioural condition over one or more events. A \emph{Complex Event Pattern} represents a composition of atomic and complex event patterns, enabling the detection of higher-level situations formed by multiple correlated behaviours occurring.
 
@@ -22,7 +22,7 @@ Event patterns represent higher-level abstractions over streams of events. An \e
 \section{Component Architecture and Responsibilities}
 \label{sec:architecture-components}
 
-Figure~\ref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{Event Stream}, which serves as the mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
+\figref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{Event Stream}, which serves as the mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
 
 \begin{figure}[t]
     \centering
@@ -47,7 +47,7 @@ Each event source is associated with a reconstructor that manages reconstruction
 A predictor maintains an internal representation of the state associated with a specific event source. It supports state updates using observed values and state extrapolation to produce estimates when observations are missing. Predictors also provide uncertainty measures associated with their estimates, enabling confidence-aware processing.
 
 \paragraph{Event Processor}
-The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence associated with events may be incorporated into pattern evaluation. This allows pattern detection to account for uncertainty introduced by reconstructed observations.
+The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence associated with events may be incorporated into pattern evaluation through confidence-aware predicates or thresholds. This allows pattern detection to account for uncertainty introduced by reconstructed observations.
 
 
 \section{Event Processing and Reconstruction Flow}

@@ -1,0 +1,68 @@
+\cite{piche2016online} notes
+normalized innovation squared (NIS) test can be used to verify a kalman filter noise assumptions are consistent with measurements and can be applied in an online mannor. NIS is a statstical hypothethis test for detection of a model mismatch or filter incosistenct. Under the hypothesis that the filter model is correct, the NIS statistic has a chi square distribution. It can be used online since the NIS statistric can be computed from current and past measurements. It should be computed from the average of NIS values from several consequetive time steps according to Bar-Shalom et all. \cite{bar2001estimation}. He also mentions a filter residual test propsoed by Gibbs \cite{gibbs2013new}, which works online too. This one works in terms of individual components of the residual, this can be adapted to a filter consistency test as the sum, of squared residuals is equivalent to NIS, which they prove in this paper. With this the NIS test can be interpreted as a Bayesian prior predictive p value diagnostic. They show two equivalent test to NIS and another similar NIS like filter consistency test. Overall the NIS helps measure how surprising the update was to the filter indicating its uncertainty in its measurements or current state.
+
+
+\cite{gamse2014statistical} notes
+describe indicators of confidence in a kalman filter. Models are inherently influenced by uncertainty. KF helps in terms of minimizing the influencer of measurement errors and allowing one to compute the accuracy of their estimate. They describe indicators of condidence being contralibility and observability; determinant of the state transition matrix; properties of the a prsteriori system state covariance matrix; and properties of the kalman gain matrix. Specifically they mention the inclusion of measurements in to the KF is determiend by the Kalman gain which is influenced by the uncertaintty in a priori state estimates and uncertainty in measurement esttimates. Ideally measurements should results in more precise state estimates and good indicators of the system state, so the kalman gain matrix should reflect this. According to  \cite{bar2001estimation} the kalman gain is large if the state prediction is inaccurate and the measurement is accurate; and small is the state prediction is accurate and the measurement is inaccurate. So a large gain indicates a rapid response to the input measurement updating the state while a small gain means a slower response to the measurement. 
+There are also filter validity statstical test. Standard deviation of system state components test - sees that evlauating the posteriori covariance matrix. In this they assume anyt estimnated system state tends to be bound between one or two standard deviations, which are defined by the diagonal elements of the covariance matrix. If an estimation errors exceeds these bounds the perfomance of the filter under these settings is unacceptable. 
+Test statistic in the domain of measurements test. computes the measurement residuals (innovation) as the difference between the estimate and measurement (NIS). If theres a significant innovation the KF could have discrepencies. 
+Test statistics in the system state domain test to see if the KF filtered system state is comparable to any previos knowledge we have about the syetm. Kalman gain matrix weights the measurmeent resuduals, if the resildual are very large, that indicates we are not predicting the future state well. 
+
+
+\cite{griebel2020kalman} notes
+propose an explicit statistical uncertainty quality measure through self assessment using subjective logic. Mentions other filter consistency test like NIS, but mentions none of these test take into account statistical uncertainty of the quality measure. This statistical uncertainty expresses the confidence of the quality of the measure itself. The present a reliability measure. The kalman gain models the impact of process and measurement model uncertainties towards the posterior state estimation. Small values of gain indicate the trust in the state prediction and big values trust the current measurement. Make use of a variant of time averaged NIS \cite{bar2001estimation}. Using incoming measurements the proposed model outputs a self assessment online measure and explict uncertainty. 
+
+
+
+
+% From other course
+\section{Background} 
+\subsection{Kalman Filtering}
+Kalman filters were first introduced by Kalman \cite{kalman1960filtering} in 1960, as part of his influential work on a recursive solution to the discrete data linear filtering problem. A Kalman filter is a recursive algorithm that estimates the state of a system while minimizing the mean squared error of the estimates \cite{bishop2001introduction}. A Kalman filter represents the system's state through a state vector, which represents the key attributes of a system at a given time. For example: 
+\[
+\vec{x}_k =
+\begin{bmatrix}
+\text{Humidity} \\
+\text{Temperature} \\
+\text{Voltage}
+\end{bmatrix}
+\]
+The uncertainty in these state estimates, along with the relationships between the uncertainties of the state variables, is represented by a covariance matrix. This matrix quantifies the degree of correlation between the different state variables:
+\[
+\Sigma_k =
+\begin{bmatrix}
+\Sigma_{\text{hh}} & \Sigma_{\text{ht}} & \Sigma_{\text{hv}} \\
+\Sigma_{\text{th}} & \Sigma_{\text{tt}} & \Sigma_{\text{tv}} \\
+\Sigma_{\text{vh}} & \Sigma_{\text{vt}} & \Sigma_{\text{vv}}
+\end{bmatrix}
+\]
+
+\subsubsection{Prediction Step}
+In the prediction step, the Kalman filter estimates the next state of the system based on the current state. This transition is represented through the state transition matrix \( \mathbf{F}_k \), which defines how the current state evolves into the next state. External influences are the factors that influence the system but are not related to the state. We add a control matrix \( \mathbf{B}_k \) and control vector \(\vec{u}_k\) as corrections to our prediction. We also need to account for uncertainty in the external influences that are not known. This noise is represented through covariance \( \mathbf{Q}_k \). The covariance matrix and state matrix are updated as follows:
+\[
+\vec{x}_{k|k-1} = \mathbf{F} \cdot \vec{x}_{k-1} + \mathbf{B} \cdot \vec{u}
+\]
+\[
+\Sigma_{k|k-1} = \mathbf{F} \cdot \Sigma_{k-1} \cdot \mathbf{F}^T + \mathbf{Q}
+\]
+
+\subsubsection{Update Step}
+In the update step, the Kalman filter refines its predicted state using actual system measurements. This step incorporates new information to correct the prediction made during the previous step.
+
+The relationship between the state and the measurements is defined by the measurement matrix \( \mathbf{H}_k \). The uncertainty in the measurements, represented as noise, is modelled by the measurement noise covariance matrix \( \mathbf{R}_k \), while the actual measurement readings are denoted as \( \vec{z}_k \)
+
+To determine how much weight to assign to the measurements versus the predictions, the \textbf{Kalman gain} \( \mathbf{K} \) is computed. The Kalman gain balances the trust between the measurements (when noise is low) and the model's predictions (when noise is high). It is calculated as follows:
+\[
+\mathbf{K} = \Sigma_{k|k-1} \cdot \mathbf{H}_k^T \cdot \left( \mathbf{H}_k \cdot \Sigma_{k|k-1} \cdot \mathbf{H}_k^T + \mathbf{R}_k \right)^{-1}
+\]
+
+Using the Kalman gain, the filter updates the state estimate and the covariance:
+
+\[
+\vec{x}_{k}' = \vec{x}_{k|k-1} + \mathbf{K}' \cdot \left( \vec{z}_k - \mathbf{H} \cdot \vec{x}_{k|k-1} \right)
+\]
+\[
+\Sigma_k' = \Sigma_{k|k-1} - \mathbf{K}' \cdot \mathbf{H}_k \cdot \Sigma_{k|k-1}
+\]
+
+These updated values are then fed back into the prediction step, completing the Kalman filter cycle. This iterative process allows the filter to continuously refine its estimates \cite{zarchan2015kalman}.

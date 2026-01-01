@@ -1,5 +1,4 @@
 \chapter{Implementation}\label{ch:implementation}
-
 % demonstrate feasibility
 % Overview
 %     programming lanagaueg, streaming frameowkr, cep engine used
@@ -26,17 +25,9 @@
 %     scalability constrants
 
 
-
-
-
-
-
-
-\section{Implementation}
-\label{sec:implementation}
 This chapter demonstrates the feasibility of the proposed architecture through a concrete implementation of the concepts introduced in \chref{ch:architecture}.
 
-\subsection{Implementation Overview}
+\section{Overview}
 
 \begin{figure}[t]
     \centering
@@ -51,7 +42,7 @@ This division reflects practical considerations. Python provides a flexible envi
 
 
 
-\subsection{Event Stream Implementation}
+\section{Event Stream Implementation}
 
 The event stream provides the primary mechanism for propagating events throughout the system. Events are serialized into a standardized JSON payload (Listing~\ref{lst:event-json}), enforcing a consistent schema across all event types and implementation languages. Reconstructed events are injected into the same event stream as observed events and require no special handling by downstream consumers, ensuring a uniform processing model throughout the pipeline.
 
@@ -80,10 +71,54 @@ This mechanism is important for the coordinator, which monitors event timing to 
 
 
 
-\subsection{Prediction and Confidence Implementation}\label{sec:pred-conf}
+\section{Predictor Design and Confidence Derivation}
+\label{sec:predictor-confidence}
+In the proposed architecture, predictors are responsible for maintaining an estimate of system state associated with each event source and for producing state extrapolations when observations are missing. For the implementation presented in this thesis, a Kalman filter is selected as the predictor due to its well-established suitability for recursive state estimation in event-driven systems.
+
+Kalman filters provide a recursive method for estimating the state of a dynamical system \cite{kalman1960filtering,bishop2001introduction}. The system state at time step $k$ is represented by a state vector $\vec{x}_k$ and an associated covariance matrix $\Sigma_k$, which captures uncertainty in the estimate and correlations between state variables. State estimation proceeds through a prediction and update cycle.
+
+In the prediction step, the filter propagates the previous state estimate forward in time using a system model:
+\[
+\vec{x}_{k|k-1} = \mathbf{F}_k \vec{x}_{k-1} + \mathbf{B}_k \vec{u}_k,
+\qquad
+\Sigma_{k|k-1} = \mathbf{F}_k \Sigma_{k-1} \mathbf{F}_k^{T} + \mathbf{Q}_k,
+\]
+where $\mathbf{F}_k$ is the state transition matrix and $\mathbf{Q}_k$ represents process noise.
+
+When a measurement $\vec{z}_k$ becomes available, the update step incorporates this observation by computing the Kalman gain:
+\[
+\mathbf{K}_k = \Sigma_{k|k-1} \mathbf{H}_k^{T}
+\left( \mathbf{H}_k \Sigma_{k|k-1} \mathbf{H}_k^{T} + \mathbf{R}_k \right)^{-1},
+\]
+which balances trust between the predicted state and the measurement based on their respective uncertainties. The state estimate and covariance are then updated as:
+\[
+\vec{x}_k = \vec{x}_{k|k-1} + \mathbf{K}_k \left( \vec{z}_k - \mathbf{H}_k \vec{x}_{k|k-1} \right),
+\qquad
+\Sigma_k = \Sigma_{k|k-1} - \mathbf{K}_k \mathbf{H}_k \Sigma_{k|k-1}.
+\]
 
 
-\subsection{Event Processing Implementation}\label{sec:event-processing}
+\subsubsection{Deriving Confidence from Normalized Innovation Squared}
+Beyond providing state estimates, Kalman filters expose statistical diagnostics that characterize the consistency of the filter with respect to incoming measurements. In particular, the normalized innovation squared (NIS) statistic provides a measure of how well observed innovations align with the noise assumptions of the filter model \cite{bar2001estimation,piche2016online}. For a measurement $\vec{z}_k$, the NIS is defined as
+\[
+\mathrm{NIS}_k =
+\left( \vec{z}_k - \mathbf{H}_k \vec{x}_{k|k-1} \right)^{T}
+\mathbf{S}_k^{-1}
+\left( \vec{z}_k - \mathbf{H}_k \vec{x}_{k|k-1} \right),
+\]
+where
+\[
+\mathbf{S}_k = \mathbf{H}_k \Sigma_{k|k-1} \mathbf{H}_k^{T} + \mathbf{R}_k
+\]
+is the innovation covariance. Under the hypothesis that the filter model is consistent, the NIS follows a chi-square distribution with degrees of freedom equal to the measurement dimension and can be evaluated online using individual or time-averaged values.
+
+% Under the hypothesis that the model is consistent, the NIS follows a chi-square distribution and can be evaluated online using individual or time-averaged values to detect deviations from expected behavior.
+
+In this architecture, the NIS statistic is used as the basis for deriving confidence values associated with reconstructed events. Intuitively, NIS quantifies how surprising a measurement update is relative to the filter’s predicted uncertainty: larger NIS values indicate lower consistency between the model and observations, while smaller values indicate higher consistency. By mapping NIS values to a bounded confidence scale, reconstructed events can be annotated with confidence values that reflect the statistical consistency of the underlying state estimate at the time of reconstruction.
+
+
+
+\section{Event Processing Implementation}\label{sec:event-processing}
 Complex event processing is implemented using the Esper CEP engine, a production-grade complex event processing platform. 
 To support confidence-aware processing, the implementation distinguishes between atomic and complex event patterns. Atomic patterns define predicates over events, such as threshold violations or state conditions, and may incorporate confidence constraints to filter uncertain observations. Complex patterns compose previously detected patterns, enabling higher-level reasoning over sequences of events.
 
