@@ -1,19 +1,23 @@
 \chapter{Foundations of Event-Driven Processing under Missing Observations}\label{ch:model}
 
-The literature review (\secref{sec:literature-review-key-takeaways}) identifies a reliability gap in SoTS: while system behaviour depends on continuous streams of data, existing approaches provide limited support for ensuring continuity of correct behaviour as operating conditions change. This gap is particularly significant because digital twins operate in an event-driven manner, and SoTS inherit this mode of operation. As a result, SoTS behaviour depends not only on the availability of events, but on how event streams are processed during operation.
+The literature review (\secref{sec:literature-review-key-takeaways}) identifies a reliability gap in SoTS: while system behaviour depends on continuous streams of events, existing approaches provide limited support for interpreting system behaviour when expected observations do not arrive. This gap is particularly evident in how event streams are processed during execution.
 
-Event-driven processing mechanisms, such as complex event processing, derive higher-level system behaviour by detecting patterns over incoming events. When
-event streams are disrupted, through missing, delayed, or irregular observations, the assumptions underlying such processing no longer hold, and the results of event-based reasoning may begin to diverge from the system state they are intended to represent. Ensuring reliability under these conditions therefore requires explicit consideration of how system behaviour should be interpreted when expected observations do not arrive.
+Event-driven processing derives higher-level system behaviour by detecting patterns over incoming events. When observations are missing or delayed, event-based reasoning may diverge from the system state it is intended to represent. Addressing this challenge therefore requires an explicit treatment of event-driven semantics under missing observations.
 
-This chapter introduces an abstract model of event-driven operation that formalizes how events are generated and processed when expected observations are missing. The model provides a basis for inferring system behaviour and assessing confidence in the results of event-driven processing under disrupted input. These semantics form the foundation for the system architecture presented in \chref{ch:architecture}.
+This chapter introduces an abstract model of event-driven operation that formalizes event generation, timing, and processing in the presence of missing observations. The model provides the foundation for the architectural requirements defined in this chapter and for the system architecture presented in \chref{ch:architecture}.
 
 
 \section{Requirements}
 \label{sec:requirements}
-\input{tables/Architecture/requirements V3.tex}
-The model developed in this chapter is derived from requirements that arise specifically from the challenge of maintaining reliable event-driven processing in the presence of missing observations. These requirements are informed by the literature on uncertainty-aware event processing and dependable system design, as well as by the reliability gap identified in the literature review (\secref{sec:literature-review-key-takeaways}). The requirements therefore focus on situations in which expected events fail to arrive and must be detected, interpreted, and accounted for during processing.
-The resulting requirements are summarized in
-\tabref{tab:architecture-requirements}, which traces each requirement to the corresponding elements of the proposed event model and to supporting literature. In the next chapter (\chref{ch:architecture}), these requirements are instantiated in a system architecture that realizes the model.
+\input{tables/Architecture/requirements V4.tex}
+At the computational level, reliability challenges in event-driven SoTS manifest as uncertainty in the data processed by CEP. Prior work has shown that missing events can undermine event-based reasoning and lead to inaccurate conclusions about system behaviour. Maintaining reliable operation under these conditions therefore requires explicit support for reasoning under uncertainty within the event processing pipeline.
+
+In the CEP literature, \citet{wasserkrug2006taxonomy} classify different types of uncertainty, identifying missing data as a form of occurrence uncertainty originating at the event source. \citet{cugola2015complex} characterize uncertainty management as a fundamental requirement for CEP systems operating over real-world data, identifying three essential capabilities: the identification of uncertainty in input data, the explicit modeling of uncertainty, and the propagation of uncertainty from primitive to composite events.
+
+Together, these results motivate a set of architectural requirements for event-driven systems that must operate in the presence of missing observations. The system must be able to identify, represent, and propagate uncertainty during event-driven computation. The resulting requirements are formalized in \tabref{tab:architecture-requirements}, grounding the proposed model in established CEP uncertainty theory while addressing the reliability gap identified for digital twins operating within SoTS (\secref{sec:literature-review-key-takeaways}).
+
+
+
 
 
 \paragraph{Model Scope and Assumptions}

@@ -1,0 +1,65 @@
+\chapter{Introduction}\label{ch:introduction}
+The growing interconnection of systems and the increasing use of automation are contributing to a sharp rise in system complexity \cite{incose2035}, both across and within individual systems. At a system level, independently developed systems are increasingly engineered to cooperate so they can achieve objectives that exceed their individual capabilities. Such arrangements are described as systems of systems (SoS): large, distributed collections of autonomous systems that collaborate toward higher-level goals while retaining independent operation \cite{maier1998architecting}. Because SoS constituents join, leave, or reorganize in response to changing objectives, their collective behaviour evolves over time and gives rise to outcomes that individual systems cannot achieve alone \cite{nielsen2015systems}.
+
+Within each constituent system, internal complexity is also increasing as modern software systems collect, interpret, and act on streams of events. Many contemporary applications operate according to event semantics: they update internal state, detect meaningful changes, and trigger higher-level behaviour based on the arrival of discrete observations over time \cite{cugola2012processing}. Digital twins (DTs) represent a prominent example of this. A DT is a digital representation of a system that mirrors its real-time state through continuous data exchange \cite{kritzinger2018digital}. This connection enables awareness of current conditions \cite{pires2019digital,zhang2024digital}, supports analysis through models that interpret or forecast behaviour, and provides services such as optimization and simulation-based decision support \cite{leng2021digital}.
+
+The convergence of system-level coordination in SoS with the real-time digital representations provided by DTs gives rise to a new class of systems referred to in this thesis as \textbf{systems of twinned systems (SoTS)}:
+
+\begin{definitionframe}
+A System of Twinned Systems (SoTS) comprises digitally twinned systems, i.e., digital and physical twins, organized by system of systems (SoS) principles, in which digitally twinned systems may act as autonomous constituents and collaborate to achieve complex goals.
+\end{definitionframe}
+
+SoTS extend SoS coordination into the digital domain. Through their DTs, systems can be composed and coordinated virtually while still maintaining control over their physical counterparts. This enables distributed monitoring and decision-making among weakly coupled constituent systems whose digital and physical aspects may be strongly coupled. Unlike traditional SoS, SoTS explicitly emphasize cyber–physical heterogeneity and convergence at the constituent level, and—unlike federated or aggregated DTs follow SoS-style, ad-hoc composition rather than fixed, rule-driven federation \cite{vergara2023federated}.
+
+
+
+
+% Core narrative for the thesis
+% SoTS are inherently exposed to temporary data unavailability. Bc their DTs are event-driven, this unreliability manifests at the level of event computation, yet existing CEP mechanisms cannot maintain correct and continuous operation under interruptions. This thesis targets that computational layer to restore reliability.
+
+A defining characteristic of SoTS is their reliance on continuous information exchange among interconnected DTs. Their operation depends on consuming streams of discrete observations and state updates, yet the properties inherited from SoS make continuous data availability difficult to guarantee. Constituents may join, leave, or change roles. Communication paths may be reconfigured, sensing quality may fluctuate, and network or platform conditions may vary over time. Collectively, these characteristics lead to frequent temporary gaps in the streams of information on which the constituents of SoTS depend on.
+
+
+\paragraph{On the reliability of SoTS.}
+Reliability, as defined by \citet{avizienis2004basic}, requires both correctness and continuity of service. In SoTS, this requirement applies not only to physical constituents but also to the DTs that provide higher-level functions such as monitoring, simulation-based optimization, and analytic reasoning. These services depend on a steady flow of observations to keep each DT synchronized with its physical counterpart. When temporary disruptions interrupt this flow, the DT’s internal state diverges from reality and the correctness of its services degrades. In SoTS composed of interacting twins, such degradation can propagate across digital boundaries, reducing the reliability of the system as a whole. Ensuring reliable operation therefore requires mechanisms that allow DT-based services to remain correct and continuous even when data becomes temporarily unavailable.
+
+
+\paragraph{Digital twins as event-driven constituents.}
+% \id{MISSING: proof that SoTS are inherently event-driven}
+DTs interact with their physical systems and with other DTs through the exchange of discrete observations, state updates, notifications, and control signals. These interactions are consumed as sequences of events that trigger state updates, model execution, or reasoning processes within DT-based services. This event-based mode of interaction is explicitly supported by established DT standards. ISO~23247 defines event-based synchronization as a mechanism for maintaining consistency between a digital twin and its physical system, in which updates are performed in response to events \cite{iso23247_1_2021}. Asset Administration Shell–based architectures specify explicit event constructs, including event types, scopes, and message structures, and define their use for asynchronous communication between DTs and external systems \cite{aas_details_2018_p1}. As a result, DT-based services advance computation in response to the arrival of events. Since SoTS are composed of interacting DTs, their overall operation is governed by event-driven interactions.
+
+
+\paragraph{On the role of Complex Event Processing.}
+% \id{So what? In terms of the prev. content. Why are these complex event patterns important in the class of systems of interst? -- Link with Reliability?}
+Within event-driven systems, complex event processing (CEP) provides the computational mechanisms for interpreting event streams and detecting higher-level phenomena \cite{luckham2002power}. CEP engines aggregate, correlate, and reason over sequences of low-level events to produce derived events and state representations used by monitoring, coordination, and decision-making services. In DT-based systems, CEP therefore forms a critical computational layer through which incoming events are transformed into higher-level representations consumed by DT services. The reliability of DT services is consequently tied to the correctness and continuity of this event-processing layer.
+
+However, conventional CEP engines implicitly assume uninterrupted event arrival. Across automata-based, logic-based, Petri-net, and grammar-based frameworks, reasoning is defined only over events that actually appear in the input stream. Although some approaches can infer latent logical subevents during recognition, none detect when an expected event has failed to arrive, nor do they reconstruct absent observations \cite{alevizos2017probabilistic}. In all cases, reasoning advances only upon the arrival of new input, and processing effectively suspends when event streams are temporarily unavailable. As a result, these approaches offer no mechanism for \textbf{maintaining event detection during intervals of temporary data unavailability}, a condition that naturally arises in SoTS.
+
+
+
+% \rem{To investigate this question}{To respond to this need}, \rep{the thesis focuses}{in this thesis, I propose... -- ALWAYS ACTIVE VOICE} on the reasoning mechanisms that operate over SoTS event streams. \id{Explain a bit more what you do in this thesis}
+% \id{To render SoTS more reliable, you specifically focus on the computation unit that processes events and make THAT reliable. This does not mean reliability of SoTS will necessarily improve, perhaps you need to take care of HW, middleware.... BUT that's not in your scope}
+% \id{Explain the solution. I will use the existing, sizeable body of knowledge of partial... whatever, Kalman filters to impute ... I will figure out where to put this -- where, IN AN SoTS -- architecture. I will start this work (arch) from established arch standards from the DT domain (bc DTs are the building blocks of SoTS and there's no such thing as an SoTS arch currently; so the next best thing I can do is to start from a DT arch standard -- ISO 23247 Part 2.}
+
+\paragraph{Thesis focus.}
+To respond to this need, I focus on the reasoning mechanisms that operate over event streams within the digital twin constituents of SoTS. This work targets the computational layer responsible for interpreting events and producing higher-level representations. Specifically, this thesis addresses the inability of conventional CEP engines to operate correctly and continuously when input event streams are temporarily disrupted.
+
+In this thesis, I propose a preprocessing pipeline that preserves continuity of event-driven computation during periods of temporary data unavailability while maintaining correctness through explicit uncertainty management. When expected events fail to arrive, the pipeline estimates missing observations using Kalman filter based predictors, selected for their ability to model and propagate estimation uncertainty. The pipeline generates substitute events together with confidence information that quantifies the uncertainty associated with each estimate. By propagating this confidence alongside reconstructed events, downstream CEP continues reasoning without interruption while constraining the use of predicted values to conditions under which their uncertainty remains acceptable. I position this approach within an architecture derived from established digital twin standards, using ISO~23247 Part~2 \cite{iso23247_2_2021} as a reference point for integrating event reconstruction and uncertainty-aware processing into DT-based constituents of SoTS.
+
+
+\section*{Research Contributions}
+
+This thesis advances the reliable operation of systems of twinned systems through four main contributions:
+
+\textbf{Contribution 1 – Characterizing and Surveying Systems of Twinned Systems (Chapters~\ref{ch:background}–\ref{ch:literature-review})}
+This thesis defines Systems of Twinned Systems (SoTS) as a distinct class of systems built on the integration of digital twins within systems of systems, establishing the conceptual and structural foundations for their organization and behaviour. It then performs a systematic review of existing SoTS research, synthesizing current approaches and emphasizing the role of reliable operation in SoTS environment.
+
+\textbf{Contribution 2 – An Architecture for Correct and Continuous Event Processing in SoTS (Chapter~\ref{ch:architecture})}  
+Develops an architecture that maintains SoTS operation during periods of temporary data unavailability. The design introduces a standardized preprocessing layer with an interface through which DTs provide reconstructed values with confidence, while the architecture detects data gaps and integrates these annotated values into the processing pipeline to support continued system operation.
+
+\textbf{Contribution 3 – Evaluating the Reliable SoTS Architecture within a Complex Event Processing Pipeline (Chapter~\ref{ch:results})}  
+Implements and integrates the proposed architecture within a complex event processing pipeline to evaluate its performance under periods of temporary data unavailability. Experiments simulate constituent disconnections, with performance assessed through reconstruction accuracy and event-detection correctness relative to a baseline configuration.
+
+\vspace{1em}
+\noindent 
+Together, these contributions establish a theoretical foundation and a practical implementation framework for reliable operation in systems of twinned systems. Afterwards, the discussion in \chref{ch:discussion} reflects on the implications of these results, while \chref{ch:conclusion} summarizes the key outcomes and outlines directions for future research on reliable systems of twinned systems.

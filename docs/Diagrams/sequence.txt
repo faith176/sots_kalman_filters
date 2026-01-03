@@ -1,5 +1,11 @@
 @startuml
-title Event Processing and Reconstruction Flow
+skinparam defaultFontSize 18
+skinparam titleFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam ArrowThickness 2
+scale 1.8
+
+title ""
 
 actor Researcher
 
