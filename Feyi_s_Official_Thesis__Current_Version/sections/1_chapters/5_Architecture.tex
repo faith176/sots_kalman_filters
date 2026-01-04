@@ -13,7 +13,7 @@ At a high level, the system is organized around the processing of events origina
     \label{fig:domain-model}
 \end{figure}
 
-An \emph{Event} represents an observation produced by an event source.  Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specific intervals but are assumed to be unreliable, allowing events to be absent.
+An \emph{Event} represents an observation produced by an event source. Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specific intervals but are assumed to be flawed, allowing events to be absent.
 To support reliable operation under such conditions, the architecture introduces explicit coordination and estimation elements. A \emph{Coordinator} monitors the arrival of events from each source and determines whether events arrive on time or are missing. When an expected event is absent from the \emph{Event Stream}, a \emph{Reconstructor} uses a \emph{Predictor} to synthesize a replacement event. An \emph{Event Processor} consumes both observed and reconstructed events to evaluate \emph{Event Patterns}. 
 Event patterns represent higher-level abstractions over streams of events. An \emph{Atomic Event Pattern} captures a basic behavioural condition over one or more events. A \emph{Complex Event Pattern} represents a composition of atomic and complex event patterns, enabling the detection of higher-level situations formed by multiple correlated behaviours occurring.
 
@@ -21,7 +21,7 @@ Event patterns represent higher-level abstractions over streams of events. An \e
 \section{Component Architecture and Responsibilities}
 \label{sec:architecture-components}
 
-\figref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. The architecture separates concerns across event production, temporal coordination, state estimation, and event processing. All communication between components occurs through the \emph{Event Stream}, which serves as the mechanism for propagating events through the system. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
+\figref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
 
 \begin{figure}[t]
     \centering
@@ -34,7 +34,7 @@ Event patterns represent higher-level abstractions over streams of events. An \e
 An event source represents an external system, sensor, or data generator that produces observations of a monitored process. Its responsibility is to generate observations and encapsulate them as events that conform to the system’s event schema. These observed events are emitted into the event stream for downstream processing.
 
 \paragraph{Event Stream}
-The event stream provides a transport and routing abstraction for all events in the system. It acts as a shared event bus through which observed and reconstructed events are delivered to coordination, reconstruction, and processing components.
+The event stream provides a transport and routing abstraction for all events in the system. It acts as a shared event bus through which observed and reconstructed events are delivered to coordination and processing components.
 
 \paragraph{Coordinator}
 The coordinator is responsible for monitoring the arrival of observed events and reasoning about their expected timing. For each event source, it maintains an expected schedule derived from configuration parameters such as reporting interval and tolerance. Based on this schedule, the coordinator identifies missing observations and initiates reconstruction when expected events do not arrive within the configured time window.
@@ -43,10 +43,10 @@ The coordinator is responsible for monitoring the arrival of observed events and
 Each event source is associated with a reconstructor that manages reconstruction for that source. The reconstructor forwards observed events to its associated predictor for state update and performs reconstruction when notified of missing observations. For a missing event, it obtains an estimated value and associated confidence from its predictor, constructs a reconstructed event, and emits it into the event stream.
 
 \paragraph{Predictor}
-A predictor maintains an internal representation of the state associated with a specific event source. It supports state updates using observed values and state extrapolation to produce estimates when observations are missing. Predictors also provide uncertainty measures associated with their estimates, enabling confidence-aware processing.
+A predictor maintains an internal representation of the system state associated with a specific event source. It supports state updates using observed values and state prediction to produce estimates when observations are missing. Predictors also provide uncertainty measures associated with their estimates.
 
 \paragraph{Event Processor}
-The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence associated with events may be incorporated into pattern evaluation through confidence-aware predicates or thresholds. This allows pattern detection to account for uncertainty introduced by reconstructed observations.
+The event processor evaluates atomic and complex event patterns over the event stream. It consumes both observed and reconstructed events and applies pattern definitions to detect higher-level events. Confidence associated with events may be incorporated into pattern evaluations. This allows pattern detection to account for uncertainty introduced by reconstructed observations.
 
 
 \section{Event Processing and Reconstruction Flow}
@@ -70,9 +70,10 @@ If an expected event does not arrive within the expected time, the coordinator d
 
 
 % Look at Sharons - https://link.springer.com/article/10.1007/s10270-025-01306-0
+% the look at RAMI 4.0
+% how would this be deployed in an enterprise - talk about KPI utility on evnt detection
 \section{Mapping the Framework to the ISO~23247 Reference Architecture}\label{sec:dt-positioning}
-
-As discussed in the literature review (\secref{subsec:literature-review-results-standards}), standards adoption in systems of twinned systems (SoTS) remains fragmented, with existing work primarily focusing on communication- and data-oriented standards. To clarify how advanced digital twin functionality can be architecturally integrated under imperfect data, the proposed framework is mapped to the ISO~23247 reference architecture. This mapping situates the framework within standardized architectural entities and functional entities (FEs), and illustrates how event data and inferred information propagate to support reliable digital twin operation and, in turn, improve reliability in SoTS.
+As identified in the literature review (\secref{subsec:literature-review-results-standards}), standards adoption in SoTS remains fragmented and is largely limited to communication- and data-level concerns. To position the proposed SoTS framework within an established reference architecture, it is mapped to ISO~23247. This mapping relates the framework’s components to standardized architectural and functional entities (FEs), and shows how both observed and inferred event information can be integrated to support reliable digital twin operation within SoTS under imperfect data conditions.
 
 \begin{figure}[t]
     \centering
@@ -87,12 +88,11 @@ ISO~23247 defines a domain- and entity-based reference architecture separating o
 
 Observable manufacturing elements reside in the OME entity and represent the physical assets being monitored. According to ISO~23247, observations of OMEs are acquired through the data collecting functional entity. In the proposed framework, this functionality is realized within the device communication entity by an event source component, which interfaces with physical devices and produces raw observations as discrete events.
 
-To ensure interoperability across heterogeneous systems, ISO~23247 defines the data translation functional entity for transforming collected data into standardized representations. This functionality is instantiated in the cross-system entity by a serialization component, which converts raw observations into a standardized event representation that can be exchanged across systems and components without coupling to device-specific formats.
+ISO~23247 defines the data translation functional entity for transforming collected data into standardized representations. This functionality is instantiated in the cross-system entity by a serialization component, which converts observations into a standardized event representation that can be exchanged across systems and components.
 
 Within the digital twin entity, ISO~23247 defines the digital representation functional entity as an abstraction of OME state and behaviour. In the proposed framework, this digital representation is maintained as a standardized event stream, which serves as the primary interface through which synchronization, simulation, and analytic services interact.
 
-Synchronization functionality, which ISO~23247 associates with maintaining temporal consistency between the physical and digital representations, is handled by the coordinator and reconstructor components. These components extend the synchronization functional entity by explicitly accounting for the absence of expected events. The coordinator supervises event timing and detects violations of expected temporal behaviour, while the reconstructor generates inferred events when observations fail to arrive within their expected windows and injects them back into the event stream.
-
+Synchronization functionality, which ISO~23247 associates with maintaining consistency between the physical and digital representations, is handled by the coordinator and reconstructor components. These components extend the synchronization functional entity by explicitly accounting for the absence of expected events. The coordinator supervises event timing and detects violations of expected behaviour, while the reconstructor generates inferred events when observations fail to arrive within their expected windows and injects them back into the event stream. 
 The predictor component instantiates the simulation functional entity defined in ISO~23247 to predict the behaviour of OMEs. The predictor updates its internal model in response to observed events and estimates system state.
 
 Finally, ISO~23247 assigns higher-level reasoning over digital twin data to the analytic service functional entity. This functionality is realized by the event processor component, which detects higher-level behaviour in event stream sequences and reasons over both observed and reconstructed events.

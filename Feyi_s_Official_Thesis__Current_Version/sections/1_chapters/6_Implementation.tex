@@ -11,24 +11,17 @@ This chapter presents the implementation of the proposed architecture introduced
     \label{fig:uml-model}
 \end{figure}
 
+\figref{fig:uml-model} presents the UML class diagram of the implemented system.  At the center of the model is the \texttt{Event} class, which represents both observed and reconstructed events flowing through the system. Each event contains an identifier, event type, source identifier, event timestamp, value, status, and an associated confidence value.
 
-\figref{fig:uml-model} presents the UML class diagram of the implemented system. The diagram shows the implementation of the architecture described in earlier chapters.
-
-At the center of the model is the \texttt{Event} class, which represents both observed and reconstructed events flowing through the system. Each event encapsulates an identifier, event type, source identifier, event-time timestamp, value, status, and an associated confidence value.
-
-Events are propagated via the \texttt{EventStream}, which acts as the primary communication backbone of the system. The event stream provides a publish--subscribe abstraction through which all event producers and consumers interact, exposing operations for publishing events and subscribing to event streams. All architectural components interact exclusively with this abstraction, enabling loose coupling and supporting a cross-language architecture in which Python- and Java-based components operate over the same logical event stream.
-
-The realization of the event stream is provided by the \texttt{Client} and \texttt{Server} classes, which together implement ZeroMQ-based message passing as the transport layer of the \texttt{EventStream}. The server is responsible solely for routing events, while the client is used internally by the event stream to manage partitions and connections. All components connect to the same logical event stream instance and interact only through the \texttt{EventStream} abstraction. This design allows Python-based components responsible for coordination, reconstruction, and state estimation, as well as the Java-based event processing subsystem, to share a common event representation while remaining independent of the underlying communication mechanism.
+Events are propagated via the \texttt{EventStream}, which acts as the primary communication backbone of the system. The event stream provides a publish--subscribe abstraction through which all event producers and consumers interact. This enables loose coupling and supporting a cross-language architecture in which Python- and Java-based components operate over the same logical event stream. The realization of the event stream is provided by the \texttt{Client} and \texttt{Server} classes, which together implement ZeroMQ-based message passing as the transport layer of the \texttt{EventStream}. The server is responsible solely for routing events, while the client is used internally by the event stream to manage partitions and connections.
 
 External data producers are represented by the \texttt{EventSource} class. Each event source is contains a source identifier, event type, and expected reporting interval, and is responsible for generating observed events and publishing them to the event stream. Event sources implement the \texttt{EventGenerator} interface, allowing them to be treated uniformly as event producers.
 
 Event supervision is handled by the \texttt{Coordinator}, which implements the \texttt{EventConsumer} interface. The coordinator monitors incoming events for each source, maintains an expected schedule, and detects when observations are missing. When an expected event fails to arrive within the configured tolerance window, the coordinator triggers reconstruction by notifying the corresponding \texttt{Reconstructor}.
 
-Each \texttt{Reconstructor} is associated with a specific event source and implements the \texttt{EventGenerator} interface. Observed events are forwarded to the reconstructor to update its associated \texttt{Predictor}, while missing events cause the reconstructor to request an estimate and confidence for the expected event time. The reconstructor then synthesizes a reconstructed \texttt{Event}, and publishes it into the event stream.
+Each \texttt{Reconstructor} is associated with a specific event source and implements the \texttt{EventGenerator} interface. Observed events are forwarded to the reconstructor to update its associated \texttt{Predictor}, while missing events cause the reconstructor to request an estimate and confidence for the expected event time. The reconstructor then synthesizes a reconstructed \texttt{Event}, and publishes it into the event stream. State estimation is done by the \texttt{Predictor}, which maintains an internal representation of system state for a given event source. In this thesis, predictors are realized using Kalman filters, which support recursive state estimation and explicitly track estimation uncertainty.
 
-State estimation is done by the \texttt{Predictor}, which maintains an internal representation of system state for a given event source. In this thesis, predictors are realized using Kalman filters, which support recursive state estimation and explicitly track estimation uncertainty.
-
-High-level reasoning over the event stream is performed by the \texttt{EventProcessor}, which also implements the \texttt{EventConsumer} interface. The event processor is implemented in Java using the Esper complex event processing engine. It evaluates \texttt{EventPattern} definitions written in Esper’s Event Processing Language (EPL). Patterns are structured as either \texttt{AtomicEventPattern}, which operate directly over events, or \texttt{ComplexEventPattern}, which compose multiple atomic or complex patterns. Detected patterns may be reintroduced into the event stream, enabling pattern-of-pattern processing and incremental construction of higher-level events.
+Event processing is realized by the \texttt{EventProcessor} and \texttt{EventPattern} classes. The class hierarchy distinguishes between atomic and composite pattern definitions, reflecting the structure used to construct higher-level events from lower-level detections.The event processor is implemented in Java using the Esper \cite{esper_reference}.
 
 
 
@@ -121,9 +114,7 @@ In the proposed architecture, the normalized innovation squared (NIS) \cite{bar2
 
 \section{Event Processing Implementation}\label{sec:event-processing}
 Complex event processing is implemented using the Esper CEP engine \cite{esper_reference}. 
-To support confidence-aware processing, the implementation distinguishes between atomic and complex event patterns. Atomic patterns define predicates over events, such as threshold violations or state conditions, and may incorporate confidence constraints to filter uncertain observations. Complex patterns compose previously detected patterns, enabling higher-level reasoning over sequences of events.
-
-Atomic patterns are defined using standard EPL and may include conditions on event confidence. Listing~\ref{lst:atomic-patterns} shows example atomic pattern definitions expressed in EPL.
+The implementation distinguishes between atomic and complex event patterns. Atomic patterns define assertions over sequences of events, and may incorporate confidence constraints to filter uncertain observations. Complex patterns compose previously detected patterns, enabling higher-level reasoning over sequences of events. Listing~\ref{lst:atomic-patterns} shows example atomic pattern definitions expressed in EPL.
 
 \begin{lstlisting}[language=json, caption={Example atomic event pattern definitions}, label={lst:atomic-patterns}]
 [
@@ -153,8 +144,4 @@ Detected patterns, including both atomic and complex patterns, are re-injected i
 ]
 \end{lstlisting}
 
-Confidence aggregation is performed outside the CEP engine using simple strategies such as minimum, maximum, average, or latest confidence. Patterns detected on safety-critical services may require maximum confidence, fault-detection patterns may use minimum confidence to reflect worst-case uncertainty, and trend-based patterns may aggregate confidence using the average to smooth individual fluctuations.
-
-Confidence-aware predicates may be applied at both atomic and complex levels, enabling queries to reason explicitly about event occurrences while accounting for input uncertainty. Existing queries can be updated to require maximum confidence, restricting evaluation to observed events only and preserving backward compatibility with conventional CEP usage.
-
-
+Confidence aggregation is performed outside the CEP engine using simple strategies such as minimum, maximum, average, or latest confidence. For example, patterns detected on safety-critical services may require maximum confidence, fault-detection patterns may use minimum confidence to reflect worst-case uncertainty, and trend-based patterns may aggregate confidence using the average to smooth individual fluctuations. Confidence-aware assertions may be applied at both atomic and complex levels, enabling queries to reason explicitly about event occurrences while accounting for input uncertainty. Existing queries can be updated to require maximum confidence, restricting evaluation to observed events only and preserving backward compatibility with conventional CEP usage.
