@@ -1,16 +1,15 @@
 \chapter{System Architecture}\label{ch:architecture}
 This chapter presents the architecture of the event processing system proposed in \chref{ch:model} to support reliable operation. The architecture defines the system’s structural organization, the responsibilities of its components, and the flow of events under both normal operation and conditions involving missing observations.
- 
 
 \section{Architectural Overview}
 \label{sec:architecture-overview}
 At a high level, the system is organized around the processing of events originating from external sources. These events are propagated through an event stream, where their arrival is monitored to determine whether they should be forwarded directly for processing or reconstructed when expected observations are missing. Reconstructed events carry the confidence of the estimates, allowing this information to be taken into account during event processing. \figref{fig:domain-model} presents the domain model of the architecture, showing the key conceptual entities and their relationships.
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{figures/Architecture/Domain Model.drawio.pdf}
-    \caption{Domain model.}
-    \label{fig:domain-model}
+\centering
+\includegraphics[width=\linewidth]{figures/Architecture/Domain Model.drawio.pdf}
+\caption{Domain model.}
+\label{fig:domain-model}
 \end{figure}
 
 An \emph{Event} represents an observation produced by an event source. Events are propagated using an \emph{Event Stream}, which provides a sequence of events to downstream elements of the system. \emph{Event sources} generate observations at specific intervals but are assumed to be flawed, allowing events to be absent.
@@ -24,10 +23,10 @@ Event patterns represent higher-level abstractions over streams of events. An \e
 \figref{fig:component-model} presents the component model of the system, illustrating the major architectural elements and the interfaces through which they interact. This design enables components to interact through well-defined interfaces while remaining loosely coupled. The responsibilities of each component are described below.
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/Architecture/High Level Component Diagram.drawio.pdf}
-    \caption{Component model.}
-    \label{fig:component-model}
+\centering
+\includegraphics[width=\textwidth]{figures/Architecture/High Level Component Diagram.drawio.pdf}
+\caption{Component model.}
+\label{fig:component-model}
 \end{figure}
 
 \paragraph{Event Source}
@@ -52,14 +51,13 @@ The event processor evaluates atomic and complex event patterns over the event s
 \section{Event Processing and Reconstruction Flow}
 \label{sec:architecture-sequence}
 
-To illustrate the behaviour of the system, \figref{fig:sequence-model} presents the sequence model for event
-processing and reconstruction.
+To illustrate the behaviour of the system, \figref{fig:sequence-model} presents the sequence model for event processing and reconstruction.
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/Architecture/Sequence Diagram.png}
-    \caption{Sequence model.}
-    \label{fig:sequence-model}
+\centering
+\includegraphics[width=\textwidth]{figures/Architecture/Sequence Diagram.png}
+\caption{Sequence model.}
+\label{fig:sequence-model}
 \end{figure}
 
 \paragraph{Normal Observation Flow}
@@ -71,15 +69,15 @@ If an expected event does not arrive within the expected time, the coordinator d
 
 % Look at Sharons - https://link.springer.com/article/10.1007/s10270-025-01306-0
 % the look at RAMI 4.0
-% how would this be deployed in an enterprise - talk about KPI utility on evnt detection
+% how would this be deployed in an enterprise - talk about KPI utility on event detection
 \section{Mapping the Framework to the ISO~23247 Reference Architecture}\label{sec:dt-positioning}
-As identified in the literature review (\secref{subsec:literature-review-results-standards}), standards adoption in SoTS remains fragmented and is largely limited to communication- and data-level concerns. To position the proposed SoTS framework within an established reference architecture, it is mapped to ISO~23247. This mapping relates the framework’s components to standardized architectural and functional entities (FEs), and shows how both observed and inferred event information can be integrated to support reliable digital twin operation within SoTS under imperfect data conditions.
+As identified in the literature review (\secref{subsec:literature-review-results-standards}), standards adoption in SoTS remains fragmented and is largely limited to communication- and data-level concerns. To position the proposed SoTS framework within an established reference architecture, it is mapped to ISO~23247. This mapping relates the framework’s components to standardized architectural and functional entities (FEs) and shows how both observed and inferred event information can be integrated to support reliable digital twin operation within SoTS under imperfect data conditions.
 
 \begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/Architecture/ISO 23247.drawio.pdf}
-    \caption{Positioning of the proposed framework within the ISO~23247 reference architecture.}
-    \label{fig:iso23247-mapping}
+\centering
+\includegraphics[width=\textwidth]{figures/Architecture/ISO 23247.drawio.pdf}
+\caption{Positioning of the proposed framework within the ISO~23247 reference architecture.}
+\label{fig:iso23247-mapping}
 \end{figure}
 
 \subsection*{Mapping to ISO~23247 entities}
@@ -93,10 +91,10 @@ ISO~23247 defines the data translation functional entity for transforming collec
 Within the digital twin entity, ISO~23247 defines the digital representation functional entity as an abstraction of OME state and behaviour. In the proposed framework, this digital representation is maintained as a standardized event stream, which serves as the primary interface through which synchronization, simulation, and analytic services interact.
 
 Synchronization functionality, which ISO~23247 associates with maintaining consistency between the physical and digital representations, is handled by the coordinator and reconstructor components. These components extend the synchronization functional entity by explicitly accounting for the absence of expected events. The coordinator supervises event timing and detects violations of expected behaviour, while the reconstructor generates inferred events when observations fail to arrive within their expected windows and injects them back into the event stream. 
-The predictor component instantiates the simulation functional entity defined in ISO~23247 to predict the behaviour of OMEs. The predictor updates its internal model in response to observed events and estimates system state.
+The predictor component instantiates the simulation functional entity defined in ISO~23247 to predict the behaviour of OMEs. The predictor updates its internal model in response to observed events and estimates the system state.
 
 Finally, ISO~23247 assigns higher-level reasoning over digital twin data to the analytic service functional entity. This functionality is realized by the event processor component, which detects higher-level behaviour in event stream sequences and reasons over both observed and reconstructed events.
 
 \input{tables/Architecture/dt_mapping.tex}
 
-\figref{fig:iso23247-mapping} illustrates the placement of the framework components within the ISO~23247 reference architecture, while \tabref{tab:iso23247-fe-mapping-compact} maps them to functional entities. Together, they show that the framework aligns with ISO~23247 and supports reliable operation of DTs in SoTS.
+\figref{fig:iso23247-mapping} illustrates the placement of the framework components within the ISO~23247 reference architecture, while \tabref{tab:iso23247-fe-mapping-compact} maps them to functional entities. Together, they show that the framework aligns with ISO~23247 and supports the reliable operation of DTs in SoTS.

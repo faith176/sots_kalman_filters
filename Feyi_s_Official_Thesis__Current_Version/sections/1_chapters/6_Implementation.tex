@@ -1,27 +1,27 @@
 \chapter{Implementation}\label{ch:implementation}
-This chapter presents the implementation of the proposed architecture introduced in \chref{ch:architecture}. The reference implementation is available on github.\footnote{\url{https://github.com/ssm-lab/sots_cep}}
+This chapter presents the implementation of the proposed architecture introduced in \chref{ch:architecture}. The reference implementation is available on GitHub.\footnote{\url{https://github.com/ssm-lab/sots_cep}}
 
 
 \section{Implementation Overview}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figures/Implementation/UML Model.drawio.pdf}
-    \caption{UML class diagram.}
-    \label{fig:uml-model}
+\centering
+\includegraphics[width=\textwidth]{figures/Implementation/UML Model.drawio.pdf}
+\caption{UML class diagram.}
+\label{fig:uml-model}
 \end{figure}
 
-\figref{fig:uml-model} presents the UML class diagram of the implemented system.  At the center of the model is the \texttt{Event} class, which represents both observed and reconstructed events flowing through the system. Each event contains an identifier, event type, source identifier, event timestamp, value, status, and an associated confidence value.
+\figref{fig:uml-model} presents the UML class diagram of the implemented system. At the center of the model is the \texttt{Event} class, which represents both observed and reconstructed events flowing through the system. Each event contains an identifier, event type, source identifier, event timestamp, value, status, and an associated confidence value.
 
-Events are propagated via the \texttt{EventStream}, which acts as the primary communication backbone of the system. The event stream provides a publish--subscribe abstraction through which all event producers and consumers interact. This enables loose coupling and supporting a cross-language architecture in which Python- and Java-based components operate over the same logical event stream. The realization of the event stream is provided by the \texttt{Client} and \texttt{Server} classes, which together implement ZeroMQ-based message passing as the transport layer of the \texttt{EventStream}. The server is responsible solely for routing events, while the client is used internally by the event stream to manage partitions and connections.
+Events are propagated via the \texttt{EventStream}, which acts as the primary communication backbone of the system. The event stream provides a publish--subscribe abstraction through which all event producers and consumers interact. This enables loose coupling and supports a cross-language architecture in which Python- and Java-based components operate over the same logical event stream. The realization of the event stream is provided by the \texttt{Client} and \texttt{Server} classes, which together implement ZeroMQ-based message passing as the transport layer of the \texttt{EventStream}. The server is responsible solely for routing events, while the client is used internally by the event stream to manage partitions and connections.
 
-External data producers are represented by the \texttt{EventSource} class. Each event source is contains a source identifier, event type, and expected reporting interval, and is responsible for generating observed events and publishing them to the event stream. Event sources implement the \texttt{EventGenerator} interface, allowing them to be treated uniformly as event producers.
+External data producers are represented by the \texttt{EventSource} class. Each event source contains a source identifier, event type, and expected reporting interval, and is responsible for generating observed events and publishing them to the event stream. Event sources implement the \texttt{EventGenerator} interface, allowing them to be treated uniformly as event producers.
 
 Event supervision is handled by the \texttt{Coordinator}, which implements the \texttt{EventConsumer} interface. The coordinator monitors incoming events for each source, maintains an expected schedule, and detects when observations are missing. When an expected event fails to arrive within the configured tolerance window, the coordinator triggers reconstruction by notifying the corresponding \texttt{Reconstructor}.
 
 Each \texttt{Reconstructor} is associated with a specific event source and implements the \texttt{EventGenerator} interface. Observed events are forwarded to the reconstructor to update its associated \texttt{Predictor}, while missing events cause the reconstructor to request an estimate and confidence for the expected event time. The reconstructor then synthesizes a reconstructed \texttt{Event}, and publishes it into the event stream. State estimation is done by the \texttt{Predictor}, which maintains an internal representation of system state for a given event source. In this thesis, predictors are realized using Kalman filters, which support recursive state estimation and explicitly track estimation uncertainty.
 
-Event processing is realized by the \texttt{EventProcessor} and \texttt{EventPattern} classes. The class hierarchy distinguishes between atomic and composite pattern definitions, reflecting the structure used to construct higher-level events from lower-level detections.The event processor is implemented in Java using the Esper \cite{esper_reference}.
+Event processing is realized by the \texttt{EventProcessor} and \texttt{EventPattern} classes. The class hierarchy distinguishes between atomic and composite pattern definitions, reflecting the structure used to construct higher-level events from lower-level detections. The event processor is implemented in Java using the Esper \cite{esper_reference}.
 
 
 
@@ -49,7 +49,7 @@ The system uses ZMQ topic filtering to separate observed and reconstructed event
 
 \input{tables/Implementation/topic_filtering.tex}
 
-This mechanism is important for the coordinator, which monitors event timing to detect missing observations. By subscribing to observed event topics, the coordinator avoids inadvertently consuming reconstructed events injected later by the reconstructor, preventing feedback loops and ensuring correct detection of missing data.
+This mechanism is important for the coordinator, who monitors event timing to detect missing observations. By subscribing to observed event topics, the coordinator avoids inadvertently consuming reconstructed events injected later by the reconstructor, preventing feedback loops and ensuring correct detection of missing data.
 
 
 
@@ -89,8 +89,8 @@ Kalman filters rely on assumptions about system dynamics and measurement noise \
 A range of consistency diagnostics for Kalman filters has been proposed in the literature. Residual-based tests examine measurement innovations, defined as the difference between an observed measurement and its predicted value produced by the filter. State domain tests assess whether estimation errors remain within bounds implied by the posterior covariance matrix. Structural indicators characterize properties of the underlying system and estimator, including observability (whether the system state can be inferred from available measurements), controllability (whether the system state can be influenced through inputs), and Kalman gain behavior \cite{bar2001estimation,gamse2014statistical,piche2016online, griebel2020kalman}. Together, these diagnostics characterize whether the uncertainty represented by the estimator remains consistent with observed system behavior during operation, as well as different aspects of model adequacy.
 
 
-% NIS is like the errors between the estimates and measurements, similar to what i claimed they would be - indicates the model knows the system well
-% follows a chi square distribution so its bounded
+% NIS is like the errors between the estimates and measurements, similar to what I claimed they would be - indicates the model knows the system well
+% follows a chi-square distribution, so it's bounded
 
 In this work, confidence values are derived from the normalized innovation squared (NIS). NIS is based on the measurement innovation, defined as the difference between an observed measurement and the corresponding value predicted by the filter. The innovation quantifies how much new information a measurement provides relative to the current state estimate.
 
