@@ -373,3 +373,33 @@
 % Subcategory corner labels
 \newcommand{\subcategory}{\;\corner{}}
 \newcommand{\subsubcategory}{\;\;\corner{}}
+
+
+
+
+
+% %%%%%%%%%%%%%%%%%%%% Boxes 
+
+    \newtcolorbox{publicationbox}[2][]{
+        enhanced jigsaw,
+        breakable,
+        notitle,
+        sharpish corners,
+        before skip=\baselineskip,
+        code=\singlespace,
+        opacityframe=0,
+        leftupper=1cm,
+        colback=gray!15!white,
+        fontupper=\footnotesize,
+        fontlower=\footnotesize,
+        lower separated=false,
+        overlay unbroken={
+            \node[anchor=north west] at ([xshift=2mm,yshift=-2mm]frame.north west) {#2};
+            },
+        overlay first={
+            \node[anchor=north west] at ([xshift=2mm,yshift=-2mm]frame.north west) {#2};
+            },
+        #1
+    }
+
+    \newcommand{\quotetext}[1]{``#1''}

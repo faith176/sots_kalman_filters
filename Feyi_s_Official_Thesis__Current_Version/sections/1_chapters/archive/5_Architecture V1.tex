@@ -1,106 +1,207 @@
-\chapter{Architecture}
-\label{ch:architecture}
+\chapter{Architecture}\label{ch:architecture}
 
-This chapter presents the architecture of the proposed framework designed to manage uncertainty in SoTS through real-time data reconstruction, confidence propagation, and event reasoning. 
+% 4.1 Middleware Meta-Model
 
-% -------------------------------------------------------------
-\section{Architectural Objectives}
+% Introduce the idea of this being a middleware for digital twisn
 
-The framework architecture is guided by two primary objectives that ensure reliable, interpretable, and interoperable operation across distributed SoTS constituents:
+% Insert requirements and where they are derived from 
 
-\begin{itemize}
-    \item \textbf{Data Continuity:} Preserve uninterrupted information flow within the SoTS by detecting and reconstructing missing data, ensuring that downstream reasoning operates on complete event streams.  
+% Insert the UML showing the architecture
 
-   \item \textbf{Uncertainty Transparency:} Explicitly encode the reliability of reconstructed information as confidence values attached to each event, ensuring consistent handling of uncertainty throughout the processing pipeline.
+% Describe key components (Event, Stream, Reconstructor, Predictor, ConfidenceModel, CEPEngine, Coordinator)
+
+% 4.2 Middleware Runtime and Data Flow
+
+% Describe the event pipeline (source → stream → reconstruction → CEP → output)
+% show the sequence and activity diagram
+
+% Mention the AAS shell and position this as a submodule to be inserted in it
+
+% 4.4 AAS-Aligned Digital Twin Representation 
+% Explain how each middleware component maps to AAS submodels
+% (RawData ↔ Stream/Event, Reconstruction ↔ Reconstructor/Predictor, etc.)
+
+
+The architecture of the proposed framework is designed to enable reliable event detection and reasoning within dynamically composed Systems of Twinned Systems (SoTS).  
+Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter presents the architectural foundations of the framework and explains how its design supports reliable operation under uncertainty.
+The chapter first defines the architectural requirements guiding the design (\secref{sec:arch-reqs}), followed by an overview of the overall system structure and its components.
+
+\section{Requirements}\label{sec:arch-reqs}
+
+As outlined in the background chapter~\secref{sec:background-cep}, Complex Event Processing (CEP) provides the event-driven reasoning capabilities that SoTS require. Such as correlating distributed events, detecting patterns, and deriving higher-level insights from heterogeneous sources. These capabilities make CEP a strong candidate for SoTS integration, yet its effectiveness depends on the completeness of incoming data streams.
+
+In practice, SoTS are inherently unreliable. Dynamic composition, emergent behaviour, and communication disruptions frequently compromise the completeness of event data. CEP, in turn, is highly sensitive to such uncertainty: missing or inconsistent inputs can cascade through event-correlation logic, leading to false activations or missed detections. These effects directly undermine reliability, defined as the continuity of correct service~\cite{avizienis2004basic}. Within this context, reliability refers to the sustained correctness of CEP-based event detection and reasoning despite intermittent or incomplete inputs.
+
+Although reliability is widely discussed in SoTS literature, few studies formally model or evaluate it (See \secref{subsec:literature-review-results-rq5}). Most treat it conceptually or at the architectural level without verifying dependable behaviour under real disruptions. In CEP-enabled SoTS, this extends to data quality, where uncertainty or incompleteness in event streams directly threatens correct and continuous operation.
+
+Prevention alone is insufficient, aligning with the resilience perspective that systems must adapt to maintain acceptable performance under uncertain conditions~\cite{madni2020constructing, ed2018deterministic}. Dependable operation therefore requires purposeful compensation mechanisms. These should be implemented through architectural strategies that mitigate the effects of inconsistent or incomplete data, rather than relying solely on redundancy or post-failure recovery~\cite{bukowski2016system}. 
+
+Within CEP, the Uncertainty Taxonomy~\cite{wasserkrug2006taxonomy} distinguishes two primary dimensions:
+\begin{itemize}[noitemsep, topsep=0pt]
+    \item Origin uncertainty — arising from noise, incompleteness, or inconsistency in observed event streams.
+    \item Element uncertainty — arising from ambiguity in event patterns, thresholds, or decision logic.
 \end{itemize}
+This work focuses on origin uncertainty, as it directly impacts the reliability of event detection and system-level reasoning. Addressing this form of uncertainty is central to ensuring dependable operation in CEP-driven SoTS.
 
-These objectives address a core limitation of existing SoTS and CEP infrastructures, which often assume complete data streams. By integrating reconstruction and confidence tracking directly into the shared event pipeline, the framework replaces absence with approximation. Allowing information to remain accessible even under uncertainty.
+Following the findings from the gaps identified in the systematic study (\chref{ch:literature-review}), the uncertainty management principles proposed by \citet{cugola2015complex} and the dependability framework of \citet{avizienis2004basic}, the following section defines the architectural requirements for the framework (see \tabref{tab:reliability-architecture-requirements}).
 
-% -------------------------------------------------------------
-\section{Overview}
+\input{tables/Requirements/requirements.tex}
 
-The proposed framework adopts a layered, message-driven architecture that enables both autonomy and cooperation among DT constituents within a SoTS. Each DT operates as an independent node capable of reconstructing sensor data, propagating confidence, and performing local event reasoning while remaining connected to a shared asynchronous communication layer.
-
-As shown in Figure~\ref{fig:ch4_context_diagram}, the framework follows a publish subscribe model: each DT publishes data from its own sensors to a shared event stream and may subscribe selectively to datastreams from other constituents. This preserves data ownership while allowing situational awareness to emerge through controlled information exchange. Each DT hosts a local instance of the SoTS framework, configured by a researcher to define subscriptions, reconstruction parameters, and complex event patterns. Through this mechanism, DTs can collaborate and access system-level information without relying on centralized coordination.
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.95\textwidth]{figures/Architecture/C1 Context.drawio.pdf}}
-\caption{Context diagram}
-\label{fig:ch4_context_diagram}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{High-Level Pipeline Description}
-
-Figure~\ref{fig:ch4_container_diagram} presents the high-level architecture of the proposed framework. 
-The system is organized into two primary layers: the Event Stream Layer, which provides the messaging infrastructure for asynchronous data exchange, and the Processing Layer, which hosts the active modules responsible for coordination, reconstruction, and reasoning. Solid arrows indicate event data flow, while dashed lines represent control signals.
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/High Level Overview.drawio.pdf}}
-\caption{
-Container-level Diagram
-}
-\label{fig:ch4_container_diagram}
-\end{figure}
-
-At a high level, the framework operates as a continuous event pipeline that transforms incomplete sensor data into a reconstructed, uncertainty-aware stream. 
-\textbf{Streams} act as data generators, emitting observed events that may contain temporal gaps due to missing readings. 
-The \textbf{Coordinator} manages event scheduling and serves as the control point for dissemination, publishing available sensor readings to the observed stream or invoking the \textbf{Reconstructor} when expected events are absent. 
-The \textit{Reconstructor} consumes all observed data and appends confidence metadata to each event.
-It continuously updates the underlying predictors and generates synthetic events when required, producing a unified stream that merges both observed and reconstructed data.
-The resulting reconstructed stream provides a temporally complete, confidence-annotated data flow for downstream reasoning by the \textbf{CEP Engine}. 
-This design ensures that every event follows a consistent lifecycle from generation to interpretation, maintaining continuity and traceability across the entire pipeline.
-
-\begin{enumerate}
-    \item \textbf{Streams} generate sensor data and forward them to the Coordinator.  
-    \item The \textbf{Coordinator} schedules event publication, detects missing readings, and triggers reconstruction when gaps are found.  
-    \item The \textbf{Reconstructor} consumes observed events, appends confidence information, and imputes missing values when invoked.  
-    \item All processed events are published to the \textit{reconstructed stream}, forming a continuous, confidence-annotated data flow.  
-    \item The \textbf{CEP Engine} consumes the reconstructed stream for local or global pattern detection.  
-\end{enumerate}
+Requirements \textbf{R1--R3} address the management of uncertainty within the CEP pipeline.  
+They follow the three-step process of identification, modeling, and propagation of uncertainty described by \citet{cugola2015complex} and translate these concepts into concrete architectural functions.  
+\textbf{R1} introduces a compensation mechanism for detecting and handling missing or inconsistent event inputs, ensuring the system can sustain operation by reconstructing or substituting incomplete information.  
+\textbf{R2} extends this by requiring explicit confidence modeling within the event structure, allowing reconstructed and observed events to carry quantitative confidence values that represent estimation uncertainty.  
+\textbf{R3} ensures that the system continues functioning under degraded conditions through graceful degradation, maintaining partial reasoning when complete input fidelity cannot be guaranteed.  
+Together, these requirements form the data-level foundation for dependable event-driven reasoning under imperfect information.
 
 
-% -------------------------------------------------------------
-\section{Event Lifecycle and System Flow}\label{sec:system-flow}
+Requirements \textbf{R4--R6} define the architectural qualities necessary to support reliable operation across dynamic SoTS environments.  
+\textbf{R4} emphasizes modularity and extensibility, ensuring that the framework’s components are loosely coupled and replaceable to accommodate heterogeneous configurations and evolving reliability mechanisms.  
+\textbf{R5} introduces runtime observability as a means to assess dependable behaviour, requiring measurable indicators such as reconstruction frequency and average confidence to be exposed for evaluation during execution.  
+Finally, \textbf{R6} ensures interoperability through standardized data formats and lightweight communication protocols, enabling seamless integration across distributed twins and middleware platforms.  
+Collectively, these architectural requirements ensure that the framework remains adaptable, transparent, and compatible across diverse SoTS implementations while maintaining reliable operation under uncertainty.
 
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/architecture_sequence.png}}
-\caption{Flow of an event through the system}
-\label{fig:ch4_system_flow}
-\end{figure}
-
-The sequence diagram (Figure~\ref{fig:ch4_system_flow}) illustrates the interaction between the major components of the framework.
-The process occurs in three phases: \textbf{Event Generation}, \textbf{Reconstruction}, and \textbf{Complex Event Processing}.
-
-\subsubsection*{(1) Event Generation}
-The \textit{Researcher} initiates data collection through the \textit{Stream} component.
-The \textit{Coordinator} periodically invokes the \texttt{generate\_event()} routine, converting sensor readings into standardized event objects.
-Each event is published to the \textit{EventStream} under the \texttt{"observed"} topic, carrying the most recent real sensor values.
-
-\subsubsection*{(2) Reconstruction}
-The \textit{Reconstructor} continuously consumes events from the \texttt{"observed"} stream, using the real values to update the internal state of its predictors.
-Each event is then augmented with metadata derived from the predictors, such as confidence and the predicted value, and republished into the \texttt{"reconstructed"} stream.
-If a temporal gap is detected, the \textit{Coordinator} directly invokes the \textit{Reconstructor}, which synthesizes a missing event using the active predictor (e.g., Kalman filter). The resulting synthetic event is inserted into the reconstructed stream, ensuring that all timestamps are represented and no temporal gaps remain.
-
-\subsubsection*{(3) Complex Event Processing}
-The \textit{CEP Engine} subscribes to the \texttt{"reconstructed"} stream and applies pattern-matching rules to detect higher-level phenomena such as anomalies or behavioural trends. 
-Each event carries confidence metadata that quantify the estimated reliability of its reconstructed values. 
-These attributes are retained throughout the CEP evaluation process, enabling rules to compute, aggregate, and query confidence levels across correlated events. 
-The resulting complex events are then logged for downstream analysis.
-
-
-
-
-% -------------------------------------------------------------
-\section{UML and Implementation } \label{sec:uml_implementation}
-
-Figure~\ref{fig:architecture_uml} presents the UML diagram of the proposed framework.
+\section{Framework}\label{sec:arch-framework}
+Intro of architecture 
 
 \begin{figure}[H]
 \centering
 \fbox{\includegraphics[width=\textwidth]{figures/Architecture/UML.drawio.pdf}}
-\caption{UML Class Diagram}
-\label{fig:architecture_uml}
+\caption{Unified Modeling Language (UML) Diagram}
+\label{fig:implementation_uml}
 \end{figure}
+
+Figure~\ref{fig:implementation_uml} illustrates the implemented structure of the framework.
+Each module in the meta-model is instantiated as a concrete class, with inter-module communication handled entirely through ZeroMQ channels.
+The \textit{Coordinator} manages scheduling and timing, invoking the \textit{Reconstructor} whenever data is missing.
+The \textit{Reconstructor} interacts with the pluggable \textit{Predictor} to estimate values and append confidence metadata, which are serialized as JSON and published back to the event stream.
+The \textit{CEP Engine}, implemented via Esper, subscribes to the reconstructed stream to evaluate event patterns defined in EPL.
+
+
+
+\subsection{Messaging Layer}
+The messaging layer defines interfaces for event publication and subscription. It includes the following elements:
+EventGenerator and EventConsumer interfaces define the contracts for components that publish and consume events, respectively. These interfaces enable uniform treatment of heterogeneous systems and data sources.
+EventStream represents a logical channel over which both observed and reconstructed events are exchanged.
+It maintains temporal order and topic scoping, providing a consistent event distribution across systems.
+EventTransport and its TransportAdaptor encapsulate the actual communication protocol, allowing the use of technologies such as ZeroMQ~\cite{zeromq_org} or MQTT~\cite{mqttspec} without changing higher-level logic.
+This layer  ensures interoperability (R6) and isolates communication concerns from processing logic, satisfying the modularity requirement (R4).
+
+\subsection{Processing Layer}
+The processing layer includes the operational logic of the framework. It controls how observed and reconstructed data flow through the system to compensate for unreliable inputs. Its main components are:
+Coordinator detects missing data within streams and compensates by triggering reconstriction when required.
+This aligns with the reliability objective of maintaining continuity of correct service (R1).
+Reconstructor performs local data compensation using predictive models. It consumes observed events, invokes a Predictor, and generates reconstructed events when necessary. The ConfidenceModel computes quantitative confidence values associated with each reconstructed event, supporting uncertainty propagation (R2).
+CEPEngine performs event-pattern evaluation on both observed and reconstructed streams.
+It supports reasoning under incomplete information and allows continued operation under degraded conditions, giving time for graceful degradation as confidence decreases (R3).
+This layer maintains reliable event processing by compensating for missing inputs and quantifying their confidence, enabling adaptive decisions when certainty decreases beyond acceptable limits.
+
+\subsection{Data Layer}
+The data layer provides a unified representation of the event information processed throughout the system, allowing for consistent handling.
+Stream represents a logical data source or sensor configuration, including stream identifiers, data types, and sampling intervals.
+Event is the base entity for all messages, containing timestamps and observed values.
+The ReconstructedEvent subclass extends this structure with fields for predicted values, confidence levels, and reconstruction methods, allowing each reconstructed data point to be traced back to its estimation source and associated uncertainty (R5).
+The data layer enables a consistent data representation and handling across different systems.
+
+
+\section{Process}\label{sec:arch-process}
+The process flow describes the runtime interactions among the framework’s components, as illustrated in Figure~\ref{fig:process-sequence}.
+It captures how events are generated, reconstructed, and processed.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/Architecture/Sequence Diagram.png}}
+\caption{Process Diagram}
+\label{fig:process-sequence}
+\end{figure}
+
+\paragraph{Event Generation}
+First, each constituent system begins by collecting data from its local sensors or data streams.
+The \textit{Stream} component converts these readings into standardized \textit{Event} objects, which are timestamped and published to the shared \textit{EventStream}.
+The \textit{Coordinator} oversees this process, ensuring that events are produced at expected intervals and detecting when a data point is delayed or missing.
+This marks the transition to the reconstruction phase.
+
+\paragraph{Reconstruction}
+When the \textit{EventStream} receives an event, the \textit{Reconstructor} consumes it to compute confidence metadata through the \textit{ConfidenceModel}.
+If an expected event is missing, the \textit{Coordinator} triggers reconstruction, prompting the \textit{Reconstructor} to estimate the missing value using its configured \textit{Predictor}.
+The predicted value is then paired with a computed confidence score and republished as a \textit{ReconstructedEvent}.
+Both observed and reconstructed events are propagated forward, ensuring the data stream remains temporally consistent and uncertainty-aware.
+
+
+\paragraph{Complex Event Processing}
+The \textit{CEPEngine} subscribes to the reconstructed event stream to evaluate higher-level patterns.
+It continuously processes both observed and reconstructed events to detect complex temporal or logical relationships within the SoTS.
+By incorporating the confidence metadata carried by each event, the engine enables uncertainty-aware reasoning, allowing patterns to be evaluated with an understanding of data reliability.
+
+Together, these three phases constitute the end-to-end process that enables the framework to maintain reliable reasoning under partial, inconsistent, or uncertain data conditions.
+
+
+\section{Implementation}\label{sec:architecture-implementation}
+
+The framework is implemented as a lightweight, modular platform that bridges Python and Java components.
+Each module in the implementation directly instantiates an element of the conceptual meta-model (Section~\ref{sec:arch-framework}), following the process flow described in Section~\ref{sec:arch-process}.
+The resulting prototype provides a concrete realization of the requirements defined in Table~\ref{tab:reliability-architecture-requirements}.
+
+
+\subsection{EventStream and Communication Implementation}
+Communication within the framework follows a publish–subscribe model realized over a lightweight client–server architecture.
+This layer is implemented using ZeroMQ (ZMQ) sockets, which support asynchronous message exchange between distributed constituents while maintaining low transport overhead.
+% Each constituent node connects as both a publisher and subscriber, allowing it to contribute data to the shared event stream and receive updates from other nodes without direct coupling.
+To ensure efficient data routing, the framework adopts topic-based filtering.
+Each event message is tagged with a topic prefix that encodes both its lifecycle phase (e.g., observed or reconstructed) and its stream identifier (e.g., the source or sensor ID).
+This scheme enables subscribers to express interest only in the subsets of data relevant to their reasoning.
+
+For example, every event is published under a topic formatted as:
+\\
+\verb|<phase>.<stream_id>_<datatype>| \\
+\verb|<phase>.<stream_id>_<datatype>|
+
+A temperature reading from a beach sensor may appear as:
+\\
+\verb|observed.beach_01_temp| \\
+\verb|observed.beach_01_temp| 
+
+and its reconstructed counterpart as:
+\\
+\verb|reconstructed.beach_01_temp| \\
+\verb|reconstructed.beach_01_temp| 
+
+Subscribers can register prefix filters to receive only the topics of interest.
+For instance:
+Subscribing to observed. receives all live sensor readings.
+Subscribing to \verb|reconstructed.beach_01_temp| retrieves only reconstructed values for that specific constituent system.
+
+
+The communication layer is defined by a generic \textit{TransportAdaptor} interface that abstracts the underlying messaging implementation. All transmitted events conform to a standardized schema expressed as a JSON payload. Each event message represents an information packet including its origin, values, and confidence. This representation allows both the Python-based reconstruction pipeline and the Java CEP engine to consume data directly from the same event channel.
+
+\begin{lstlisting}[language=json,caption={Event payload.},label={lst:eventstream-json},basicstyle=\ttfamily\small]
+{
+    "stream_id": "dt01-097846",
+    "timestamp": 1730672400,
+    "datatype": "temperature",
+    "observed_value": 22.7,
+    "predicted_value": 22.9,
+    "confidence": 0.84,
+    "method": "KalmanFilter",
+    "status": "reconstructed"
+}
+\end{lstlisting}
+
+
+\subsection{Processing Layer Implementation}
+The \textit{Coordinator} manages event timing and synchronization across the data stream.  
+It operates as a scheduling service that monitors the expected arrival intervals of data and triggers corrective actions when deviations occur.  
+If an observation fails to arrive within the configured period, the Coordinator invokes the \textit{Reconstructor}, which estimates the missing value and publishes it to the reconstructed stream. When readings are present, the Coordinator publishes to the observed partition. 
+
+The Reconstructor serves as the compensation mechanism for missing or inconsistent inputs. It uses a configurable Predictor component that performs estimation based on recent data. By default, the framework uses a Kalman Filter as its core predictor. A Kalman Filter maintains a probabilistic model of the system’s state. Recent studies have demonstrated the interpretability of Kalman filters through the lens of subjective logic, showing that their probabilistic outputs naturally support reasoning about belief and uncertainty \cite{griebel2020kalman, kang2021some}. The reconstructed event is then forwarded back into the event stream, enabling the rest of the framework to process complete data.
+
+
+\subsection{CEP Implementation}
+Complex event reasoning is implemented using the Esper CEP engine~\cite{esper_reference}.
+The CEP module subscribes to the \texttt{reconstructed} topic from the event stream and processes incoming events using declarative Event Processing Language (EPL) rules.
+Patterns are defined externally in configuration files.
+The CEP engine executes within a separate Java process, launched and monitored from the Python environment.
+This approach ensures that event processing remains decoupled from data generation and reconstruction.
+It also allows Esper to be replaced by any other CEP system capable of consuming structured event streams (e.g., Siddhi or Flink CEP) with minimal reconfiguration, as long as the replacement follows the same event schema and channel interface.
+The CEP engine evaluates temporal and logical patterns across reconstructed events. Because each event includes confidence, pattern rules can incorporate confidence thresholds. For example, triggering alerts only when correlated events exceed a cumulative confidence value.
+

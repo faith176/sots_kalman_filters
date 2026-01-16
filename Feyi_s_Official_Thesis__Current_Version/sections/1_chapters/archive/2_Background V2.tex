@@ -1,4 +1,4 @@
-\chapter{Background}\label{ch:background}
+\chapter{Background and Related Work}\label{ch:background}
 This chapter introduces the foundational concepts of systems of systems (\secref{sec:background-sos}), digital twins (\secref{sec:background-dt}), and event-driven and complex event processing (\secref{sec:background-cep}), and key ideas of dependability in systems (\secref{sec:background-dependability}).
 
 % -------------------------------------------------------------
@@ -27,9 +27,6 @@ To clarify related forms of digital representation, \citet{kritzinger2018digital
 DTs operate according to an event-driven lifecycle in which synchronization is triggered by changes observed in the physical system. These changes are communicated as discrete, time-stamped observations that initiate state updates within the digital representation. More generally, DT synchronization behaviour is characterized in terms of discrete triggers that determine when such updates occur, including state changes, timed triggers, contextual conditions, and data-dependent thresholds \cite{alghamdi2024synchronization}. The updated digital state may then be used for simulation or analysis, followed by optimization or control actions that influence physical operation. As this lifecycle repeats, DT behaviour becomes dependent on the timing, ordering, and continuity of observed events. Consequently, DT synchronization is governed by event semantics that determine when and under what conditions digital state updates occur. These semantics are also formalized in established DT standards. ISO~23247 defines event-based synchronization as a mechanism for maintaining consistency between a digital twin and its physical system through event-triggered updates \cite{iso23247_1_2021}. Asset Administration Shell–based architectures similarly specify explicit event constructs and their use for asynchronous communication between DTs and external systems \cite{aas_details_2018_p1}.
 
 
-% DTs interact with their physical systems and with other DTs through the exchange of discrete observations, state updates, notifications, and control signals. These interactions are naturally consumed as event streams that trigger state updates, model execution, and analytic reasoning. This event-driven interaction model is explicitly supported by established DT standards. ISO~23247 defines event-based synchronization as a mechanism for maintaining consistency between a digital twin and its physical counterpart \citep{iso23247_1_2021}. Asset Administration Shell--based architectures similarly define event constructs for asynchronous communication between DTs and external systems. As a result, DT-based services advance computation in response to events, and SoTS composed of interacting DTs operate fundamentally as event-driven systems. Reasoning about DT behaviour and coordination in SoTS therefore reduces to reasoning over event streams, motivating the use of event processing mechanisms as the computational foundation for higher-level analysis.
-
-
 % -------------------------------------------------------------
 \section{Complex Event Processing}\label{sec:background-cep}
 Event-driven processing is a model in which system behaviour advances in response to the occurrence of events, rather than through continuous polling or queries over stored data \cite{kommera2020power}. An event represents a discrete, observable occurrence within a system, typically corresponding to a state change, measurement, or notable condition. It is commonly modeled as a record carrying a payload and a timestamp. Events are produced asynchronously and collected into event streams, which form ordered sequences reflecting the evolving behaviour of a system over time. Event-driven architectures organize system components around the production, detection, and consumption of events \cite{manchana2021event}. Components communicate indirectly by emitting and reacting to events, allowing them to operate independently and asynchronously.
@@ -44,3 +41,39 @@ Dependability is defined as the justified confidence that a system delivers corr
 According to \citet{avizienis2004basic}, dependability comprises five core attributes: availability, reliability, safety, integrity, and maintainability. Availability refers to the readiness of a system to deliver correct service when required, while reliability represents the continuity of that correct service over time. Safety concerns the avoidance of catastrophic consequences arising from system failures, integrity ensures that system state and data are protected from improper modification, and maintainability reflects the ease with which a system can be repaired or adapted. Although these attributes are interrelated, they capture distinct concerns. A system may be available but unreliable if it frequently produces incorrect results, or reliable but unsafe if failures lead to unacceptable outcomes. Together, these attributes illustrate that dependable operation requires multiple aspects of service quality to be considered during operation.
 
 Dependability theory distinguishes between faults, errors, and failures in systems \cite{avizienis2004basic}. A fault is the underlying cause of an error, an error is an incorrect system state, and a failure occurs when an error leads to a deviation from correct service as observed externally. Within this framework, \citet{avizienis2004basic} identify four complementary means for achieving dependability: fault prevention, fault removal, fault forecasting, and fault tolerance. Fault prevention and fault removal focus on reducing the introduction and persistence of faults through design, verification, and maintenance activities, while fault forecasting seeks to assess the likelihood and impact of faults. Fault tolerance addresses the system’s ability to continue delivering correct service despite the presence of faults, by detecting errors and preventing them from propagating into failures. Together, these means address different stages in the fault--error--failure chain and are applied in combination to support dependable system behaviour.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dependability provides a conceptual framework for reasoning about the trustworthiness of system behaviour in the presence of faults, uncertainty, and change. It is commonly defined as the justified confidence that a system delivers correct service, even under adverse conditions \cite{avizienis2004basic}. Rather than referring to a single property, dependability encompasses multiple complementary attributes that together characterize correct and reliable operation.
+
+According to \citet{avizienis2004basic}, dependability comprises five core attributes: availability, reliability, safety, integrity, and maintainability. Availability concerns readiness for service, while reliability refers to the continuity of correct service over time. Safety addresses the avoidance of catastrophic consequences, integrity ensures protection against improper state or data modification, and maintainability reflects the system’s ability to be repaired or adapted. These attributes are related but distinct, highlighting that dependable operation requires reasoning across multiple dimensions of service quality.
+
+A central organizing principle in dependability theory is the fault--error--failure chain \cite{avizienis2004basic}. A fault is a latent defect or deviation from correctness within a system. When activated, a fault may produce an error, defined as an incorrect system state or behaviour. An error may then propagate and manifest externally as a failure, observed as a deviation from the system’s specified service. As noted by \citet{hanmer2013patterns}, failures may be consistent or inconsistent, particularly in distributed systems where different observers may perceive failures differently.
+
+Dependability theory identifies multiple complementary means for addressing faults and failures, including fault prevention, fault removal, fault forecasting, and fault tolerance \cite{avizienis2004basic}. Fault prevention and fault removal focus on reducing the introduction and persistence of faults through design, verification, and maintenance, while fault forecasting concerns the assessment of fault likelihood and impact. Fault tolerance addresses the continued delivery of acceptable service despite the presence of faults and errors, using mechanisms such as error detection, recovery, isolation, and reconfiguration \cite{hanmer2013patterns}. These techniques represent established and complementary approaches for managing dependability in software and systems.

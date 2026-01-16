@@ -1,213 +1,211 @@
 \chapter{Architecture}\label{ch:architecture}
 
-The architecture of the proposed framework is designed to enable reliable event detection and reasoning within dynamically composed Systems of Twinned Systems (SoTS).  
-Building on the concepts of uncertainty in CEP discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter presents the architectural foundations of the framework and explains how its design supports reliable operation under uncertainty.
-The chapter first defines the architectural requirements guiding the design (\secref{sec:arch-reqs}), followed by an overview of the overall system structure and its components.
+The architecture of the proposed framework is designed to enable reliable event processing and reasoning within SoTS. Building on the uncertainty challenges discussed in \chref{ch:background} and the reliability gaps identified in \chref{ch:literature-review}, this chapter develops the conceptual foundations, architectural requirements, system design, and implementation of the proposed solution.
 
-\section{Requirements}\label{sec:arch-reqs}
 
-As outlined in the background chapter~\secref{sec:background-cep}, Complex Event Processing (CEP) provides the event-driven reasoning capabilities that SoTS require. Such as correlating distributed events, detecting patterns, and deriving higher-level insights from heterogeneous sources. These capabilities make CEP a strong candidate for SoTS integration, yet its effectiveness depends on the completeness of incoming data streams.
+\section{Description of the Approach} \label{sec:approach}
+The proposed architecture introduces a method for enabling event-driven systems, particularly those embedded within SoTS, to continue operating when expected observations temporarily fail to arrive. The core idea is to treat short-term data gaps as explicit, detectable conditions within the event pipeline and to provide a structured method for generating substitute observations whose quality is known. At a high level, the approach augments a standard event-driven pipeline with a reconstruction stage placed between the data source and the reasoning engine. This stage tracks the expected arrival schedule of each stream, detects when an observation fails to appear on time, and invokes a predictive model maintained by the digital twin to estimate what the missing observation would have been. The reconstructed event is emitted in the same structure as a normal observation but includes an additional confidence value reflecting the predictive model’s uncertainty. Both reconstructed and genuine events are forwarded to the CEP engine without requiring any changes to CEP queries or operators. The CEP engine processes the combined stream as usual, with the option to interpret confidence information when relevant.
 
-In practice, SoTS are inherently unreliable. Dynamic composition, emergent behaviour, and communication disruptions frequently compromise the completeness of event data. CEP, in turn, is highly sensitive to such uncertainty: missing or inconsistent inputs can cascade through event-correlation logic, leading to false activations or missed detections. These effects directly undermine reliability, defined as the continuity of correct service~\cite{avizienis2004basic}. Within this context, reliability refers to the sustained correctness of CEP-based event detection and reasoning despite intermittent or incomplete inputs.
 
-Although reliability is widely discussed in SoTS literature, few studies formally model or evaluate it (See \secref{subsec:literature-review-results-rq5}). Most treat it conceptually or at the architectural level without verifying dependable behaviour under real disruptions. In CEP-enabled SoTS, this extends to data quality, where uncertainty or incompleteness in event streams directly threatens correct and continuous operation.
+\section{Conceptual Foundations}
+\label{sec:architecture-conceptual-foundations}
 
-Prevention alone is insufficient, aligning with the resilience perspective that systems must adapt to maintain acceptable performance under uncertain conditions~\cite{madni2020constructing, ed2018deterministic}. Dependable operation therefore requires purposeful compensation mechanisms. These should be implemented through architectural strategies that mitigate the effects of inconsistent or incomplete data, rather than relying solely on redundancy or post-failure recovery~\cite{bukowski2016system}. 
+This section introduces the formal model of  the proposed architecture. It defines the structure of event streams, the notion of expected arrivals, the semantics of temporary data gaps, and the rules of reconstruction and confidence.
 
-Within CEP, the Uncertainty Taxonomy~\cite{wasserkrug2006taxonomy} distinguishes two primary dimensions:
-\begin{itemize}[noitemsep, topsep=0pt]
-    \item Origin uncertainty — arising from noise, incompleteness, or inconsistency in observed event streams.
-    \item Element uncertainty — arising from ambiguity in event patterns, thresholds, or decision logic.
+\subsection{Event Model}
+
+In a SoTS, let
+\[
+\mathcal{D} = \{D_1, D_2, \ldots, D_n\}
+\]
+denote the set of digital-twin constituents. Each digital twin \(D_i\) performs a collection of computations,
+\[
+\mathcal{C}_i = \{c_{i1}, c_{i2}, \ldots\},
+\]
+such as complex event processing, anomaly detection, forecasting, or simulation-based analysis. These computations consume one or more input event streams originating from distributed event generators.
+
+Let \(\mathcal{G}\) be the set of event generators. Each generator \(g \in \mathcal{G}\) produces a sequence of timestamped events inserted into a dedicated arrival buffer \(Q_g\).
+An event is defined as a tuple
+\[
+e = (id,\, t_s,\, p),
+\]
+where \(id\) uniquely identifies the event instance, \(t_s\) is the source timestamp at which the underlying observation occurred, and \(p\) denotes the event payload.
+Events appear in \(Q_g\) according to wall-clock arrival order; downstream components interpret them according to their source timestamps.
+
+\subsection{Expected Arrival and Missingness}
+
+Each generator \(g\) is assumed to produce observations at a known sampling interval \(\Delta_g\).
+If the most recent event has timestamp \(t_{s-1}\), the next observation is expected at
+\[
+t_{\exp} = t_{s-1} + \Delta_g.
+\]
+
+A temporary data gap occurs when the expected observation does not appear within a tolerance window \(\varepsilon\). Formally, an event with timestamp \(t_s = t_{\exp}\) is considered \emph{missing} when
+\[
+t_{\mathrm{now}} > t_{\exp} + \varepsilon
+\]
+and no such event is present in \(Q_g\).
+
+\subsection{Reconstruction Semantics}
+
+When a data gap is detected, the architecture generates a substitute event \(\hat{e}\) that stands in place of the missing observation. A reconstructed event takes the form
+\[
+\hat{e} = (id',\, t_{\exp},\, \hat{p},\, \gamma),
+\]
+where:
+\begin{itemize}
+    \item \(t_{\exp}\) is the timestamp of the missing observation,
+    \item \(\hat{p}\) is the predicted payload computed by the DT's internal model,
+    \item \(\gamma \in [0,1]\) is a confidence value assigned by the predictive model,
+    \item \(id'\) uniquely identifies the synthetic event.
 \end{itemize}
-This work focuses on origin uncertainty, as it directly impacts the reliability of event detection and system-level reasoning. Addressing this form of uncertainty is central to ensuring dependable operation in CEP-driven SoTS.
 
-Following the findings from the gaps identified in the systematic study (\chref{ch:literature-review}), the uncertainty management principles proposed by \citet{cugola2015complex} and the dependability framework of \citet{avizienis2004basic}, the following section defines the architectural requirements for the framework (see \tabref{tab:reliability-architecture-requirements}).
+Reconstructed events are delivered to downstream consumers in the same manner as genuine events.
 
-\input{tables/Requirements/requirements.tex}
+\subsection{Confidence Semantics}
 
-Requirements \textbf{R1--R3} address the management of uncertainty within the CEP pipeline.  
-They follow the three-step process of identification, modeling, and propagation of uncertainty described by \citet{cugola2015complex} and translate these concepts into concrete architectural functions.  
-\textbf{R1} introduces a compensation mechanism for detecting and handling missing or inconsistent event inputs, ensuring the system can sustain operation by reconstructing or substituting incomplete information.  
-\textbf{R2} extends this by requiring explicit confidence modeling within the event structure, allowing reconstructed and observed events to carry quantitative confidence values that represent estimation uncertainty.  
-\textbf{R3} ensures that the system continues functioning under degraded conditions through graceful degradation, maintaining partial reasoning when complete input fidelity cannot be guaranteed.  
-Together, these requirements form the data-level foundation for dependable event-driven reasoning under imperfect information.
-
-
-Requirements \textbf{R4--R6} define the architectural qualities necessary to support reliable operation across dynamic SoTS environments.  
-\textbf{R4} emphasizes modularity and extensibility, ensuring that the framework’s components are loosely coupled and replaceable to accommodate heterogeneous configurations and evolving reliability mechanisms.  
-\textbf{R5} introduces runtime observability as a means to assess dependable behaviour, requiring measurable indicators such as reconstruction frequency and average confidence to be exposed for evaluation during execution.  
-Finally, \textbf{R6} ensures interoperability through standardized data formats and lightweight communication protocols, enabling seamless integration across distributed twins and middleware platforms.  
-Collectively, these architectural requirements ensure that the framework remains adaptable, transparent, and compatible across diverse SoTS implementations while maintaining reliable operation under uncertainty.
+The confidence value \(\gamma\) expresses the model's internal estimate of the plausibility of \(\hat{p}\).
+The architecture makes no assumptions about how confidence is computed, but it must satisfy:
+\begin{enumerate}
+    \item \(0 \le \gamma \le 1\),
+    \item downstream reasoning components may treat \(\gamma\) as an attribute for filtering, weighting, or annotating results.
+\end{enumerate}
 
 
-To position the proposed framework relative to existing CEP systems, Table~\ref{tab:cep-balanced-comparison} compares the prposed architecture against with commonly used engines discussed in \secref{subsec:background-cep-principles}. While traditional CEP platforms focus on pattern and stream processing, the framework extends these capabilities by incorporating reconstruction, confidence to address reliability challenges in SoTS environments.
+\subsection{Architectural Assumptions}
 
-\input{tables/Architecture/framework_comparison.tex}
+The conceptual model operates under the following assumptions, which define the types of computations and data the architecture can support.
+
+\paragraph*{Event-based semantics}
+All inputs are discrete, timestamped events. The architecture does not use any domain-specific interpretation of the payload; the meaning of the data is external to the framework.
+
+\paragraph*{Data-agnostic reconstruction}
+The reconstruction mechanism does not rely on the physical semantics or structure of the payload. It assumes only that payloads can be represented numerically and predicted over short horizons. This abstraction allows the architecture to remain independent of domain-specific models.
+
+\paragraph*{Model fidelity and validity}
+Digital-twin predictive models are assumed to operate within a validated fidelity regime, meaning their short-term forecasts are reliable within a defined operating range and have known error behaviour. While the architecture does not use a specific modelling technique, it assumes that each DT model has undergone appropriate verification and validation for its domain, ensuring its predictions are suitable for use during temporary data gaps.
+
+\paragraph*{Known expected timing}
+Each generator \(g\) has a known or learnable expected interval \(\Delta_g\), enabling the detection of temporary data gaps.
+
+\paragraph*{Short-duration missingness}
+Gaps are assumed to be brief interruptions rather than long-term outages or structural missingness. Long-duration failures fall outside the intended scope of the reconstruction mechanism.
 
 
-\section{Framework}\label{sec:arch-framework}
-\figref{fig:metamodel} shows a meta model of the framework. The architecture is organized into three conceptual layers: messaging, processing, and data. This separation enables modularity, ensuring that components can be replaced or extended without altering the overall semantics of operation. The messaging layer abstracts communication and event exchange, decoupling the framework from specific middleware protocols (e.g., ZeroMQ, MQTT). The processing layer controls data compensation, confidence computation, and complex-event reasoning. The data layer formalizes the structure and semantics of events within the system.
+
+\section{Architectural Requirements}\label{sec:architecture-reqs}
+As highlighted by \citet{wasserkrug2006taxonomy}, uncertainty in active and event-driven systems arises along two dimensions:
+
+\begin{enumerate}
+    \item Element uncertainty, concerning what about the event is uncertain — including occurrence uncertainty (did the event actually happen?) and attribute uncertainty (is its timestamp or payload precise?).
+    \item Origin uncertainty, describing where uncertainty arises — either from the data sources (sensor failures, communication delays) or from inference processes (ambiguities in the CEP rules or derived events).
+\end{enumerate}
+
+
+\input{tables/Architecture/requirements V2.tex}
+
+Temporary data gaps correspond to occurrence uncertainty originating from the data source: an event that should exist fails to appear on time, leaving its state undefined unless explicitly modelled. Unlike noisy or imprecise measurements, a missing event has no representation in the stream and thus cannot be reasoned about unless explicitly modelled. This absence disrupts temporal reasoning, sequence detection, and window-based operators in CEP systems. Building on the conceptual foundations, uncertainty taxonomy \cite{wasserkrug2006taxonomy}, dependability framework \cite{avizienis2004basic}, and the limitations identified in the literature review \chref{ch:literature-review}, the architecture must satisfy the following requirements ((Table~\ref{tab:architecture-requirements})):
+
+
+\section{Architecture Overview}\label{sec:arch-framework}
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/Meta Model.drawio.pdf}}
-\caption{Framework Meta Model}
-\label{fig:metamodel}
+\fbox{\includegraphics[width=0.85\textwidth]{figures/Architecture/UML.drawio.pdf}}
+\caption{Unified Modeling Language (UML) class diagram of the architecture. \id{Domain model (shows the key (architectural) concepts)}}
+\label{fig:uml}
 \end{figure}
 
+Figure~\ref{fig:uml} presents a conceptual view of the architecture. The system is organized into three layers, the Messaging Layer, Processing Layer, and Data Layer, which together form a pipeline for detecting missing observations, reconstructing substitutes, and forwarding uncertainty-annotated events to the CEP engine. Each layer has a specific set of responsibilities, enabling modularity and clear separation of concerns.
+
+The architecture operates as follows. Event generators publish observed data into the system through the Messaging Layer. The Processing Layer monitors expected arrival schedules, detects missing observations, and invokes predictive models to reconstruct substitutes when necessary. Both observed and reconstructed events flow to the CEP engine, which evaluates event patterns without requiring modifications to query semantics. The Data Layer provides unified event representations that standardize how timestamps, payloads, and confidence metadata are managed across the system.
 
 \subsection{Messaging Layer}
-The messaging layer defines interfaces for event publication and subscription. It includes the following elements:
-EventGenerator and EventConsumer interfaces define the contracts for components that publish and consume events, respectively. These interfaces enable uniform treatment of heterogeneous systems and data sources.
-EventStream represents a logical channel over which both observed and reconstructed events are exchanged.
-It maintains temporal order and topic scoping, providing a consistent event distribution across systems.
-EventTransport and its TransportAdaptor encapsulate the actual communication protocol, allowing the use of technologies such as ZeroMQ~\cite{zeromq_org} or MQTT~\cite{mqttspec} without changing higher-level logic.
-This layer  ensures interoperability (R6) and isolates communication concerns from processing logic, satisfying the modularity requirement (R4).
+
+The Messaging Layer defines the communication interfaces used for sending and receiving events. Its purpose is to abstract away protocol-specific details so that higher-level logic remains independent of communication technology.
+
+\paragraph*{EventGenerator and EventConsumer}
+These interfaces define generic contracts for publishing and subscribing to event streams. They enable heterogeneous sensors, data sources, and DT components to be treated uniformly.
+
+\paragraph*{EventStream}
+Represents a logical communication channel over which both observed and reconstructed events are exchanged. It maintains temporal ordering and encapsulates stream identifiers and metadata.
+
+\paragraph*{Client and Server}
+These classes abstract the underlying communication mechanism (e.g., ZeroMQ or MQTT). By encapsulating publishing and subscription behaviour, they allow the architecture to remain independent of transport protocols.
 
 \subsection{Processing Layer}
-The processing layer includes the operational logic of the framework. It controls how observed and reconstructed data flow through the system to compensate for unreliable inputs. Its main components are:
-Coordinator detects missing data within streams and compensates by triggering reconstriction when required.
-This aligns with the reliability objective of maintaining continuity of correct service (R1).
-Reconstructor performs local data compensation using predictive models. It consumes observed events, invokes a Predictor, and generates reconstructed events when necessary. The ConfidenceModel computes quantitative confidence values associated with each reconstructed event, supporting uncertainty propagation (R2).
-CEPEngine performs event-pattern evaluation on both observed and reconstructed streams.
-It supports reasoning under incomplete information and allows continued operation under degraded conditions, giving time for graceful degradation as confidence decreases (R3).
-This layer maintains reliable event processing by compensating for missing inputs and quantifying their confidence, enabling adaptive decisions when certainty decreases beyond acceptable limits.
+
+The Processing Layer contains the operational logic responsible for detecting gaps, reconstructing missing events, and delivering enriched streams to CEP.
+
+\paragraph*{Coordinator}
+The central orchestrator of the processing workflow. It monitors incoming streams, manages timing expectations, and uses the \textit{StreamScheduler} to determine when an observation is overdue.
+
+\paragraph*{StreamScheduler}
+Tracks the expected arrival times for each stream and signals the Coordinator when a missing observation should be reconstructed.
+
+\paragraph*{Reconstructor}
+Consumes observed events, determines when reconstruction is necessary, and generates substitute events. It invokes a \textit{Predictor} to estimate missing values and attaches quantitative confidence metadata to each reconstructed event.
+
+\paragraph*{Predictor}
+An abstract interface for digital-twin forecasting models. Implementations may use filtering, machine learning, simulation, or other techniques, but the Reconstructor treats them uniformly.
+
+\paragraph*{CEPEngine}
+Evaluates event patterns over the combined stream of observed and reconstructed events. Confidence values are made available as attributes, allowing CEP queries to incorporate uncertainty if desired.
 
 \subsection{Data Layer}
-The data layer provides a unified representation of the event information processed throughout the system, allowing for consistent handling.
-Stream represents a logical data source or sensor configuration, including stream identifiers, data types, and sampling intervals.
-Event is the base entity for all messages, containing timestamps and observed values.
-The ReconstructedEvent subclass extends this structure with fields for predicted values, confidence levels, and reconstruction methods, allowing each reconstructed data point to be traced back to its estimation source and associated uncertainty (R5).
-The data layer enables a consistent data representation and handling across different systems.
+
+The Data Layer provides the shared data structures used across the architecture. These entities ensure consistent handling and annotation of event information.
+
+\paragraph*{Stream}
+Represents a logical data source, including identifiers, data types, and expected sampling intervals. It provides the context needed for gap detection.
+
+\paragraph*{Event}
+The base representation for all messages in the system. Contains timestamps, payload data, and metadata associated with the original observation.
+
+\paragraph*{ReconstructedEvent}
+Extends \textit{Event} to include predicted values, confidence levels, and reconstruction method identifiers. This structure ensures that downstream components can distinguish genuine from reconstructed observations while maintaining a consistent event format.
 
 
-\section{Process}\label{sec:arch-process}
-The process flow describes the runtime interactions among the framework’s components, as illustrated in Figure~\ref{fig:process-sequence}.
-It captures how events are generated, reconstructed, and processed.
+\section{Process Flow of the Architecture}\label{sec:process-flow}
 
 \begin{figure}[H]
 \centering
 \fbox{\includegraphics[width=\textwidth]{figures/Architecture/Sequence Diagram.png}}
-\caption{Process Diagram}
-\label{fig:process-sequence}
+\caption{Sequence diagram}
+\label{fig:process-flow}
 \end{figure}
 
-\paragraph{Event Generation}
-First, each constituent system begins by collecting data from its local sensors or data streams.
-The \textit{Stream} component converts these readings into standardized \textit{Event} objects, which are timestamped and published to the shared \textit{EventStream}.
-The \textit{Coordinator} oversees this process, ensuring that events are produced at expected intervals and detecting when a data point is delayed or missing.
-This marks the transition to the reconstruction phase.
+Figure~\ref{fig:process-flow} shows the end-to-end runtime behaviour of the system. It illustrates how observed and reconstructed events move through the architecture and how components interact under normal operation and during temporary data gaps.
 
-\paragraph{Reconstruction}
-When the \textit{EventStream} receives an event, the \textit{Reconstructor} consumes it to compute confidence metadata through the \textit{ConfidenceModel}.
-If an expected event is missing, the \textit{Coordinator} triggers reconstruction, prompting the \textit{Reconstructor} to estimate the missing value using its configured \textit{Predictor}.
-The predicted value is then paired with a computed confidence score and republished as a \textit{ReconstructedEvent}.
-Both observed and reconstructed events are propagated forward, ensuring the data stream remains temporally consistent and uncertainty-aware.
+\paragraph{Normal Event Flow}
+When a generator produces an observation, the \textit{Stream} forwards it to the \textit{Coordinator}, which verifies that it arrived within its expected window. The event is then dispatched to the \textit{EventStream} and delivered to both the \textit{Reconstructor} and the \textit{CEP Engine}. In this path, the event is simply treated as an \emph{observed} input.
 
+\paragraph{Gap Detection and Reconstruction}
+If an expected event fails to appear on time, the \textit{Coordinator} detects the gap and issues a \texttt{triggerReconstruction()} request. The \textit{Reconstructor} then invokes the digital twin’s \textit{Predictor} to estimate the missing value and compute a corresponding confidence score. The resulting \textit{ReconstructedEvent} is structurally identical to an observed event but annotated with confidence metadata, and is then published back into the EventStream.
 
-\paragraph{Complex Event Processing}
-The \textit{CEPEngine} subscribes to the reconstructed event stream to evaluate higher-level patterns.
-It continuously processes both observed and reconstructed events to detect complex temporal or logical relationships within the SoTS.
-By incorporating the confidence metadata carried by each event, the engine enables uncertainty-aware reasoning, allowing patterns to be evaluated with an understanding of data reliability.
-
-Together, these three phases constitute the end-to-end process that enables the framework to maintain reliable reasoning under partial, inconsistent, or uncertain data conditions.
+\paragraph{CEP Processing}
+The \textit{CEP Engine} consumes both observed and reconstructed events without requiring changes to query logic. Confidence is available as an attribute for pattern evaluation but does not alter the semantics of existing operators.
 
 
-\section{Implementation}\label{sec:architecture-implementation}
+\section{Implementation}\label{sec:implementation}
+Python~3.10 is used for the reconstruction layer. It provides extensive libraries for numerical computation and state-estimation methods, and its flexibility supports rapid prototyping of predictive components.
 
-The framework is implemented as a lightweight, modular platform that bridges Python and Java components.
-Each module in the implementation directly instantiates an element of the conceptual meta-model (Section~\ref{sec:arch-framework}), following the process flow described in Section~\ref{sec:arch-process}.
-The resulting prototype provides a concrete realization of the requirements defined in Table~\ref{tab:reliability-architecture-requirements}.
+The CEP engine is implemented in Java~21 using the Esper library. The project is built with Maven (version~3.6), which compiles and packages the engine into a self-contained executable JAR. Esper provides an efficient runtime for evaluating continuous event queries, enabling low-latency processing of both observed and reconstructed events.
 
-
-\subsection{EventStream and Communication Implementation}
-Communication within the framework follows a publish–subscribe model realized over a lightweight client–server architecture.
-This layer is implemented using ZeroMQ (ZMQ) sockets, which support asynchronous message exchange between distributed constituents while maintaining low transport overhead.
-% Each constituent node connects as both a publisher and subscriber, allowing it to contribute data to the shared event stream and receive updates from other nodes without direct coupling.
-To ensure efficient data routing, the framework adopts topic-based filtering.
-Each event message is tagged with a topic prefix that encodes both its lifecycle phase (e.g., observed or reconstructed) and its stream identifier (e.g., the source or sensor ID).
-This scheme enables subscribers to express interest only in the subsets of data relevant to their reasoning.
-
-For example, every event is published under a topic formatted as:
-\\
-\verb|<phase>.<stream_id>_<datatype>| \\
-\verb|<phase>.<stream_id>_<datatype>|
-
-A temperature reading from a beach sensor may appear as:
-\\
-\verb|observed.beach_01_temp| \\
-\verb|observed.beach_01_temp| 
-
-and its reconstructed counterpart as:
-\\
-\verb|reconstructed.beach_01_temp| \\
-\verb|reconstructed.beach_01_temp| 
-
-Subscribers can register prefix filters to receive only the topics of interest.
-For instance:
-Subscribing to observed. receives all live sensor readings.
-Subscribing to \verb|reconstructed.beach_01_temp| retrieves only reconstructed values for that specific constituent system.
+To connect the Python-based reconstruction layer with the Java-based CEP engine, the system uses lightweight message passing through ZeroMQ~\cite{zeromq_org}. This design keeps the components decoupled, allowing each subsystem to evolve, be replaced, or be scaled independently without modifying the other.
 
 
-The communication layer is defined by a generic \textit{TransportAdaptor} interface that abstracts the underlying messaging implementation. All transmitted events conform to a standardized schema expressed as a JSON payload. Each event message represents an information packet including its origin, values, and confidence. This representation allows both the Python-based reconstruction pipeline and the Java CEP engine to consume data directly from the same event channel.
+\subsection{Libraries and Tools}
+Several libraries support the implementation:
 
-\begin{lstlisting}[language=json,caption={Event payload.},label={lst:eventstream-json},basicstyle=\ttfamily\small]
-{
-    "stream_id": "dt01-097846",
-    "timestamp": 1730672400,
-    "datatype": "temperature",
-    "observed_value": 22.7,
-    "predicted_value": 22.9,
-    "confidence": 0.84,
-    "method": "KalmanFilter",
-    "status": "reconstructed"
-}
-\end{lstlisting}
+\begin{itemize}
+    \item \textbf{NumPy} and \textbf{pandas} for numerical computation and time-indexed event manipulation.
+    \item \textbf{SciPy} for interpolation and auxiliary statistical routines.
+    \item \textbf{FilterPy} for implementing the Kalman filter used by the predictor.
+    \item \textbf{matplotlib} for evaluation plot visualizations.
+    \item \textbf{pytest} for automated testing.
+    \item \textbf{Esper} (Java) serves as the CEP engine, executing continuous queries and time-windowed pattern detection without modification to its query model.
+    \item \textbf{ZeroMQ (pyzmq)} provides asynchronous publish–subscribe communication between components
+\end{itemize}
 
-
-\subsection{Processing Layer Implementation}
-The \textit{Coordinator} manages event timing and synchronization across the data stream.  
-It operates as a scheduling service that monitors the expected arrival intervals of data and triggers corrective actions when deviations occur.  
-If an observation fails to arrive within the configured period, the Coordinator invokes the \textit{Reconstructor}, which estimates the missing value and publishes it to the reconstructed stream. When readings are present, the Coordinator publishes to the observed partition. 
-
-The Reconstructor serves as the compensation mechanism for missing or inconsistent inputs. It uses a configurable Predictor component that performs estimation based on recent data. By default, the framework uses a Kalman Filter as its core predictor. A Kalman Filter maintains a probabilistic model of the system’s state. Recent studies have demonstrated the interpretability of Kalman filters through the lens of subjective logic, showing that their probabilistic outputs naturally support reasoning about belief and uncertainty \cite{griebel2020kalman, kang2021some}. The reconstructed event is then forwarded back into the event stream, enabling the rest of the framework to process complete data.
-
-
-\subsection{CEP Implementation}
-Complex event reasoning is implemented using the Esper CEP engine~\cite{esper_reference}.
-The CEP module subscribes to the \texttt{reconstructed} topic from the event stream and processes incoming events using declarative Event Processing Language (EPL) rules.
-Patterns are defined externally in configuration files.
-The CEP engine executes within a separate Java process, launched and monitored from the Python environment.
-This approach ensures that event processing remains decoupled from data generation and reconstruction.
-It also allows Esper to be replaced by any other CEP system capable of consuming structured event streams (e.g., Siddhi or Flink CEP) with minimal reconfiguration, as long as the replacement follows the same event schema and channel interface.
-The CEP engine evaluates temporal and logical patterns across reconstructed events. Because each event includes confidence, pattern rules can incorporate confidence thresholds. For example, triggering alerts only when correlated events exceed a cumulative confidence value.
-
-
-\subsection{Implementation UML Overview}\label{subsec:arc-framework-uml}
-
-\label{sec:implementation-uml}
-
-Figure~\ref{fig:implementation_uml} illustrates the implemented structure of the framework.
-Each module in the meta-model is instantiated as a concrete class, with inter-module communication handled entirely through ZeroMQ channels.
-The \textit{Coordinator} manages scheduling and timing, invoking the \textit{Reconstructor} whenever data is missing.
-The \textit{Reconstructor} interacts with the pluggable \textit{Predictor} to estimate values and append confidence metadata, which are serialized as JSON and published back to the event stream.
-The \textit{CEP Engine}, implemented via Esper, subscribes to the reconstructed stream to evaluate event patterns defined in EPL.
-
-% \begin{figure}[H]
-% \centering
-% \fbox{
-%     \begin{minipage}[c][5cm][c]{0.85\textwidth}
-%     \centering
-%     \textbf{TODO: Export updated UML from drawio and place here.}
-%     \end{minipage}
-% }
-% \caption{Unified Modeling Language (UML) Diagram}
-% \label{fig:implementation_uml}
-% \end{figure}
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]{figures/Architecture/UML.drawio.pdf}}
-\caption{Unified Modeling Language (UML) Diagram}
-\label{fig:implementation_uml}
-\end{figure}
+The system is modular: predictors, communication mechanisms, and CEP engines can be replaced without altering the architecture, allowing the framework to be adapted to different SoTS environments and technology stacks.

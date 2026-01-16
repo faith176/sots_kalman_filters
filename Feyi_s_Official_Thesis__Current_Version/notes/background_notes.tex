@@ -37,4 +37,68 @@ state estimation itself can be event driven and not periodically sampled. their 
 estimation advancers through prediction and correction steps
 
 
-\cite{}
+
+
+
+% Fault Tolerance
+\cite{hanmer2013patterns}
+fault tolerance is being able to operate though some part is no longer operating correctly, so the book focuses on mechanisms that allow for continued operation, focused on improving the reliability and avaliability of software 
+fault error failure chain
+faults - defect present in the system that can cause an error. Represents a deviation from correctness. 
+error - incorrect system behaviour, categories: value error - incorrect discrete values or system ststae, and timing - non performance time, caused by faults
+failure - system behaviour is not performed as expected/according to system specifications, caused by errors
+- grouped into consistent (appears the same each time it was observed), or inconsistent (appear different to different observers)
+System Reliability - probability that it will perform without deviations from expected behaviour for a specific peroid of time, ie no failures during a specific timeframe
+- measured with mean time to failure (MTTF) and mean time to repair (MTTR)
+Dependabulity - measure of system trustworthyness to be rleied upon - reliability, avaliability, safety, recurity
+Markov models can be used to show the transitions between failure and repair states
+performance is linked closely to reliability
+phases to fault tolerance - error detection, error recovery, error mitigation, and fault treatment
+Error Recovery - undoing the bad effect and creating and error free state in the system so it can resume execution
+Recovery Patterns
+Quarantine=isolate element to prevent corruption of the rest of the system
+Concetrated Recovery = remove distractions during the error
+Error Handler = controlled mannor for handling errors
+Restart = resume execution by restarting program from begining 
+Rolleback = resume execution by moving to a state before the error occuranced
+Roll Forward = resume execution by advancing to a future state that would have been reached if no error occured
+Return to Reference Point = resume execution by returning to a specifci known state that is safe
+Limit Retries = do not return to the error without changing something, as the error can reoccur
+Failover = recovery by switching to a redundant data unit
+Checkpoint = save state periodically so that it does not need to be regenerated
+What to save = checkpoints save information of global interest for long duration processes
+Remote Storage = depends on where you place checkpoints
+Individuals decide timing = let each processes decide when to take a checkpoints based on their own needs
+Data Reset = restore some data to an initial or predetermined value when it is incorrect
+
+
+\cite{avizienis2004basic}
+means to attain dependability 
+Fault Prevention
+- prevention techniques like strong typing, information hiding, modularity, 
+Fault Tolerance
+- error detection and system reovery, corrective maintenance techniques
+Error Detection -  concurrent detection (takes place during service) and preemptive detection (takes place while operation is suspended)
+- Recovery - error handling and fault handling
+- Error Handling (eliminates errors) - rollback (go back to saved state before error), rollforward (go to state without the error), compensation (erroneous state contains enough info the be masked, conceals a progeessive loss)
+- fault handling (prevents faults from occuring again) - diagnosis (indentify the cause and location), isolation (exclude the faulty component), reconfiguration (swap in spare components or reassign task), reinitialization (updates and records the new configuration)
+Fault Removal 
+- consist of verfication before and and after removal to ensure that removal does not cause any consequences (Static verfication =  static analysis or theorem proving, or model checking) (Dynamic verfication = testing through symbol or real inputs)
+- fault removal during use - corrective or preventative maintainance
+Fault Forecasting
+- evlauation of system behaviour with respect to fault occurance and activation in a qualitative and quantitative method
+
+
+\cite{benveniste2012contracts}
+devised a mathematical meta theory of contracts, with compositions of components formed through contracts
+components are abstract entities that can be compused through associative or commutative links
+Contracts define a set of valid implementations and environments it can work in to contrain both sides of the interaction
+Contracts have assumptions and guaruntees
+observers can be expressed through temporal logic, simulink, modelica for runtime monitering
+contract meta theory defines autonomous components, with composability (typed) and integration through contracts
+
+Contract-based design, as developed by \citet{benveniste2012contracts}, treats composition as a mechanism for safely decomposing systems into subsystems under strong assumptions about interface and envirnonmental stability. In these settings contracts are used to ensure that independently developed components can be recomposed without violating correctness.
+
+In contrast, Systems of Twinned Systems operate under fundamentally different conditions. Constituents are loosely coupled, interact through asynchronous event streams, and evolve independently, leading to environments in which contract assumptions are routinely violated. Under contract based design, such systems would be deemed incompatible or inconsistent, and meaningful computation would not be possible.
+
+This thesis addresses the inverse problem: rather than using contracts to prevent unreliable composition, it investigates how computation can proceed despite it. By shifting reliability concerns from the communication layer to the computational semantics of event processing, and by explicitly representing uncertainty through confidence-aware reconstruction and pattern detection, the proposed architecture enables meaningful reasoning in dynamically composed, unreliable systems.
