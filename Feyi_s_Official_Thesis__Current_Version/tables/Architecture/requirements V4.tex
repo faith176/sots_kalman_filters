@@ -12,7 +12,7 @@
 \midrule
 
 \textbf{R1} &
-The system shall support the \textbf{identification of uncertainty in input data}, arising from the monitored environment. &
+The system shall support the \textbf{runtime identification of uncertainty in input data}, including the detection of missing observations. &
 Event scheduling and missing-event classification
 (\secref{sec:scheduling-missing}) &
 \citet{cugola2015complex},
@@ -20,7 +20,7 @@ Event scheduling and missing-event classification
 \\
 
 \textbf{R2} &
-The system shall provide an \textbf{explicit model for representing uncertainty}, such that inferred information remains distinguishable from directly observed information during event processing. &
+The system shall provide an \textbf{explicit model for representing uncertainty}, such that inferred information remains distinguishable from directly observed information during event processing and pattern evaluation. &
 Explicit representation of inferred events
 (\secref{sec:state-based-inference}, \secref{sec:confidence-aware-semantics}) &
 \citet{cugola2015complex},
@@ -36,10 +36,9 @@ Uniform event representation and propagation
 \\
 
 \textbf{R4} &
-The system shall support \textbf{reasoning and continued operation under incomplete information}. &
+The system shall support \textbf{continued event-driven operation when observations are missing}. &
 Event processing with inferred observations
 (\secref{sec:state-based-inference}, \secref{sec:confidence-aware-semantics}) &
-\citet{cugola2015complex},
 \citet{avizienis2004basic}
 \\
 

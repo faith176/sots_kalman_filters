@@ -1,0 +1,119 @@
+RECOMENDATIONS===================================================
+
+
+Recommendation 1 (Domain diversification).
+Our results show a strong concentration of SoTS research in manufacturing and optimization-driven scenarios, with comparatively limited exploration of domains such as healthcare, logistics, cybersecurity, and enterprise systems. Future research should intentionally target underrepresented domains to assess whether existing SoTS assumptions, architectures, and coordination mechanisms generalize beyond industrial automation settings.
+
+Recommendation 2 (Intent-aware and decentralized SoTS design).
+The prevalence of combining DTs into a SoS, alongside the dominance of centralized Acknowledged and Directed architectures, suggests an implicit design bias toward bottom-up integration and centralized coordination. Future studies should explicitly justify the chosen SoTS intent and architectural configuration, and further explore decentralized Collaborative and Virtual SoTS to better understand autonomy, negotiation, and emergent behavior in highly distributed environments.
+
+Recommendation 3 (Expanded constituent models and autonomy justification).
+Most SoTS focus on physical assets represented by fully autonomous DTs, while cyber-physical-human and enterprise-level constituents remain underexplored. Future work should broaden the range of constituent system types and explicitly justify autonomy assumptions, particularly in safety-critical or socio-technical contexts where human oversight and organizational dynamics play a central role.
+
+Recommendation 4 (Emergence, reconfiguration, and evolution as first-class concerns).
+Although many systems are framed as SoS, emergent behavior, reconfiguration, and long-term evolution are only partially addressed or omitted entirely. Future research should explicitly analyze and evaluate these dynamical properties, for example through emergence-aware simulations, scenario-based validation, or longitudinal studies that capture system adaptation over time.
+
+Recommendation 5 (Formalization and validation of reliability).
+While reliability is frequently cited as a motivation or architectural concern, it is rarely formalized or empirically validated. Future SoTS research should adopt explicit reliability models and validation techniques, such as fault injection, simulation-based evaluation, or formal analysis, to move beyond architectural intuition.
+
+Recommendation 6 (Advancing maturity through evaluation and standardization).
+The dominance of low-to-mid TRL prototypes and validation-oriented studies indicates a maturity gap in SoTS research. Future work should prioritize evaluation research, including industrial case studies and longitudinal assessments, and treat standards as first-class design concerns. Explicit alignment with both DT- and SoS-oriented standards can improve interoperability, comparability, and technology transfer.
+
+
+
+\subsubsection{On intent-aware and decentralized SoTS design}
+Our analysis reveals a strong concentration of SoTS research in manufacturing, which alone accounts for \xofyp{32}{80} studies, followed by automotive, cyber-physical systems, and smart cities (\tabref{tab:domains-table}). Together, these domains dominate the current literature, while areas such as healthcare, logistics, cybersecurity, and enterprise systems remain sparsely explored. This skew indicates that many SoTS design assumptions are derived from industrial automation settings, where system boundaries are relatively stable, optimization goals are clear, and centralized coordination is often acceptable.
+
+The limited presence of other domains raises concerns about the generalizability of these assumptions. Domains with stronger organizational autonomy, regulatory constraints, and human involvement may require different coordination mechanisms, looser coupling, and stronger guarantees for reliability, privacy, and accountability. While the current domain focus is a reasonable trade-off for early-stage feasibility studies, continued concentration risks narrowing the conceptual scope of SoTS research and overlooking challenges that emerge only in more heterogeneous or socio-technical contexts.
+
+Broadening the range of application domains would enable comparative analyses of SoTS architectures and coordination strategies under differing operational conditions, and help assess whether current approaches extend beyond industrial automation. Such diversification is therefore essential for advancing SoTS toward a more general and robust class of systems.
+
+\begin{recoframe}{Recommendation 1}
+Intentionally diversify the application domains studied in SoTS research beyond manufacturing and industrial automation to assess the generalizability and robustness of existing SoTS assumptions, architectures, and coordination mechanisms.
+\end{recoframe}
+
+
+
+
+
+\subsubsection{Domain diversification}
+
+Our analysis shows that most SoTS are realized by combining DTs into a SoS rather than by twinning an existing SoS (\xofyp{49}{80} vs. \xofyp{31}{80}, \tabref{tab:intents-table}). This bottom-up integration approach is closely aligned with the observed dominance of centralized architectural configurations, with Acknowledged and Directed SoTS accounting for over two thirds of the studies (\xofyp{57}{80}, \tabref{tab:sots-type-table}). Together, these findings suggest an implicit design bias toward centralized coordination, where DTs are aggregated under a supervisory or orchestration-centric control structure.
+
+While such configurations are well suited for optimization and integration in stable environments, they limit opportunities to study autonomy, negotiation, and emergent behavior—core characteristics of SoS. In contrast, Collaborative and Virtual SoTS, which enable voluntary participation, peer-to-peer coordination, and dynamic goal formation, remain comparatively underexplored. Their limited presence indicates that the design space of decentralized SoTS is not yet well understood, particularly in environments characterized by high distribution, organizational independence, or conflicting objectives.
+
+As SoTS are increasingly applied in domains beyond tightly controlled industrial settings, explicitly reasoning about the intent of combination and its architectural implications becomes essential. Clear justification of whether a system is designed to twin a SoS or to combine DTs into a SoS can improve comparability across studies and help align architectural choices with intended coordination and autonomy properties. Expanding empirical investigations of decentralized SoTS would further enable systematic analysis of trade-offs between centralized control and emergent coordination.
+
+\begin{recoframe}{Recommendation 2}
+Explicitly justify the intent and architectural configuration of SoTS designs, and expand empirical research on decentralized Collaborative and Virtual SoTS to better understand autonomy, negotiation, and emergent behavior in highly distributed environments.
+\end{recoframe}
+
+
+
+\subsubsection{On constituent diversity and autonomy justification}
+
+Our results indicate that SoTS research predominantly models physical systems as constituents, which appear in \xofyp{62}{80} studies, while cyber-physical-human systems and enterprise systems remain comparatively rare (\tabref{tab:constituent-units-table}). This focus is mirrored in the treatment of autonomy: the vast majority of studies implement fully autonomous digital twins (\xofyp{66}{80}), whereas human-supervised and human-actuated DTs are encountered only sporadically (\tabref{tab:autonomy-table}). Together, these findings suggest that current SoTS designs are largely shaped by assumptions of autonomous operation over technical assets, with limited consideration of human involvement or organizational dynamics.
+
+While autonomous DTs are well suited for optimization and real-time control, particularly in industrial settings, their dominance raises concerns when SoTS are applied in safety-critical or socio-technical contexts. Domains involving human decision-making, accountability, regulatory oversight, or organizational coordination may require different autonomy configurations, including supervisory control, human-in-the-loop decision making, or mixed autonomy arrangements. The scarcity of such configurations in the literature suggests that autonomy choices are often implicit rather than explicitly reasoned about as part of the system design.
+
+In addition, the near absence of enterprise- and organization-level constituents indicates an underexplored design space. Many real-world system-of-systems challenges arise not only from technical coordination but also from organizational structures, governance, and lifecycle management. Broadening the range of constituent system types to include departments, roles, and workflows, and explicitly justifying autonomy assumptions for these constituents, would improve the conceptual robustness of SoTS research and extend its applicability beyond operational control to strategic planning and socio-technical coordination.
+
+\begin{recoframe}{Recommendation 3}
+Broaden the range of constituent system types considered in SoTS, including enterprise- and organization-level constituents, and explicitly justify autonomy assumptions, particularly in safety-critical and socio-technical contexts where human oversight and governance play a central role.
+\end{recoframe}
+
+
+
+
+
+\subsubsection{On emergence, reconfiguration, and evolution in SoTS}
+
+Although all sampled systems are framed as systems of systems, dynamical SoS properties are only partially addressed in practice. As shown in \tabref{tab:emergence-type-table}, emergent behavior is not addressed at all in \xofyp{28}{80} studies, while strong emergence—behaviors not predictable from individual constituents—appears in only \xofyp{6}{80} cases. Most studies that do consider emergence focus on weak or simple forms, typically observed through system-level simulation rather than explicitly analyzed or evaluated.
+
+This trend is consistent with the broader treatment of SoS dimensions. While structural properties such as distribution, independence, interdependence, and interoperability are widely reported, dynamical dimensions including autonomy, emergence, reconfiguration, and evolution are less consistently addressed and often only partially evident. Reconfiguration and long-term evolution are the least acknowledged dimensions overall, suggesting that many SoTS are designed for static or short-term operational scenarios rather than adaptive, long-lived deployments.
+
+The limited treatment of emergence, reconfiguration, and evolution constrains the ability of current SoTS research to substantiate SoS claims beyond architectural composition. Many systems adopt SoS terminology without fully operationalizing its defining properties, creating a gap between SoS theory and SoTS implementations. Without explicit analysis of these dynamical aspects, it remains unclear how SoTS behave under changing conditions, constituent turnover, or shifting goals. Addressing these limitations requires evaluation approaches that go beyond single-scenario validation, such as emergence-aware simulations, scenario-based stress testing, or longitudinal studies capturing system adaptation over time.
+
+\begin{recoframe}{Recommendation 4}
+Explicitly analyze and evaluate emergence, reconfiguration, and long-term evolution in SoTS, and clearly relate implementation decisions to SoS theory by stating which SoS dimensions are supported, approximated, or intentionally out of scope.
+\end{recoframe}
+
+
+
+
+\subsubsection{On the formalization and validation of reliability}
+
+Our results indicate that reliability is a recurring concern in SoTS research, yet it is predominantly treated at a high architectural level rather than being formally specified or empirically evaluated. As shown in \tabref{tab:reliability-table}, reliability is architecturally addressed in more than half of the studies (\xofyp{41}{80}), typically through mechanisms such as fallback strategies, redundancy, or asynchronous communication. However, explicit reliability modeling appears in only \xofyp{2}{80} studies, and empirical evaluation or validation is reported in just \xofyp{3}{80} cases.
+
+This gap suggests that reliability is often assumed to emerge from architectural choices rather than being treated as a first-class, measurable property. While architectural mechanisms are necessary, they provide limited insight into how SoTS behave under fault conditions, partial failures, or degraded communication—scenarios that are intrinsic to distributed and loosely coupled systems of systems. The scarcity of formal models and validation efforts therefore limits the ability to compare approaches, reproduce results, or assess trade-offs between reliability and other system properties.
+
+To advance SoTS research beyond architectural intuition, reliability must be explicitly specified and evaluated. Formal reliability models, fault injection, simulation-based stress testing, and analytical techniques can provide concrete evidence of system behavior under adverse conditions and support more rigorous assessment of design decisions. Integrating such approaches would also improve comparability across studies and contribute to the maturation of SoTS as an engineering discipline.
+
+\begin{recoframe}{Recommendation 5}
+Adopt explicit reliability models and validation techniques in SoTS research, including formal analysis, fault injection, and simulation-based evaluation, to move beyond architectural intuition and enable rigorous assessment of reliability properties.
+\end{recoframe}
+
+
+\subsubsection{On advancing maturity through evaluation and standardization}
+
+Our results reveal a clear maturity gap in SoTS research. As shown in \tabref{tab:trl-table}, most studies operate at low-to-mid technology readiness levels, with demo prototypes (\xofyp{35}{80}) and proof-of-concept implementations (\xofyp{16}{80}) dominating the sample. Only a small number of studies report deployed prototypes or operational systems, and evaluation-oriented research remains comparatively rare. Instead, most studies focus on validating the feasibility of a single system, which limits insight into the trade-offs between alternative architectural choices, autonomy levels, or coordination strategies.
+
+Standardization practices further reinforce this observation. While several studies reference established standards, fewer than half of the sampled works rely on any standard at all, and those that do predominantly apply DT-oriented or data-exchange standards such as OPC UA or the Asset Administration Shell (\tabref{tab:standards-table}). Standards that explicitly address SoS concerns, or that bridge DT and SoS perspectives, are uncommon. As a result, many SoTS implementations remain tightly coupled to bespoke architectures, limiting interoperability, reproducibility, and technology transfer.
+
+Advancing the maturity of SoTS therefore requires a dual focus on evaluation and standardization. Empirical evaluation through industrial case studies, longitudinal assessments, and comparative evaluations of alternative SoTS designs can provide evidence of effectiveness beyond isolated demonstrations. At the same time, treating standards as first-class design concerns and explicitly aligning SoTS architectures with both DT- and SoS-oriented standards can improve comparability across studies and support the transition from prototypes to operational systems.
+
+\begin{recoframe}{Recommendation 6}
+Prioritize evaluation research, including comparative and longitudinal studies, and explicit standard alignment in SoTS to advance maturity, improve interoperability, and support technology transfer.
+\end{recoframe}
+
+
+
+
+
+
+
+
+
+
+
+

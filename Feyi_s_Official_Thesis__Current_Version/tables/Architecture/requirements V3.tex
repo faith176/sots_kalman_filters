@@ -1,56 +1,46 @@
 \begin{table*}[ht]
 \centering
 \caption{Architectural Requirements}
-\label{tab:architecture-requirements-v3}
+\label{tab:architecture-requirements}
 \footnotesize
-\begin{tabularx}{\textwidth}{@{}p{0.9cm}X p{1.7cm}p{3.1cm}@{}}
+\begin{tabularx}{\textwidth}{@{}p{0.9cm}X p{3.8cm} p{3.2cm}@{}}
 \toprule
 \textbf{ID} &
 \textbf{Requirement} &
-\textbf{Connection to Model} &
+\textbf{Connection to Model (\secref{sec:events-streams})} &
 \textbf{Supporting Literature} \\
 \midrule
 
 \textbf{R1} &
-The system shall provide a mechanism to \textbf{identify missing observations at runtime} by classifying expected events based on event time and tolerance windows. &
-\secref{sec:scheduling-missing} &
-\citet{wasserkrug2006taxonomy},
+The system shall support the \textbf{identification of uncertainty in input data}, arising from the monitored environment. &
+Event scheduling and missing-event classification
+(\secref{sec:scheduling-missing}) &
 \citet{cugola2015complex},
-\secref{sec:literature-review-key-takeaways}
+\citet{wasserkrug2006taxonomy}
 \\
 
 \textbf{R2} &
-The system shall provide an \textbf{explicit representation for derived observations} such that derived events remain distinguishable from observed events through metadata. &
-\secref{sec:state-based-inference},
-\secref{sec:confidence-stream-augmentation} &
-\citet{wasserkrug2006taxonomy},
+The system shall provide an \textbf{explicit model for representing uncertainty}, such that inferred information remains distinguishable from directly observed information during event processing. &
+Explicit representation of inferred events
+(\secref{sec:state-based-inference}, \secref{sec:confidence-aware-semantics}) &
 \citet{cugola2015complex},
-\secref{sec:literature-review-key-takeaways}
+\citet{wasserkrug2006taxonomy}
 \\
 
 \textbf{R3} &
-The system shall support \textbf{explicit confidence representation} by attaching confidence metadata to derived events, enabling downstream event processing to account for uncertainty without altering event-time semantics. &
-\secref{sec:confidence-stream-augmentation},
-\secref{sec:confidence-aware-semantics} &
+The system shall ensure that \textbf{uncertainty propagates through the event processing pipeline}, so that derived results reflect the uncertainty present in contributing observations. &
+Uniform event representation and propagation
+(\secref{sec:confidence-stream-augmentation}, \secref{sec:confidence-aware-semantics}) &
 \citet{cugola2015complex},
-\secref{sec:literature-review-key-takeaways}
+\citet{cugola2012processing}
 \\
 
 \textbf{R4} &
-The system shall enable \textbf{continued operation under temporary data unavailability} by supporting inference over observations classified as missing rather than suspending event-driven processing. &
-\secref{sec:scheduling-missing},
-\secref{sec:state-based-inference} &
+The system shall support \textbf{reasoning and continued operation under incomplete information}. &
+Event processing with inferred observations
+(\secref{sec:state-based-inference}, \secref{sec:confidence-aware-semantics}) &
+\citet{cugola2015complex},
 \citet{avizienis2004basic}
-\secref{subsec:literature-review-results-reliability},
-\secref{sec:literature-review-key-takeaways}
-\\
-
-\textbf{R5} &
-The system shall maintain \textbf{compatibility with existing event-driven processing engines} by producing derived events that conform to the same structural and event-time semantics as observed events. &
-\secref{sec:events-streams},
-\secref{sec:confidence-stream-augmentation},
-\secref{sec:confidence-aware-semantics} &
-\secref{sec:literature-review-key-takeaways}
 \\
 
 \bottomrule
