@@ -29,3 +29,92 @@ In contrast to existing secondary studies, our work provides a systematic and st
 
 Primary research proposing hierarchical or federated DT architectures~\cite{tao2019digital, schroeder2021digital, gill2024toward, ghanbarifard2023digital} further motivates the need for such a characterization, as these works implicitly adopt SoS principles without systematically analyzing their implications. Our study complements these efforts by providing an empirical synthesis of how such approaches are realized in practice and how they collectively shape the emerging SoTS landscape.
 
+============================================================
+Current Related Work
+
+SoS+DT
+Secondary/Review/Surveys
+olsson2023systems - who analyze ten studies in the overlap of DTs and SoS to highlight conceptual challenges, such as integration and interoperability
+
+Primary Works/Position Papers
+gill2024toward - who advocate for automated horizontal and vertical DT integration and emphasize the need for a unified DT model to enable interoperability across manufacturers.
+
+dietz2020digital - spatial-temporal configurations,  modeling SoS-like structures through DT aggregation.
+
+michael2022integration - identify barriers to integrating DTs into SoS, including interoperability gaps, connectivity and privacy issues
+
+borth2019digital - outline strategic and architectural difficulties associated with lifecycle coordination, data ownership, and conflicting stakeholder objectives in loosely coupled DT systems.
+
+
+
+DT
+Secondary/Review/Surveys
+kritzinger2018digital - review of Digital Twins in manufacturing, introducing the Digital Model–Digital Shadow–Digital Twin taxonomy to distinguish levels of physical–digital integration
+
+dalibor2022cross - present a large-scale systematic mapping study of Digital Twins from a software engineering perspective, analysing 356 primary studies to characterise DT counterparts, properties, realization techniques, and evaluation practices, and proposing a feature model to support systematic DT engineering. While the survey explicitly identifies systems-of-systems as a major class of DT counterparts
+
+tao2018digital -  comprehensive state-of-the-art survey of Digital Twin research in industry, framing DTs as cyber–physical systems that integrate modeling, simulation, data fusion, and services across the product lifecycle. While the survey acknowledges interaction and collaboration among multiple virtual models
+
+fuller2020digital - review of Digital Twin enabling technologies, applications, challenges, and open research questions, with a strong emphasis on IoT/IIoT connectivity, data analytics, and Industry 4.0 use cases across manufacturing, healthcare, and smart cities. it frames aggregation primarily as tighter physical–digital coupling and platform integration
+
+negri2017review - review of Digital Twins in Industry 4.0 manufacturing, emphasizing lifecycle continuity, real-time synchronization, and semantic data integration., DTs are modeled at the level of single production systems
+
+semeraro2021digital - present a systematic literature review that synthesizes Digital Twin research across application domains, life-cycle phases, architectures, and enabling technologies. Presents DTs as an emerging cyber physical paradigm. Acknowledges DTs at unit, system, and system-of-systems levels, They argue that horizontal data integration is necessary for effective vertical system unification.
+
+barricelli2019survey - surveys of Digital Twin research, consolidating definitions, core characteristics, application domains, and socio-technical design implications. The survey strongly emphasizes lifecycle continuity, AI-enabled prediction, and human–DT interaction
+
+ferko2023standardisation - systematically assess how existing Digital Twin architectures in manufacturing align with the ISO 23247 reference architecture, showing that most implementations realize only a narrow subset of the prescribed functional entities and largely neglect cross-system, interoperability, and lifecycle concerns.
+
+ferko2022architecting - present a systematic mapping study of software architectures for Digital Twins, analysing 140 primary studies to characterise architectural solution types, quality attributes, and recurring architectural patterns.
+
+
+% 
+% xu2023survey - survey of Digital Twin–enabled Industrial IoT, framing DTs as high-fidelity cyber-physical replicas that integrate control, communication, and computing (3C), and that are increasingly augmented with AI and blockchain for intelligent and secure operation. largely assumes unified system ownership and control, and does not address the composition of multiple autonomous digital twins
+
+% wang2023survey - survey IoDT as a large-scale, distributed extension of cyber–physical systems, emphasizing inter-twin cooperation, decentralized data exchange, and security governance. However, despite this decentralization rhetoric, DT interactions are largely assumed to operate within a single system boundary, stopping short of treating DTs as independently governed constituents in a true system-of-systems sense.
+
+% ghanbarifard2023digital - discussing distributed DT composition in dynamic, evolving operational contexts, surveying use cases, challenges, and enabling technologies across large-scale, highly interconnected systems such as maritime operations, smart cities, and industrial infrastructures.
+
+
+
+Primary Works/Position Papers
+verdouw2021digital - introduce six types of DT patterns and illustrates compositions of DTs in agricultural scenarios
+
+tao2019digital - analyzes CPS and DTs from multiple perspectives. propose a multi-level DT structure, suggesting that enterprises can achieve SoS by incrementally combining unit-level DTs into complex, higher-order systems.
+
+schroeder2021digital - categorize connectivity levels within DT architectures and demonstrate how aggregated DTs can represent broader system behaviors. 
+
+
+
+SoS -------------------------
+Secondary/Review/Surveys
+gorod2008system - review the SoS literature to illustrate the need to create an SoSE management framework based on the demands of constant technological progress in a complex dynamic environment. Discuses composing complex systems in a general sense. 
+
+uday2015designing - present a comprehensive survey of metrics, methods, and design challenges for engineering resilience in Systems-of-Systems, critically examining the limitations of traditional reliability and risk approaches and synthesizing multidisciplinary strategies for coping with disruption, recovery, and uncertainty. While the survey draws heavily on cyber-physical infrastructure domains and networked operational systems, it treats resilience at the architectural and system-interaction level and does not explicitly frame these mechanisms in terms of Digital Twins or continuous physical–digital synchronization.
+
+nielsen2015systems - present a comprehensive survey of System-of-Systems engineering that synthesizes foundational concepts, categorizes SoS types, and systematically maps eight core SoS dimensions. Discusses cyber physical example domains for SoS 
+
+keating2003system - present an early foundational treatment of System-of-Systems Engineering, explicitly framing SoSE as the engineering of integrated complex metasystems composed of autonomous, heterogeneous complex systems operating under uncertainty, emergence, and evolution. While the paper discusses large-scale sociotechnical and infrastructure systems that combine physical assets, computation, and human decision-making, it predates and does not explicitly adopt the cyber-physical systems paradigm or Digital Twin concepts.
+
+klein2013systematic - do a lit review on systems of system architecture, finding most solutions are fragmented and there no strong convergence towards specific architecture or tooling. Focuses specifically on the architecture dimension of SoS — how SoS structures are described and classified in literature. Helps identify architectural patterns, gaps, and trends across published work.
+
+axelsson2015systematic - systematic mapping of System-of-Systems Engineering publications, characterizing research topics, application domains, and community structure. the study explicitly references cyber-physical systems and IoT as closely related and future application domains and highlights architecture, modeling, and integration as dominant themes,
+
+
+% 
+% fang2021system - review on the SoS architecture selection to preserve the dynamic properties of SoS. Mentions The recent digital twin technologies might offer a great opportunity to collect adequate high-quality architecture data that could be used to be analyzed with different methods for addressing different issues during SoS architecting,  in their discussion on future opportunities. Along with an empahsis on model driven and ML incoportations.
+
+
+% santos2022evaluation - present a systematic review of methods for evaluating System-of-Systems software architectures, analyzing modeling techniques, quality attributes, and the maturity of existing evaluation approaches for dynamic and evolving SoS. the survey discusses cyber-physical application domains and runtime architectural reconfiguration
+
+% dridi2020system - literature review of System-of-Systems modelling approaches, surveying challenges, quality attributes, and a wide range of MBSE-based techniques (e.g., MDA, ADLs, SOA, ontologies) used to describe static and dynamic SoS architectures. While the review frequently references cyber-physical application domains and emphasizes architectural evolution and reconfiguration, it remains focused on design-time modelling abstractions
+
+% vargas2016approaches - systematic review of System-of-Systems integration research, focusing on software engineering methods, interoperability mechanisms, and architectural approaches used to integrate heterogeneous constituent systems. While the review emphasizes integration challenges in distributed and often cyber-physical application domains and references service-oriented and event-based architectures
+
+
+
+
+
+
+
+
