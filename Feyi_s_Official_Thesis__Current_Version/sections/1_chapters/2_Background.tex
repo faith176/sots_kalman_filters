@@ -36,6 +36,13 @@ Complex Event Processing (CEP) extends this model by enabling the detection of h
 
 % -------------------------------------------------------------
 \section{Dependability Concepts and Means}\label{sec:background-dependability}
+
+% Having trouble integrating in contract based composition
+% Classical contract-based design (Benveniste et al.), addresses the composition of systems under strong assumptions about component behaviour, interfaces, and integration. - relies on fixed environments and well-defined assumptions and guarantees to ensure correctness under composition. 
+% SoTS however, do not operate under fixed environments: constituent systems may join or leave, interaction patterns evolve over time, 
+% So strong contract-based composition cannot be relied on in these environments
+% This thesis addresses the complementary problem of supporting reliable event-driven computation in systems where composition is inherently weak and dynamic.
+
 Dependability is defined as the justified confidence that a system delivers correct service, even in the presence of adverse conditions \cite{avizienis2004basic}. It provides a conceptual framework for reasoning about the trustworthiness of system behaviour under uncertainty, partial failure, and change. 
 According to \citet{avizienis2004basic}, dependability comprises five core attributes: availability, reliability, safety, integrity, and maintainability. Availability refers to the readiness of a system to deliver correct service when required, while reliability represents the continuity of that correct service over time. Safety concerns the avoidance of catastrophic consequences arising from system failures, integrity ensures that system state and data are protected from improper modification, and maintainability reflects the ease with which a system can be repaired or adapted.
 
