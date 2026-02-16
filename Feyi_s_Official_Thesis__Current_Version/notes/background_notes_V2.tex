@@ -1,0 +1,118 @@
+% System of Systems
+
+maier1998architecting - 
+
+jamshidi2008system - 
+
+dahmann2008understanding - 
+
+boardman2006system - 
+
+keating2003system - 
+
+sheard2009principles - 
+
+nielsen2015systems - 
+
+
+
+
+% Digital Twins
+\cite{boschert2016digital}
+
+
+grieves2014digital - 
+
+grieves2017digital -
+
+kritzinger2018digital - 
+
+tao2018digital - 
+
+tao2019digital - analyzes CPS and DTs from multiple perspectives. propose a multi-level DT structure, suggesting that enterprises can achieve SoS by incrementally combining unit-level DTs into complex, higher-order systems.
+
+verdouw2021digital - introduce six types of DT patterns and illustrates compositions of DTs in agricultural scenarios
+
+boschert2016digital - 
+
+david2024infonomics - 
+
+% Surveys
+liu2021review - 
+
+barricelli2019survey - 
+
+
+
+
+
+% Complex Event Processing
+etzion2010event - an event is an occurance in a system or domain. There are catergories for event processing applications - information dissemination, oberrvation, predictive processing, active diagnosis, and dynamic operational behaviour. event processing performs oeprations on events. Events can be composed of other event instances. Event producers can be sensors, workflow engines, software, ect. Theres two categories for interactions patterns: sensor - producers that sense environment or state; and detectors - who detect specific occirances and report on them through events. Event consumers consume events through a channel. Sees movemenets away from monolithic systems to more deversified applciations. Event proccessing will be embeded in future systems either as a middleware or packaged application. 
+
+
+cugola2012processing - complex event processing systems use event notifications from different sources to detect interesting situations. Notifications of events happening in the external world observed by sdources. the CEP engine is responsible for filtering and combining these notifications to understand what is happening in terms of higher level composite events. Traditional versions followed a publish subscribe middleware. 
+
+
+cugola2015complex - overview of the Complex Event Processing (CEP) paradigm, framing it as a computation model for detecting situations of interest through patterns over primitive events rather than transforming raw data streams. CEP is positioned as distinct from Data Stream Management Systems (DSMS), emphasizing that CEP interprets incoming information as event notifications with semantic meaning and focuses on pattern detection, temporal relationships, and situation awareness, rather than continuous data aggregation or querying. The chapter formalizes key CEP concepts, including event types, payloads, and time models, highlighting challenges introduced by heterogeneous event sources, unsynchronized clocks, and out-of-order arrivals. Events are treated as discrete occurrences annotated with timestamps and structured payloads, enabling temporal constraints such as ordering, windows, and negation. The authors show how CEP rules implicitly define computation through event patterns, rather than explicitly prescribing processing steps, and describe common operators such as selection, combination, negation, aggregation, and hierarchical event composition. A significant portion of the chapter surveys execution models for CEP, including automata-based incremental processing and column-based delayed processing. These models illustrate how CEP engines maintain internal state to track partial matches over time, revealing inherent trade-offs between expressiveness, memory usage, and performance. The discussion highlights that long-running patterns and rich temporal constraints can lead to state explosion, making efficient management of intermediate results a central concern in CEP system design
+
+dayarathna2018recent - urvey of event processing (EP) research, covering both academic and industrial advances and positioning Complex Event Processing (CEP) as a specialized subset of EP focused on detecting composite events from patterns over simple events. The paper distinguishes EP, stream processing, and CEP, emphasizing that CEP attaches semantic meaning to event patterns and supports temporal, logical, and hierarchical composition. systematic classification of EP systems into event processing platforms (EPPs), distributed stream computing platforms (DSCPs), and CEP engines. This taxonomy highlights architectural differences between centralized CEP engines and large-scale distributed stream processors, and shows how CEP functionality is increasingly embedded within general-purpose stream processing frameworks such as Storm, Spark Streaming, and Flink. The survey documents the evolution from first-generation relational stream processors to second-generation per-event and micro-batching architectures, illustrating trade-offs between latency, throughput, and consistency guarantees
+
+kommera2020power - Event-driven processing is a model in which system behaviour advances in response to the occurrence of events, rather than through continuous polling or queries over stored data. Event driven architecture is a system design pattern where the system reponds to events which can be state changes or system generated signals. An event is a significant occurance in the system. Event producers and event consumers are decoupled allowing for asynchronous commuincation between components. Interest has grown in it in the e-commerce industry, Iot, urban infrastrcutre, and autonomous vehicles, and healthcare. Naturally fits microsewrvice architecture. An event handler processes events when they are detected ensuring the correct response is triggered. Event processing allows for immediate responses, streaming data, horizontal scalability, fault isolation.
+
+
+buchmann2009complex - CEP plays an important role in logistics, energy management, finance, and manufacturing. Mediates infromation in the form of events between providers and consumers and support relationship detection among events through correlations rules called event patterns. Aggregation and composition of new complex event can be generated to derive more abstract events.
+
+
+wu2006high - SASE introduced native sequence operators for processing unbounded event streams and proposed a declarative query model for detecting temporal and semantic relationships within continuous data flows, with applications in retail and healthcare monitoring.
+
+brenna2007cayuga - Cayuga extended these ideas through a relational model, representing events as tuples and evaluating SQL-like temporal queries using non-deterministic finite-state automata to enable expressive event correlation. 
+
+esper_reference - Esper as an open-source engine widely adopted in industry. Unlike traditional databases that store data and query it retrospectively, Esper inverts this model by storing continuous queries and streaming live data through them. When incoming events match registered patterns, the system triggers real-time actions. Its state-machine-based implementation efficiently supports sequence and pattern detection over sliding time windows, making it suitable for financial trading, network monitoring, and business process automation. 
+
+suhothayan2011siddhi - Siddhi  advanced this model with a high-performance, publish–subscribe architecture that decomposes complex queries into a pipeline of processors. Each processor maintains event queues and evaluates time-windowed queries in parallel, enabling fine-grained concurrency and support for both pattern and sequence queries through tree-based evaluation and state machines. 
+
+carbone2015apache - At a larger scale, Apache Flink  integrates CEP principles into distributed stream processing environments. 
+
+
+
+
+
+% Reliable and Dependable Systems
+
+avizienis2001fundamental - defines dependability in tersm of the threats, attributes, and means. Dependability of a computing system is the ability to deliver service that can justifiably be trusted. Defines a taxonomy. Outlines how failures and faults can occur and propogate. Formalizes dependability as a system property
+
+
+avizienis2004basic - Introduces the core concepts: faults, errors, failures, and attributes (reliability, availability, safety, integrity, maintainability). Dependability is defined as the justified confidence that a system delivers correct service, even in the presence of adverse conditions \cite{avizienis2004basic}. It provides a conceptual framework for reasoning about the trustworthiness of system behaviour under uncertainty, partial failure, and change. According to \citet{avizienis2004basic}, dependability comprises five core attributes: availability, reliability, safety, integrity, and maintainability. Availability refers to the readiness of a system to deliver correct service when required, while reliability represents the continuity of that correct service over time. Safety concerns the avoidance of catastrophic consequences arising from system failures, integrity ensures that system state and data are protected from improper modification, and maintainability reflects the ease with which a system can be repaired or adapted. Achieving these dependability attributes in practice requires understanding the mechanisms through which correct service may be compromised during operation. Dependability theory therefore distinguishes between faults, errors, and failures in systems \cite{avizienis2004basic}. A fault is the underlying cause of an error, an error corresponds to an incorrect system state, and a failure occurs when an error results in a deviation from correct service as observed externally. Within this framework, \citet{avizienis2004basic} identify four complementary means for achieving dependability: fault prevention, fault removal, fault forecasting, and fault tolerance. Fault prevention and fault removal aim to reduce the introduction and persistence of faults through design, verification, and maintenance activities, while fault forecasting seeks to assess the likelihood and potential impact of faults.
+
+
+laprie1985dependable - early paper introducing dependability concepts. Dependability is ther quality of the delivered service such that relaince can justifiability be placed on the service. failure happens when the service deviates from what is specified for it, which occurs because the system was erronous. An error is a part of the system state which lead to the failure. failures are created by faults which become errors when activated.  Focused on relianbility and availability as measures, faults failures and errors as impairments, and means to deal with them through fault avoidance, fault tolerance, error removal, and error forecasting. Fault avoidance focuses on how to prevent, by construction, fault occrance. Faultr tolerance is redundancy and complying with specificiations despite having errors. Error removal is how to minimize the presence or latents errors through verification. And error forcasting is how to restimate the presence, creation, and consequence of errors. There are two states a system can be in: service acomplishment and service interuption. Failure and restorations are transitions between these two states. You can quanitfy this through measuring reliability (measure of continious service accomplishment), and availability (measure of service accomplishment with respect to the alternationation of accomplishment and interruption). maintainability represents the time to restoration.
+
+avizienis1986dependable - present a comprehensive overview of dependable computing, consolidating foundational concepts and linking dependability attributes to concrete design techniques. Dependability is defined as the ability to deliver service that can justifiably be trusted, with reliability positioned as one of several key attributes alongside availability, safety, integrity, and maintainability. The paper formalizes the fault–error–failure chain, clarifying how faults (latent or active) lead to errors and may eventually result in service failures if not detected or contained. A = contribution of the paper is the classification of means for achieving dependability into four categories: fault prevention, fault tolerance, fault removal, and fault forecasting. Fault tolerance is emphasized as essential for systems where faults cannot be completely avoided, requiring mechanisms to detect errors and recover from them during operation. The authors introduce design diversity as a fundamental fault-tolerance technique, where independently developed components are used to reduce the likelihood of common-mode failures, particularly in software systems. The paper also discusses error detection and recovery strategies, including backward and forward recovery, redundancy, and voting mechanisms. These techniques are presented as architectural choices that directly influence system-level dependability. Importantly, the authors note that increasing fault tolerance often introduces additional complexity, which itself can become a source of new faults, highlighting trade-offs between robustness and system complexity.
+
+
+hanmer2013patterns - presents a catalog of architectural and design patterns for building fault-tolerant software systems, framing fault tolerance as a systematic design concern rather than an ad hoc implementation detail. The book emphasizes that software faults are often systematic rather than random, and that achieving reliability therefore requires deliberate architectural structures rather than purely statistical assurance. Fault tolerance is positioned as a core contributor to dependability, alongside fault prevention and fault removal. The work organizes fault tolerance patterns around recurring problems such as fault detection, fault isolation, recovery, redundancy, and graceful degradation. Patterns such as watchdog, heartbeat, replication, checkpoint and rollback, and exception shielding illustrate how systems can continue to provide acceptable service in the presence of faults. Hanmer stresses that fault tolerance is not about preventing faults entirely, but about containing their effects and maintaining service continuity. A key contribution is the explicit link between system structure and fault containment, showing how architectural boundaries, redundancy strategies, and recovery mechanisms influence system-level reliability. The book also highlights trade-offs between complexity, performance, and dependability, noting that poorly designed fault-tolerance mechanisms can themselves introduce new failure modes.
+
+
+hosford1960measures - presents one of the earliest systematic treatments of dependability as a probabilistic property, defining it in terms of the likelihood that a system is operable when required. The paper distinguishes between reliability, pointwise availability, and interval availability, emphasizing that different operational questions require different measures rather than a single notion of reliability. Reliability is framed as failure-free operation over a time interval, while availability captures readiness at a specific instant or fraction of time operational over an interval. The paper formalizes dependability using simple failure–repair models, introducing relationships between failure rates, repair rates, MTTF, MTTR, and steady-state availability. A key insight is that systems with frequent failures but rapid repair may exhibit low reliability but high availability, highlighting the importance of selecting measures that reflect operational realities. Hosford also considers systems with non-continuous operation (e.g., duty, standby, and off cycles), showing that operational mode strongly influences dependability assessment.
+
+
+littlewood2000software - outlines research challenges, reliability models, and dependability measures for complex software systems. Mention theres an increasing dependance on software as it starts to perform ciritcal services. Failures due to software are considered systematic. Mention methods to help ensure reliability. Simulating the system under different operational conditions and noting time of failure (reliability growtih modelling) - howveer this is limited. Stricter procedures during development. Static anaysis is also a means where confidence in the reliability of the program influences its development, in the way of much what contribution does such evidence contribute to a claim that a program has met its reliability target. Reliability of a system can also be derived from the reliability of its components - however its difficult for simple models to capture the interactions between components and model these dependencies in relation to reliability. Knowledge about dependability is always uncertain and investing in reducing this uncertainty is worthwhile. Mention we should design for dependability assessment and increase relaibility through - failure prevention, system monitering. Mentions system of systems are built as aggregation computer based systems which challenges the domains of reliability engineering. he says a good way to approach this is to avoid the risk factors previously discussed so they don't become dominant.
+
+
+nelson2002fault - dicusses failures, faults, and errors. faults can be classified by their duration, nature, and extent. Transient faults occur as the result of external disturbance and exist for a finite length of time and is nonrecurring. For intermittent faults, the system oscillates between failty and fault free oepration. Permenant faults are device conditions that do not correct over time and are due to physical damage or design errors. Transient and intermittent faults are harder to detect as they disappear after the error has occured. Local faults are one component and global faults are multiple components. Fault tolerant design goal is to improve dependability. Reliability is the idea a system can perform is designed function at a given time, given it was operational at a specific start time. Thus reliability is a function of the faulty process affecting the system andf any mechanism that prevent system failure when a fault occurs. When we can't faully guaruntee relaibility the system will have some downtime whcih is quanitfied with avaliability. Fault tolerance in a digital system is acheived through redundancy in hardware, software, information, and/or computations. Fault tolerance stratgies are: masking - dynamic correction of generated errors. Detection - detection of an error. Containment - prevention of error propogation across defined boundaries. Diagnosis - identification of the faulty module responsible for the detected error. Repair/reconfiguration - elimation or replacement of the faulty component or a recovery mechanism to by pass it. Recovery - correction of the system to a state acceptable for continious operation.
+
+
+
+cristian1991understanding - computing systems with lots of hardware and software components are bound to faul eventually leading to unanticipated distruptive behaviours and service downtime. A server implements a service, so if something depends on a server its correctness depends on the correctness of that server. failures will propogate upwards. A service is correct if in response to inputs, it behaves in a mannor consistent withe specfification. An failure occurs when it sdoes not behave properly. An ommision faulire is when the server omits to respond to an input. A timing failure is when the response is correct but delayed. A response failure is when the response is incorrect, (value or state). Defines crash failures when the server stops responding. Mentions a servers specification must include normal semantics and failure semantics, so what to do in each state. Stronger faulure semantics are expensive and harder to implement but allow for simpler recovery at higher levels leading to a design tradeoff. failures can propogate across levels, and masking can convert failures or hide them. The mechanisms are through timeouts, retries, exception handling, and state recovery. Services can be implemented by groups of redundant servers, where groups mask failures of individuals members - ex through primary/backup, majority voting, and fastest reponse selection. K fault tolerance tolerates k concurrent member failures. Components that depend on others inhert their weaknesses.
+
+% musa1975theory - presents a theory on an approach to software reliability based on execution time. A classical paper presenting one of the first quantitative software reliability models based on failure data, establishing the empirical grounding for software reliability growth models.
+
+
+% Relable Systems For Unreliable Data
+
+
+
+
+
+
+

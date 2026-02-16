@@ -1,0 +1,77 @@
+\addblockbegin{}
+\id{This is the new version:}
+
+We now synthesize the results of our SLR into a set of key takeaways and derive research and development directions for systems that combine DTs and SoS.
+
+\subsubsection{\textit{SoTS architectures rely on application-specific designs, limiting reuse}}
+
+\textbf{Key observation: Many SoTS architectures are developed for specific application contexts, resulting in limited architectural reuse and weak convergence across studies (RQ6).}
+Our analysis shows that most SoTS contributions report architectures designed for specific application settings, with communication mechanisms, data sharing models and formats, and coordination protocols tailored to individual use cases. As presented in \secref{results-rq6}, fewer than half of the reviewed studies reference any standard, and only a small subset explicitly apply or map referenced standards to both DT and SoS-related architectural concerns (\xofyp{6}{80}). When standards are used, they primarily define data exchange and interoperability (e.g., OPC~UA, Asset Administration Shell), while higher-level concerns such as negotiation and constituent entry and exit are less commonly formalized. This pattern is consistent with the generally low-to-mid technical maturity of current SoTS research (\secref{results-rq6}), which is largely characterized by domain-specific demonstrative implementations. As a result, architectural decisions remain implementation-bound, limiting comparison across contributions and the identification of recurring design approaches.
+
+\begin{recoframe}{Recommendation 1}
+Encourage systematic architectural reporting and cross-implementation comparison to support reusable SoTS architectural practices and future standardization.
+\end{recoframe}
+
+Future SoTS research should document architectural decisions in a structured and comparable manner. In particular, studies should explicitly describe communication mechanisms, data sharing models and formats, coordination protocols, and the handling of negotiation and constituent entry and exit, using established architecture description standards (e.g., ISO/IEC/IEEE~42010 \cite{iso42010}) to define and organize architectural viewpoints. Defining a set of minimum architectural reporting elements for SoTS studies may improve transparency and enable meaningful comparison across implementations. In addition, researchers should conduct comparative analyses across multiple SoTS implementations to identify recurring architectural approaches supported by empirical evidence \cite{cloutier2007applying}. Such analyses can help consolidate reusable architectural knowledge and provide a clearer foundation for future standardization.
+
+
+
+\subsubsection{\textit{Typical SoTS coordination architectures underemphasize dynamic SoS properties}}
+
+\textbf{Key observation: Most SoTS adopt coordination architectures that emphasize stable operation (RQ2), with limited attention to dynamic SoS properties such as adaptation, reconfiguration, and emergence (RQ4).}
+
+The architectural analysis in \secref{sec:architecture} shows a clear dominance of SoTS configurations with explicitly assigned coordination roles: acknowledged (\xofyp{31}{80}) and directed (\xofyp{26}{80}) SoTS account for the majority of studies, while collaborative (\xofyp{19}{80}) and virtual (\xofyp{4}{80}) SoTS remain comparatively rare. Although many contributions frame their systems as SoS, this distribution indicates that coordination is typically centralized rather than emerging fully from interactions among autonomous constituents. This tendency is consistent with the SoS dimension analysis (\secref{sec:dimensions}). While distribution and independence are widely supported, properties that depend on inter-constituent interaction, specifically reconfiguration and evolution, are among the least frequently addressed. Emergence is absent or only partially considered in a substantial portion of the sample and, when discussed, is generally limited to weak or predictable forms (\secref{sec:emergence-type}). Consequently, challenges related to dynamic membership, shifting goals, and adaptive behavior remain underexplored.
+
+\begin{recoframe}{Recommendation 2}
+Investigate methods to support choreography-oriented coordination in SoS, particularly within collaborative and virtual SoTS architectures, to better enable dynamic properties such as reconfiguration and emergence.
+\end{recoframe}
+
+Future SoTS research should more explicitly examine configurations in which behavior emerges from inter-constituent interaction. Within our classification (\secref{sec:classification}), collaborative and virtual SoTS represent such interaction-driven forms of coordination, where no single entity holds a permanent coordinating role. Instead, coordination arises through information exchange and negotiated interaction among autonomous constituents. An approach consistent with choreography-oriented coordination~\cite{peltz2003web}. Given the limited representation of collaborative, and especially virtual, SoTS in the current sample, these architectures provide a promising setting for studying dynamic membership, adaptation, reconfiguration, and emergent behavior.
+
+Multi-agent system (MAS) models offer an established foundation for realizing such interaction-driven coordination, as they enable independently managed entities to coordinate through negotiation and message-based interaction~\cite{leite2013systematic}. Recent SoTS research demonstrates the feasibility of multi-agent DT architectures for distributed industrial control~\cite{jirsa2024use}. In addition, contract-based design provides a complementary mechanism for constraining interaction while preserving constituent autonomy: assumption-guarantee contracts support compositional reasoning about compatibility, substitution, and evolution~\cite{benveniste2012contracts}, and formal results show that global choreography properties can be ensured through local contract conformance rather than centralized control~\cite{bravetti2007towards}.
+
+\subsubsection{\textit{SoTS evaluation is predominantly success-oriented and assumes standard operating conditions}}
+
+\textbf{Key observation: Existing SoTS evaluations primarily assess feasibility under standard operating conditions, with limited attention to disruptions or non-ideal scenarios (RQ1, RQ5).}
+
+Although reliability and security are frequently mentioned non functional properties, they are rarely modeled or explicitly evaluated. As shown in \secref{results-rq5} and \secref{results-rq6}, most studies validate their approaches through prototyping or simulation under assumptions of stable communication, timely data availability. Targeted evaluation of adverse conditions---such as delayed or missing updates, inconsistent state across DTs, or temporary system unavailability---is uncommon. This success-oriented evaluation bias aligns with the dominant motivations of optimization and integration (\secref{sec:results-rq1}), but provides limited insight into SoTS behavior under unexpected conditions. Such scenarios are particularly relevant in large-scale SoS where system structure, constituent membership, and goals may evolve over time.
+
+\begin{recoframe}{Recommendation 3}
+Evaluate SoTS under disruption and unexpected conditions to more rigorously assess reliability, security, and dependability.
+\end{recoframe}
+
+Future SoTS evaluations should explicitly incorporate disruption scenarios and changing operating conditions as core evaluation dimensions. In interdependent systems, local disturbances can propagate across constituents, producing cascading effects and hidden vulnerabilities that remain undetected under stable operating assumptions~\cite{eusgeld2011system}. To address this, SoTS research should systematically explore ``what-if`` scenarios---such as delayed information, partial system blindness, inconsistent state across twins, or constituent unavailability---to understand how such disruptions spread and affect overall system behavior.
+
+SoTS studies should ground their evaluation strategies in established SoS reliability engineering practices~\cite{ferreira2021reliability}, treating disruptions as explicit architectural concerns~\cite{ferreira2024framework}. Evaluations should examine how disturbances propagate across interdependent constituents and how mission-critical capabilities are maintained when constituents become unavailable or behave unexpectedly. This requires combining dependency analysis, probabilistic reasoning, and runtime monitoring, while clearly defining acceptable operational conditions for constituent DTs and mechanisms for detecting deviations. From a dependability perspective~\cite{avizienis2004basic}, system quality should be assessed based on the ability to sustain acceptable service levels before, during, and after adverse events~\cite{bukowski2016system}. Accordingly, SoTS studies should explicitly report how disturbances are detected, how adaptation is triggered, how mission objectives are preserved under stress, and how preferred configurations are restored once conditions stabilize. Such evaluation practices would strengthen dependability claims and provide more realistic evidence for deployment in evolving, distributed environments.
+
+
+\subsubsection{\textit{Cross-domain transferability of SoTS designs in socio-technical contexts}}
+
+\textbf{Key observation: Most SoTS studies are conducted in industrial domains (RQ1) and predominantly model constituent systems as fully autonomous physical DTs, limiting transferability to socio-technical settings (RQ2, RQ3).}
+
+As reported in \secref{sec:results-rq1}, existing SoTS studies are concentrated in manufacturing (\xofyp{32}{80}). This domain is well suited to early SoTS research because it involves complex physical assets, clearly defined performance objectives, and strong incentives for monitoring and automation. This concentration shapes modeling assumptions. As shown in \secref{results-rq2} and \secref{results-rq3}, most studies represent physical assets using fully autonomous DTs (\xofyp{66}{80}), while cyber-physical-human systems (\xofyp{7}{80}) and enterprise-level systems (\xofyp{2}{80}) receive limited attention. Consequently, dominant SoTS architectures reflect industrial assumptions about autonomy, coordination, and control. Their applicability to socio-technical settings---where system behavior is shaped by human decision-making, organizational structures, and institutional constraints---remains largely unexplored.
+
+\begin{recoframe}{Recommendation 4}
+Broaden SoTS design to explicitly incorporate socio-technical constituents and alternative autonomy configurations, including human-supervised and human-actuated DTs.
+\end{recoframe}
+
+SoS research emphasizes that SoS are inherently socio-technical arrangements characterized by managerial independence, negotiated coordination, and governance enacted at system interfaces rather than through centralized control \cite{siemieniuch2014extending}. When SoTS architectures abstract away human actors and institutional constraints, they risk making assumptions that may not hold in public-sector, urban, healthcare, or safety-critical domains. Building on work on human-centered DTs, SoTS research should explicitly represent human roles, organizational processes, and institutional constraints within SoTS models, rather than treating DTs as purely technical artifacts \cite{ye2023developing}. Socio-technical DT research further highlights value-sensitive design principles---such as participatory modeling, transparency, and accountability---when modeling human and organizational behavior \cite{barn2022sociotechnical}. Applied to SoTS, this implies designing architectures and evaluation approaches that account for how human decision-making, organizational boundaries, and regulatory conditions shape system behavior. Integrating these socio-technical considerations with multi-layer representations of physical, cyber, social, and environmental dynamics strengthens cross-domain transferability and better aligns SoTS designs with real-world coordination challenges.
+
+
+
+\subsubsection{\textit{Lifecycle concerns are rarely addressed at the SoTS level}}
+
+\textbf{Key observation: SoTS architectures rarely reflect or manage lifecycle concerns at the SoS level, particularly with respect to evolution, reconfiguration, and long-term coordination (RQ6).}
+
+The maturity analysis indicates that lifecycle concerns are rarely addressed beyond the level of individual DTs. As shown in \secref{results-rq6}, most SoTS studies operate at low-to-mid technology readiness levels, with demonstrative prototypes (\xofyp{35}{80}), initial implementations (\xofyp{20}{80}), and proof-of-concept systems (\xofyp{16}{80}) dominating the sample. Evaluations typically occur within short development or experimental windows, relying on prototyping or simulation rather than sustained operation. While individual DTs often encode lifecycle-related information about their associated assets, SoTS architectures are rarely examined in settings where system-level evolution, reconfiguration, or long-term coordination dynamics become observable. Consequently, current SoTS research provides limited insight into how coordination structures, roles, and objectives evolve over time at the SoS level.
+
+\begin{recoframe}{Recommendation 5}
+Extend lifecycle-oriented reasoning from individual DTs to the SoTS level by explicitly modeling how constituent roles and interaction patterns evolve over time, and how lifecycle information about the SoTS itself is shared and used across constituent DTs.
+\end{recoframe}
+
+Future SoTS research should investigate how lifecycle information already maintained within individual DTs can be elevated to support reasoning about system-level evolution. This includes mechanisms for adapting coordination logic as constituent systems enter or leave the SoTS, change capabilities, or undergo upgrades, as well as documenting how system-level objectives and interaction patterns are revised over time. This requires representations of constituent lifecycle states and transitions at the SoTS level, for example through membership state machines that capture onboarding, active participation, suspension, and withdrawal. Such representations enable systematic reasoning about adaptation as constituent states evolve.
+
+Established systems engineering lifecycle frameworks, such as ISO/IEC/IEEE~15288~\cite{7106435}, provide a foundation for structuring system-level lifecycle concerns. In parallel, DT standards such as IEC~63278 Asset Administration Shell~\cite{aas_details_2018_p1} support explicit lifecycle modeling, versioning, and modular composition at the asset level. Using these standards as building blocks, SoTS research can elevate lifecycle awareness to the SoS layer by linking asset-level lifecycle data with system-level coordination models. Empirical studies observing SoTS over extended operational periods would be particularly valuable for understanding how constituent lifecycle dynamics shape long-term coordination and reconfiguration in practice.
+
+
+\addblockend{}

@@ -1,0 +1,46 @@
+\begin{table*}[t]
+\small
+\centering
+\caption{SoS Reliability Strategies with \citet{hanmer2013patterns} Fault-Tolerance Pattern Families}
+\label{tab:sos-reliability-techniques}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{3.5cm} p{3.5cm} p{7.5cm}}
+\toprule
+\textbf{Pattern Family} & \textbf{SoS Reliability Strategy} & \textbf{Techniques Identified \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive}} \\
+\midrule
+
+\textbf{Architectural Patterns} 
+& Structural Redundancy and Substitution 
+& Spatial redundancy; functional redundancy; constituent replication; Substitutable Heterogeneous System Architectures (SHSA) \\
+
+
+\midrule
+
+\textbf{Error Detection} 
+& Runtime Monitoring and Verification 
+& Fault Detection and Isolation (FDI); runtime verification using Linear Temporal Logic (LTL) and Computation Tree Logic (CTL); anomaly detection \\
+
+\midrule
+
+\textbf{Error Recovery} 
+& Task and Goal Reallocation 
+& Multi-objective optimization (e.g., NSGA-II) for task redistribution and mission re-planning; dynamic task reassignment; architectural reconfiguration \\
+
+
+\midrule
+
+\textbf{Error Mitigation} 
+& Estimation and Prediction 
+& Kalman filtering; Neural Network  prediction (e.g., Long Short-Term Memory (LSTM)); Time-series forecasting\\
+
+\midrule
+
+\textbf{Fault Treatment} 
+& Dependency, Probabilistic, and Hazard Modeling 
+& Functional Dependency Network Analysis (FDNA); Bayesian Networks; Markov chains and Continuous-Time Markov Models (CTMM); Petri nets; Monte Carlo simulation; 
+\newline
+Failure Mode and Effects Analysis (FMEA); Failure Mode, Effects, and Criticality Analysis (FMECA); Fault Tree Analysis (FTA); Event Tree Analysis (ETA); Hazard and Operability Study (HAZOP) \\
+
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,61 @@
+\chapter{Approach to Reliable Event-Driven Reasoning in Systems of Twinned Systems}\label{ch:approach}
+This chapter presents the approach adopted in this thesis to address reliability challenges in SoTS. It describes the role of event processing in supporting DT reasoning, identifies missing observations as a fundamental challenge, and outlines how continued reasoning is supported under partial data availability.
+
+
+
+\section{Reliability Challenges in SoTS}
+
+The literature review (\secref{sec:literature-review-key-takeaways}) identifies a recurring reliability gap in systems of twinned systems: although reliability is frequently cited as a motivation or architectural concern, existing SoTS research rarely adopts formal models or validation mechanisms to reason about reliable behaviour during operation. Instead, reliability is typically addressed implicitly through architectural assumptions or infrastructure-level measures, rather than being treated as a property that must be maintained and assessed at runtime.
+
+This gap is particularly problematic given the inherent characteristics of SoTS as a SoS. As emphasized by \citet{jamshidi2008system}, knowledge of an SoS is inherently incomplete and continuously evolving, and its boundaries are fluid and negotiable as constituent systems join, leave, or change roles over time. These dynamics directly affect what is observed, by whom, and under what assumptions. As a result, the availability, timing, and interpretation of observations cannot be assumed to remain stable during operation. For DT-based services that rely on continuous streams of observational data, this instability manifests as incomplete, delayed, or missing observations that arise naturally from SoTS operation. In such situations, DT-based services may stall or continue operating using outdated or partial information, leading to divergence between digital representations and the physical behaviour they are intended to reflect.
+
+Consequently, reliability challenges in SoTS cannot be resolved solely through redundancy, synchronization, or fault-tolerance mechanisms at the infrastructure level. While such measures may mitigate data loss or communication failures, they do not address how reasoning should proceed when observations are incomplete or absent during execution. Reliability must therefore also be considered at the level of computation, where  reasoning is updated from incoming observations and where uncertainty introduced by missing data directly influences the correctness of derived results.
+
+% FOCUS ON THIS TOMORROW
+% From a dependability perspective, this challenge reflects a broader issue identified in prior work: dependability claims are inherently uncertain and rely on incomplete and evolving evidence. As argued by \citet{bloomfield2007confidence}, confidence must be treated as a first-class concern in dependability assessment, capturing uncertainty not only in system behavior but also in the observations and evidence used to reason about that behavior. In SoTS, where observations are distributed, delayed, or missing, this uncertainty manifests during operation rather than solely at design time, necessitating mechanisms that explicitly represent and manage confidence during execution.
+
+
+
+\section{Event-Driven Computation in SoTS}
+DTs observe and track physical systems through discrete observations of state changes produced by sensors, controllers, and other constituent systems. These observations arrive over time, originate from multiple autonomous sources, and reflect changes in system state as they occur. As a result, DT operation aligns naturally with event-driven computation, in which reasoning advances in response to events that represent observed changes in the system \cite{alghamdi2024synchronization}. This view is reflected in established standards, which characterize synchronization and interaction in terms of event-triggered updates and asynchronous communication \citep{iso23247_1_2021, aas_details_2018_p1}.
+
+Each event captures an observation at a specific point in time and serves as a trigger for updating the digital representation. By processing sequences of such events, DTs maintain alignment with the evolving physical system and support subsequent simulation, analysis, and decision-making. This perspective also introduces the notion of expected events. When expected observations arrive, event-consuming services can proceed according to their defined semantics. When expected events do not arrive, their absence constitutes information about the system, indicating increased uncertainty regarding the current system state and the alignment between digital and physical counterparts.
+
+
+\section{Uncertainty Handling in Complex Event Processing}
+Event-driven reasoning in SoTS can be realized through complex event processing (CEP). While CEP provides mechanisms for detecting patterns over event streams, it offers limited support for assessing how missing observations affect detected results. The CEP literature distinguishes several forms of uncertainty that arise during event processing. \citet{wasserkrug2006taxonomy} classify uncertainty along multiple dimensions, including event occurrence, event values, temporal ordering, and pattern inference. Of particular relevance to SoTS is occurrence uncertainty, which arises when it is unclear whether an expected event has occurred, been delayed, or failed to occur altogether. This form of uncertainty originates at the event source and directly affects the progression of event-driven computation.
+
+Prior work has explored a range of techniques for representing and propagating uncertainty in CEP. Bayesian-network--based approaches assign probabilities to observed and derived events and use probabilistic inference to evaluate event patterns \citep{wasserkrug2010efficient, wasserkrug2012model}. Interval-based temporal models represent event timestamps as ranges to accommodate imprecise ordering \citep{zhang2013recognizing}. Other probabilistic CEP engines maintain likelihoods over detected patterns using lineage tracking or automata-based evaluation \citep{shen2008probabilistic, kawashima2010complex, chuanfei2010complex, wang2013complex}. Frameworks such as CEP2U and uncertainty-aware extensions of Esper and Flink integrate these ideas into existing CEP engines by supporting uncertainty in event values and rule evaluation \citep{cugola2015introducing, moreno2019managing}.
+
+Across this literature, uncertainty is primarily treated as a property of event values or inference mechanisms, with computation progressing only in response to arriving events. As a result, existing CEP engines provide limited support when expected observations do not arrive. Survey work identifies missing data as a common challenge in real-world event streams and shows that gaps in input data can undermine the effectiveness of complex event processing, particularly in large-scale and high-velocity environments \citep{tawsif2018review}. Unlike noisy or imprecise observations, missing data corresponds to the absence of expected information, disrupting the progression of event-driven computation itself.
+% REVIEW THIS flouris2017issues, dayarathna2018recent
+
+Recent work has addressed this limitation through compensation mechanisms. Event-fabrication techniques replace missing sensor events using interpolation or smoothing to preserve stream continuity \citep{gkoulis2025assessing}. Prediction-based approaches integrate state estimation, such as Kalman filtering, into CEP engines to allow computation to continue during short-term interruptions \citep{vijayakumar2009missing}. Petri-net--based techniques reconstruct missing events by reasoning over process models to complete incomplete event sequences \citep{wang2013efficient}.
+
+
+\section{Design Strategy for Event Absence in SoTS}
+The limitations discussed in the previous section show that existing event-driven approaches provide limited support when expected observations fail to arrive. While uncertainty-aware CEP frameworks acknowledge imperfect data, they generally assume that computation progresses only in response to observed events. As a result, the absence of an expected observation is not explicitly represented during execution, even though such absence can carry important semantic meaning in systems where reasoning depends on continuous streams of observations.
+
+In the CEP literature, uncertainty management is recognized as a fundamental capability for systems operating over real-world data. In particular, \citet{cugola2015complex} identify three essential capabilities for handling uncertainty during event processing: (i) identifying uncertainty in input data, (ii) explicitly representing uncertainty, and (iii) propagating uncertainty from primitive to derived events. In SoTS, missing observations constitute a recurring operational challenge for digital-twin-based reasoning. Addressing this challenge, therefore requires mechanisms that can recognize when expected observations do not occur, represent the resulting uncertainty explicitly, and allow reasoning to continue while accounting for its impact on derived results. Integrating these uncertainty-management principles at the level of event-driven computation allows existing event processing logic to remain operational, while making the effects of missing data explicit to downstream reasoning.
+
+
+The approach adopted in this thesis addresses these requirements by treating the absence of observations explicitly during execution. The system maintains expectations about when observations should occur and detects when those expectations are not met at runtime. When an expected observation is absent, the approach uses state-based prediction to infer a plausible replacement observation. Crucially, inferred observations are represented as events and annotated with confidence values that quantify the uncertainty introduced by prediction, ensuring that inferred information remains distinguishable from directly observed data and uncertainty can be propogated in higher level detections.
+
+At a conceptual level, the strategy consists of three steps:
+\begin{itemize}
+    \item maintaining expectations about when observations should occur,
+    \item detecting the absence of expected observations during execution, and
+    \item continuing reasoning by incorporating predicted observations together with explicit uncertainty information.
+\end{itemize}
+
+Together, these steps provide a basis for supporting reliable event-driven reasoning in SoTS. By making absence explicit and integrating prediction with uncertainty-aware event processing, the approach enables CEP-based systems to remain operational under partial data availability while preserving transparency about the uncertainty and correctness of derived results.
+
+
+\section{Scope and Assumptions}
+The approach assumes that missing observations arise from finite, short-term interruptions rather than prolonged or permanent data loss. It focuses on supporting continued reasoning during such interruptions rather than retroactively correcting inferred results when delayed observations arrive. Handling prolonged outages, long-term model drift, and post hoc reconciliation are considered out of scope and left for future work (\chref{ch:discussion}).
+
+
+\vspace{1em}
+This chapter has motivated an event-driven approach to reliability in SoTS and outlined a strategy for handling missing observations during execution. The next chapter formalizes this approach by introducing an abstract model of event-driven processing that defines events, expected observations, and reconstruction under missing data.
+
+% =======================================
