@@ -1,34 +1,162 @@
 \chapter{Towards Reliable Systems of Twinned Systems}\label{ch:approach}
-This chapter presents an approach to building reliability in SoTS. Building on the gaps identified in the literature review, it formalizes reliability in the context of constituent lifecycle dynamics and defines explicit levels of reliability under disturbance and reconfiguration. The chapter establishes a structured foundation for modeling, assessing, and preserving SoTS operation.
+
+This chapter presents an approach to building reliability in SoTS. Building on the gaps identified in the literature review, it formalizes reliability in the context of constituent lifecycle dynamics and defines explicit levels of reliability under disturbance and reconfiguration.
+
 
 \section{Reliability in SoTS}
-Reliability, in classical dependability theory, is defined as the probability that a system performs its intended function without failure for a specified period of time \cite{avizienis2004basic}. In SoS, this notion must be extended to account for operational independence, dynamic reconfiguration, and emergent behavior among constituent systems. Accordingly, reliability is increasingly reframed in terms of disturbances rather than isolated component faults \cite{ferreira2023towards}. 
-Disturbances may arise from constituent failures, communication breakdowns, organizational factors, or independent evolution that misaligns services \cite{ferreira2021reliability}.
-Because constituents are interdependent, such disturbances propagate across system boundaries and impact mission fulfillment. Reliability in SoS therefore concerns sustaining system-level capabilities despite ongoing disturbance, evolution, and reconfiguration.
+In classical dependability theory, reliability is defined as the probability that a system performs its intended function without failure for a specified period of time \cite{avizienis2004basic}. In SoS, this notion must be extended to account for operational independence, emergent behavior, and dynamic reconfiguration. Reliability is therefore increasingly framed in terms of disturbance tolerance rather than isolated failures \cite{ferreira2023towards}. Disturbances may arise from constituent faults, communication breakdowns, independent evolution, or misaligned services \cite{ferreira2021reliability}. Because constituents are interdependent, such disturbances can propagate across system boundaries and ultimately affect system-level capability.
+
+These challenges are amplified in SoTS. DTs rely on continuous synchronization between their physical counterparts and on coordinated interaction with other twins. When participation changes, communication is challenged, or state updates are delayed, representational fidelity can deteriorate.  Recent work on DT architectures highlights the importance of reliability and trust in maintaining alignment between physical and DTs \cite{ferko2022architecting}. Experts emphasize that a DT must accurately reflect what is occurring in its physical counterpart in order to remain useful.  Reliability in SoTS therefore concerns not only sustaining system-level functionality, but also preserving the correctness, timeliness, and alignment of digital representations as system configurations evolve.
+
+The systematic literature review (\secref{sec:literature-review-key-takeaways}) confirms this gap. Although reliability is frequently cited as a motivation or quality attribute in SoTS studies, it is rarely modeled explicitly or validated at runtime. Most contributions address reliability indirectly through structural redundancy, communication fallback mechanisms, state persistence, or distributed deployment architectures, rather than treating it as an property that must be formally assessed and maintained during execution.
 
 
-
-% These challenges are amplified in SoTS.
-These disturbance dynamics are amplified in SoTS. DTs depend on continuous and timely information exchange between physical and digital constituents. In an evolving SoS environment, observation availability, timing guarantees, and participation cannot be assumed stable. Delayed or incomplete information introduces uncertainty into the digital layer and may compromise coordinated behavior. In SoTS, reliability therefore depends on maintaining acceptable system operation despite fluctuating participation and imperfect information.
-% In SoTS, reliability ultimately concerns sustaining system capabilities even as constituent availability and information quality vary over time.
-
-The systematic literature review (\secref{sec:literature-review-key-takeaways}) confirms this gap. Although reliability is frequently cited as a motivation or quality attribute in SoTS studies, it is rarely modeled explicitly or validated at runtime. Most contributions address reliability indirectly through structural redundancy, communication fallback mechanisms, state persistence, or distributed deployment architectures, rather than treating it as an operational property that must be formally assessed and maintained during execution.
-
-
-
-
-\section{Existing Strategies for Reliable SoTS}
 \input{tables/Approach/sos_reliability_techniques.tex}
-Techniques for preserving reliability in SoS align closely with the fault-tolerance pattern families described by \citet{hanmer2013patterns}. As summarized in \tabref{tab:sos-reliability-techniques}, the approaches identified in major SoS reliability surveys \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive} span: architectural patterns (structural organization and redundancy to contain faults), error detection (mechanisms to identify abnormal behavior at runtime), error recovery (strategies to restore acceptable operation after disruption), error mitigation (techniques that limit the impact of errors during operation), and fault treatment (analysis and modeling approaches that identify, diagnose, or eliminate underlying causes).
+\section{Existing Strategies for Reliable SoTS} \label{approach:reliability-strategies}
+Techniques for preserving reliability in SoS align closely with the fault-tolerance pattern families described by \citet{hanmer2013patterns}. As summarized in \tabref{tab:sos-reliability-techniques}, the approaches identified in major SoS reliability surveys \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive} span: architectural mechanisms (structural organization and redundancy to contain faults), error detection (mechanisms to identify abnormal behavior at runtime), error recovery (strategies to restore acceptable operation after disruption), error mitigation (techniques that limit the impact of errors during operation), and fault treatment (analysis and modeling approaches that identify, diagnose, or eliminate underlying causes).
 
-Existing SoTS studies predominantly emphasize architectural patterns and error mitigation mechanisms. Most implementations rely on structural redundancy and component substitution, including fallback communication layers, state persistence, distributed or cloud-based DT deployment, asynchronous messaging, and data caching during disconnection \cite{acharya2023twins, aziz2022empowering, larsen2024towards, lopez2023modeling}. Error detection is occasionally supported through runtime monitoring, event-triggered replanning, or dynamic rescheduling \cite{park2020digital, villalonga2021decision-making}. In contrast, comparatively few studies incorporate explicit fault treatment approaches such as parametric reliability modeling, uncertainty reasoning, or fault tree analysis (FTA) \cite{kutzke2021subsystem, oquendo2019dealing, saraeian2022digital}. 
+Existing SoTS studies predominantly emphasize architectural patterns and error mitigation mechanisms. Most implementations rely on structural redundancy and component substitution, including fallback communication layers, state persistence, and data caching during disconnection \cite{acharya2023twins, aziz2022empowering, larsen2024towards, lopez2023modeling}. Error detection and recovery is occasionally supported through runtime monitoring, event-triggered replanning, or dynamic rescheduling \cite{park2020digital, villalonga2021decision-making}. In contrast, comparatively few studies incorporate explicit fault treatment approaches such as parametric reliability modeling, uncertainty reasoning, or fault tree analysis (FTA) \cite{kutzke2021subsystem, oquendo2019dealing, saraeian2022digital}. 
 
 
 \section{Ensuring Reliable Participation and Stable Operation in SoTS}
-A foundational principle in SoS architecting is the notion of \emph{stable intermediate forms} \cite{maier1998architecting}: partial configurations must remain operational and capable of delivering useful functionality throughout deployment, evolution, and reconfiguration. Subsequent work reinforces this view, arguing that SoS evolution must proceed through viable configurations that preserve value and maintain service continuity during adaptation \cite{rechtin1991systems, rechtin2010art, mekdeci2014pliability, petitdemange2021design, weyns2013challenges}. 
 
-In practice, however, maintaining such stable intermediate forms is difficult because SoS configurations are not static. Reconfiguration is intrinsic to SoS evolution: constituents may join, leave, degrade, suspend participation, or shift roles over time \cite{fang2020improving, manzano2020dynamic, pradhan2016achieving, mohsin2019modeling}. As participation changes, the operational boundary of the SoTS shifts, introducing structural reconfiguration and uncertainty about constituent state and availability. Reliability must therefore be preserved not within a fixed architecture, but across continuously evolving compositions. Without an explicit model of membership transitions, reliability mechanisms respond to isolated disruptions rather than systematically managing how system configurations change over time.
+A foundational principle in SoS architecting is the notion of stable intermediate forms \cite{maier1998architecting}: partial configurations must remain operational throughout deployment and evolution. Subsequent work reinforces that SoS adaptation must proceed through viable configurations that preserve service continuity \cite{rechtin1991systems, rechtin2010art, mekdeci2014pliability, petitdemange2021design, weyns2013challenges}. However, SoS configurations are inherently dynamic. Constituents may join, leave, suspend participation, or shift roles over time \cite{fang2020improving, manzano2020dynamic, pradhan2016achieving, mohsin2019modeling}. Each transition alters the operational boundary of the system.
 
-SoS research has increasingly formalized constituent lifecycle states. \citet{axelsson2019refined} distinguish ignorant, prepared, passive, and active states; \citet{hristozov2023modeling} define a state machine governing safe initialization and withdrawal; \citet{petitdemange2021design} structure reconfiguration through coordinated active-passive transitions; and other work models negotiation states \cite{qin2016contract}, standby and replacement roles \cite{du2024reconfiguration}, or lifecycle-driven situational awareness \cite{svenson2020situation}. 
+In SoTS, such transitions additionally affect the integrity of shared digital state. When a DT joins, withdraws, or operates under constrained conditions, the collective digital representation changes. If unmanaged, these transitions may produce stale data, partial synchronization, or inconsistent views across twins. Preserving stable intermediate forms in SoTS therefore requires governing how DTs enter, participate, compensate, and recover under disturbance. Reliability must be preserved not within a static architecture, but across evolving configurations.
 
-In SoTS, these transitions directly affect the availability and consistency of digital representations. To preserve stable intermediate forms, participation changes must therefore be bounded, coordinated, and, when necessary, compensated. The remainder of this section derives explicit reliability requirements from constituent lifecycle governance and introduces levels of operational reliability that characterize how effectively a SoTS maintains capability under reconfiguration and evolution. 
+To address this challenge, we first ground our approach in existing SoS lifecycle research before introducing a structured model of operational reliability for SoTS.
+
+\section{Operational Reliability Levels in SoTS}
+
+Research in SoS engineering has formalized constituent lifecycle states in several ways. \citet{axelsson2019refined} distinguish ignorant, prepared, passive, and active states; \citet{hristozov2023modeling} define a state machine for safe initialization and withdrawal; and \citet{petitdemange2021design} structure reconfiguration through coordinated active-passive transitions. Other studies introduce negotiation states \cite{qin2016contract}, standby and replacement roles \cite{du2024reconfiguration}, or lifecycle-driven participation models \cite{svenson2020situation}.
+
+Although terminology differs, the underlying distinctions are consistent: a constituent may be outside the SoS, prepared to participate, actively contributing, temporarily limited, or transitioning between configurations.
+
+Building on these distinctions, this thesis adopts the states \emph{Idle}, \emph{Standby}, \emph{Participating}, \emph{Impaired}, and \emph{Negotiating}, adapted to Systems of Twinned Systems (SoTS).
+
+\begin{enumerate}
+    \item \emph{Participating} denotes active contribution of DT capabilities to the coalition.
+    \item \emph{Standby} denotes readiness without active contribution.
+    \item \emph{Idle} denotes non-participation in the current configuration, without implying shutdown, since DTs may belong to multiple coalitions simultaneously.
+    \item \emph{Impaired} represents limited but still functioning operation under disturbance, enabling mitigation without immediate withdrawal.
+    \item \emph{Negotiating} captures controlled joining, leaving, or recovery decisions.
+\end{enumerate}
+
+The \emph{Negotiating} state assumes the presence of a coordination capability within the SoTS. In practice, this may be realized as a digital integration layer that mediates participation among DTs. Existing SoTS architectures already introduce such higher-layer components, including integration platforms \cite{ehemann2023digital}, runtime monitoring and adaptation frameworks \cite{parri2019jarvis}, and orchestration services coordinating distributed DTs \cite{aziz2022empowering}. Such a mediator can enforce participation constraints, evaluate recovery decisions, and trigger compensatory actions.
+
+Using these states as a foundation, we now introduce four operational reliability levels. Each level progressively strengthens control over participation dynamics and integrates fault-tolerance mechanisms more deeply into the constituent lifecycle.
+
+
+\paragraph{Level 1 — Reactive Participation with Local Error Detection and Mitigation}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.425\textwidth]{figures/Approach/lv1.pdf}
+\caption{Reliable SoTS Level 1}
+\label{fig:level1}
+\end{figure}
+
+
+At the most basic level, a constituent transitions between \emph{Idle} and \emph{Participating} without coordination. Entry and exit occur implicitly through \texttt{join()}, \texttt{leave()}, or \texttt{crash()} events. Level~1 includes local disturbance handling. Runtime detection may trigger transition to \emph{Impaired}, where temporary mitigation is applied before resuming participation if the condition clears. However, participation itself remains unmanaged. Configuration evolution is unconstrained, and stable intermediate forms are not enforced. Reliability depends on local mitigation and passive architectural tolerance of abrupt change. Level~1 therefore provides minimal operational reliability.
+
+
+\paragraph{Level 2 --- Announced Participation with Fault Treatment}
+
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/Approach/lv2.pdf}
+\caption{Reliable SoTS Level 2}
+\label{fig:level2}
+\end{figure}
+
+Level~2 introduces \emph{Standby} to structure transitions between \emph{Idle} and \emph{Participating}. Join and leave operations are announced and temporally bounded (e.g., \texttt{after($t_{\text{notice}}$)}), reducing abrupt participation change. Detection and mitigation remain as in Level~1. In addition, \emph{fault treatment} may be performed while in \emph{Standby}, enabling corrective action without disrupting active participation.
+The key improvement is announced participation changes: membership evolution becomes predictable through explicit announcements and bounded notice periods for joining and leaving.
+
+
+
+\paragraph{Level 3 --- Negotiated Participation}
+
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1\textwidth]{figures/Approach/lv3.pdf}
+\caption{Reliable SoTS Level 3.}
+\label{fig:level3}
+\end{figure}
+
+Level~3 introduces explicit control of participation. Entry into and withdrawal from the SoTS no longer occur solely through announcement. They require approval through a bounded negotiation process. Detection, mitigation, and fault treatment continue as established in Level~2. The defining extension is that participation itself becomes negotiated. A constituent must enter the \emph{Negotiating} state and obtain approval before entry or departure. System stability and reliability is strengthened because participation changes cannot occur without coordinated agreement.
+
+
+\paragraph{Level 4 --- Lifecycle-Integrated Fault-Tolerant Participation}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/Approach/lv4.pdf}
+\caption{Reliable SoTS Level 4}
+\label{fig:level4}
+\end{figure}
+
+Level~4 integrates fault tolerance directly into participation dynamics. Detection and mitigation remain active during participation, but recovery now produces explicit compensation plans that are negotiated and executed within the lifecycle. Compensation execution activates architectural mechanisms (e.g., redundancy activation, interface rebinding, state transfer) and recovery strategies (e.g., task reallocation). Once stability is restored (\texttt{[systemStable]}), normal participation resumes. Fault treatment remains available in \emph{Standby}. At this level, detection, mitigation, recovery, and treatment are formally embedded into the lifecycle of the constituents. Stable intermediate forms are actively maintained across both configuration change and operational disturbances.
+
+
+
+
+\section{Reliable SoTS Requirements}
+\label{sec:reliable-sots-requirements}
+
+\input{tables/Approach/reliability_levels_capabilities.tex}
+
+As summarized in \tabref{tab:reliability-capability-matrix}, the four reliability levels progressively introduce structure into constituent lifecycle control and disturbance handling. From these levels, we derive a set of requirements for reliable SoTS. The requirements are cumulative: higher reliability levels encompass the requirements of lower levels and introduce additional constraints on lifecycle control and fault tolerance.
+
+
+\subsection{Foundational Lifecycle Control (Level~1)}
+
+\textbf{R1 — Explicit Lifecycle States.}  
+Each constituent shall expose explicit lifecycle states including \emph{Idle}, \emph{Participating}, and \emph{Impaired}.
+
+\noindent 
+\textbf{R2 — Defined State Transitions.}  
+Transitions between lifecycle states shall occur through explicit triggers and guards.
+
+\noindent 
+\textbf{R3 — Runtime Disturbance Detection.}  
+While in \emph{Participating}, a constituent shall monitor for disturbances that threaten operational capability or digital-physical alignment.
+
+\noindent 
+\textbf{R4 — Local Mitigation in Impaired State.}  
+Upon disturbance detection, a constituent shall transition to \emph{Impaired} and apply mitigation without immediate withdrawal from the SoTS.
+
+
+\subsection{Controlled Participation and Fault Treatment (Level~2)}
+ 
+\textbf{R5 — Controlled Participation.}  
+Activation and withdrawal shall pass through \emph{Standby}, introducing control over SoTS configuration change.
+
+\noindent
+\textbf{R6 — Fault Treatment.}  
+Fault treatment and corrective actions shall be performed in \emph{Standby} whenever possible, avoiding disruption of active participation.
+
+
+\subsection{Negotiated Participation (Level~3)}
+
+\textbf{R7 — Negotiated Participation Changes.}  
+Entry and withdrawal from the SoTS shall require explicit approval through a mediator mechanism (\emph{Negotiating} state).
+
+\noindent
+\textbf{R8 — Bounded Negotiation.}  
+Negotiation processes shall proceed through defined proposal and evaluation steps and shall be bound by a timeout.
+
+
+\subsection{Stable Configuration Preservation (Level~4)}
+
+\textbf{R9 — Coordinated Recovery Planning.}  
+If local mitigation is insufficient, compensation actions shall be negotiated and approved prior to structural reconfiguration.
+
+\noindent
+\textbf{R10 — Stable Intermediate Forms.}  
+During participation change and disturbance handling, the SoTS shall maintain a viable configuration capable of delivering acceptable functionality.
+
+
+\section*{Chapter Summary}
+This chapter formalized reliability in SoTS as four operational levels and translated them into explicit requirements. The remainder of this thesis develops a middleware architecture implementing Level~1 reliable SoTS, realizing disturbance detection and local mitigation within constituent DT. This provides a foundation for future extensions toward higher reliability levels.
