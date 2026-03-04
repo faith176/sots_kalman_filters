@@ -1,0 +1,49 @@
+\begin{tikzpicture}[
+    font=\small,
+    twin/.style={
+        rectangle, draw, rounded corners,
+        minimum width=2.4cm,
+        minimum height=1cm,
+        inner ysep=3pt,
+        fill=white,
+        align=center
+    },
+    dependency/.style={gray!60, thin},
+    cep/.style={
+        rectangle,
+        draw,
+        thick,
+        fill=white,
+        minimum width=4.5cm,
+        align=center
+    }
+]
+
+% SoS Boundary
+\node[
+    draw=black!60,
+    thick,
+    fill=white,
+    rounded corners,
+    minimum width=10.2cm,
+    minimum height=4.4cm,
+    label=above:{\textbf{SoTS}}
+] (sos) at (0,0) {};
+
+% Participating DTs
+\node[twin] (dt1) at (-3,0.9)  {DT$_1$};
+\node[twin] (dt2) at (0,1.2)   {DT$_2$};
+\node[twin] (dt3) at (3,0.9)   {DT$_3$};
+\node[twin] (dt4) at (-1.5,-1.1) {DT$_4$};
+\node[twin] (dt5) at (1.5,-1.1)  {DT$_5$};
+
+% Interdependencies
+\draw[dependency] (dt2) -- (dt3);
+\draw[dependency] (dt3) -- (dt5);
+\draw[dependency] (dt4) -- (dt1);
+
+% CEP
+\node[cep, below=-0.15cm of sos.south]
+{Complex Event Processing (CEP) Layer};
+
+\end{tikzpicture}

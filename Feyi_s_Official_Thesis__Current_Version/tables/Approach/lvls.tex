@@ -1,0 +1,100 @@
+\begin{table*}[h]
+\centering
+\caption{Reliability Levels as Escalating Architectural Constraints over $S = (B,H)$}
+\begin{tabular}{|c|c|p{3cm}|p{3.2cm}|p{5.4cm}|}
+\hline
+\textbf{Level} &
+\textbf{Name} &
+\textbf{New Architectural Control Introduced} &
+\textbf{Disturbance Interception Point} &
+\textbf{Architectural Invariants over $(B,H)$} \\
+\hline
+
+L1 &
+Reactive &
+Mandatory awareness of participation transitions &
+After disturbance manifests &
+\(
+\forall t:\; B(t^-)\neq B(t^+) \Rightarrow Announcement
+\)
+
+\(
+H\text{ does not constrain }B
+\)
+
+\\
+\hline
+
+L2 &
+Proactive &
+Temporal mediation of participation changes +
+Failure exclusion &
+During topology transition &
+\(
+Join \Rightarrow after(\Delta)
+\)
+
+\(
+Leave \Rightarrow after(\Delta)
+\)
+
+\(
+H = Failed \Rightarrow B \notin \{Active, Passive\}
+\)
+
+\(
+Join \Rightarrow H \neq Failed
+\)
+
+\\
+\hline
+
+L3 &
+Controlled &
+Health-gated admission and enforced removal &
+Before contribution to SoS &
+\(
+Admission \Rightarrow H \in H_{acceptable}
+\)
+
+\(
+H = Failed \Rightarrow B = Prepared
+\)
+
+\(
+H \notin H_{acceptable} \Rightarrow AdmissionDenied
+\)
+
+\(
+LeaveRequest \Rightarrow MayBeDenied
+\)
+
+\\
+\hline
+
+L4 &
+Adaptive &
+Continuous participation modulation +
+Escalation based on health degradation &
+During impairment and before failure &
+\(
+H \in \{Erroneous, Malfunctioning\} \Rightarrow Role = Restricted
+\)
+
+\(
+H = Degraded \Rightarrow B = PendingExit
+\)
+
+\(
+H = Failed \Rightarrow B = Prepared
+\)
+
+\(
+H_i \prec H_j \Rightarrow Escalation(H_i \rightarrow H_j)
+\)
+
+\\
+\hline
+
+\end{tabular}
+\end{table*}

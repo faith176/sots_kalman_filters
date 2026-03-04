@@ -403,3 +403,29 @@
     }
 
     \newcommand{\quotetext}[1]{``#1''}
+
+
+
+    
+\tcbset{
+    cepstyle/.style={
+        colback=examplebg,
+        colframe=exampleblue,
+        fonttitle=\bfseries,
+        coltitle=white,
+        colbacktitle=exampleblue,
+        boxrule=0.8pt,
+        arc=3pt,
+        left=6pt,
+        right=6pt,
+        top=6pt,
+        bottom=6pt
+    }
+}
+
+\newtcolorbox{runningexample}[2][]{
+    cepstyle,
+    breakable,
+    enhanced,
+    title={#2: #1},
+}

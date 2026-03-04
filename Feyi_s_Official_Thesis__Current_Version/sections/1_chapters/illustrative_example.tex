@@ -1,0 +1,15 @@
+\chapter{Illustrative Example: Event-Driven SoTS with Complex Event Processing}\label{ch:example}
+
+This chapter introduces an event-driven SoTS scenario that serves as a running example throughout the thesis. The example focuses on DT services operating within an event-driven architecture and using CEP to derive higher-level system capabilities.
+
+\section{Event-Driven DT Services}
+
+In the illustrative SoTS, each constituent is represented by a DT that exposes its functionality through event-producing and event-consuming services. An event represents a discrete, observable occurrence, such as a measurement, state change, or detected condition, and is typically modeled as a timestamped record containing structured data \cite{etzion2010event}.
+
+Event-driven processing advances system behaviour in response to the arrival of events \cite{kommera2020power}. DT services generate events asynchronously, and these events are collected into streams that reflect the evolving state of the overall system. Communication and coordination among DTs occur through the exchange and interpretation of these event streams.
+
+\section{Complex Event Processing as a System-Level Capability}
+
+At the SoTS level, system capability is realized through Complex Event Processing (CEP). CEP extends the event-driven model by detecting higher-level situations through correlation of multiple events over time \cite{cugola2015complex}. CEP engines evaluate continuous event streams against declarative rules that define temporal and logical relationships, including sequencing, aggregation, concurrency, and time windows \cite{cugola2012processing,cugola2015complex}. When specified conditions are satisfied, a composite event is emitted to represent detection of a meaningful situation.
+
+To support incremental pattern detection, CEP engines maintain internal state that tracks partial matches across event streams. Common implementations rely on automata-based or state-machine-based execution models \cite{cugola2015complex}. These concepts originated in academic systems such as SASE and Cayuga \cite{wu2006high,brenna2007cayuga}, and are implemented in industrial engines including Esper and Siddhi \cite{esper_reference,suhothayan2011siddhi}, as well as in distributed stream processing frameworks such as Apache Flink \cite{carbone2015apache,dayarathna2018recent}.

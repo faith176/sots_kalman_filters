@@ -1,0 +1,236 @@
+\chapter{Reliable SoTS Through Orthogonal State Modeling}
+\label{ch:reliable-sots}
+Reliability is widely acknowledged in SoTS research but is rarely formalized as an explicit architectural modeling dimension, as observed in the systematic literature review in Chapter~\ref{ch:literature-review}.
+
+This chapter introduces an orthogonal state modeling framework that represents SoTS reliability through two interacting dimensions: structural participation and operational health.
+
+\begin{runningexample}{Running Example: Event-Driven Coordination in a CEP-Based SoTS}
+
+Throughout this thesis, we consider a distributed cyber-physical environment composed of independently operated assets, each coupled with a corresponding DT. Together, these constituents form a SoTS.
+
+\begin{center}
+\input{figures/Approach/running_example.tex}
+\end{center}
+
+Each DT continuously monitors its underlying asset and emits timestamped events reflecting observable state changes. A CEP coordination layer aggregates these event streams and computes higher-level patterns derived from the combined observations.
+
+The CEP layer may also emit coordination or advisory events back to the DTs, influencing local behavior or operational parameters based on the inferred global condition.
+\end{runningexample}
+
+
+
+\section{Disturbances and SoS-Level Reliability}
+In dependability theory, reliability is defined as the ability of a system to deliver correct and continuous service over time \cite{avizienis2001fundamental}. SoS differ fundamentally from traditional systems due to the operational and managerial independence of their constituents \cite{maier1998architecting}. Constituents may join, leave, degrade, or evolve autonomously. Reliability in SoS therefore cannot be reduced to component-level correctness; it must be understood in terms of sustained mission fulfilment despite constituent autonomy and variability.
+
+\citet{ferreira2023towards} define a disturbance in SoS as any structural or operational change that alters the availability or effective execution of capabilities required for mission fulfilment. Disturbances may arise from participation changes, performance degradation, coordination misalignment, or other variations in constituent behavior. Following \cite{ferreira2023towards}, reliability in SoS is characterized as the ability of the system to tolerate such disturbances while continuing to fulfil its mission objectives.
+
+
+\section{Why SoTS Requires Architectural Reliability}
+
+Participation changes and operational impairments are inherent in SoS. Constituents may withdraw, degrade, or behave unpredictably, directly affecting mission fulfillment. In SoTS, DT coupling amplifies this impact because constituent state is continuously exposed and aggregated to support coordination.
+
+SoS disturbance-handling techniques build on established dependability principles---such as fault prevention, tolerance, removal, and forecasting \cite{avizienis2004basic}---and use mechanisms including redundancy, monitoring, reallocation, and predictive estimation to preserve mission performance under degradation \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive}. We observe similar mitigation strategies in SoTS research, where distributed twins, state persistence, fallback mechanisms, and asynchronous communication are introduced to tolerate intermittent connectivity, missing data, and partial observability \cite{esterle2021digital,larsen2024towards,lopez2023modeling,chen2018digital,joseph2021aggregated}.
+
+Because system-level decisions rely on information reported by constituent DTs, participation instability or operational degradation may propagate beyond local effects and influence system-level reasoning. Impaired yet active constituents may distort the computed global condition, sudden withdrawal may reduce observational coverage, and accumulated disturbances may amplify uncertainty across interdependencies.
+
+\begin{runningexample}{Recall: Disturbances in the CEP-Based SoTS}
+In the CEP-based SoTS, these risks manifest concretely:
+\begin{itemize}[noitemsep]
+    \item A DT may leave unexpectedly, reducing the observations available to compute the global condition.
+    \item A degraded DT may emit delayed, noisy, or inconsistent events, introducing bias or uncertainty into the aggregated result.
+    \item Event loss or corruption may distort detected patterns, leading to incorrect coordination decisions.
+\end{itemize}
+
+\begin{center}
+\input{figures/Approach/running_example_disturbances.tex}
+\end{center}
+\end{runningexample}
+
+
+However, SoTS disturbance-handling techniques are largely reactive: they respond after problems occur. Reconfiguration, redundancy, and compensation may restore functionality following degradation or withdrawal, but these mechanisms are typically activated only once a disturbance becomes observable. In digitally coupled SoTS environments---where constituents continuously contribute state information---an impaired or unstable participant may influence shared system knowledge before failure is detected. As a result, participation changes and operational degradation can affect system-level outcomes even when recovery mechanisms are in place.
+
+\section{Disturbances Along Two Primary Dimensions}
+Mission fulfilment depends on both the presence and the effective execution of constituent capabilities. Disturbances arise when constituents are structurally absent or operationally impaired.
+
+We therefore distinguish two orthogonal disturbance dimensions: \emph{belonging} and \emph{health}.
+
+\input{tables/Approach/healthy_belong.tex}
+
+\paragraph{Belonging.}
+Participation in SoS is voluntary and autonomous \cite{salado2015abandonment}. Constituents may abandon the SoS or withhold participation, dynamically altering architectural composition. Belonging captures structural participation:
+\begin{itemize}
+    \item Belongs — structurally present and contributing capabilities.
+    \item Does not belong — structurally absent and unable to contribute.
+\end{itemize}
+
+\paragraph{Health.}
+Even when present, a constituent may fail to meet its objectives due to faults or internal degradation. \citet{ferreira2023towards} emphasize that faults reduce a constituent's ability to achieve intended performance, thereby diminishing effective capability contribution.
+
+Health captures operational quality:
+\begin{itemize}
+    \item Healthy — capabilities are delivered as expected.
+    \item Unhealthy — capability delivery is degraded or impaired.
+\end{itemize}
+
+Belonging determines capability availability. Health determines capability effectiveness. 
+
+\section{Orthogonal State Modelling for Reliability}
+
+Participation modeling in SoS research defines lifecycle states governing structural integration \cite{axelsson2019refined, svenson2020situation, hristozov2023modeling}. Reliability research, in parallel, defines the ability of a system to sustain performance under disturbance \cite{ferreira2024framework, uday2015designing, garro2014reliability, li2025reliability}. However, these perspectives are typically developed independently. Participation decisions are governed by lifecycle criteria, while operational reliability is addressed reactively after degradation occurs.
+
+To integrate these dimensions, I propose an orthogonal lifecycle reliability framework in which participation is governed by two interacting state dimensions: belonging and health.
+% =============
+Let \( B \) denote the set of participation states and \( H \) the set of operational health states. The composite state of a constituent is defined as the product
+\[
+S = B \times H .
+\]
+Each \( (b,h) \in S \) represents the state of a constituent at a given time, defined by its participation state \(b\) and operational health state \(h\).
+
+Transitions between participation states depend on the operational health of the constituent. For example, a transition from participation state \(B_1\) to \(B_2\) may occur only when the health state satisfies a particular condition:
+\[
+B_1 \rightarrow B_2 \quad \text{if} \quad H \in \{h_1, h_2\}.
+\]
+In this way, health states constrain transitions in the participation dimension.
+
+\textbf{SoS reliability} can be assessed by \textbf{restricting which configurations of the state space \(S\) are permitted}. We define reliability levels in terms of how restrictive these permitted configurations are. For each reliability level \(R\), let
+\[
+S_R \subseteq S
+\]
+represent the set of permitted states. Higher levels of reliability correspond to stricter constraints on which states are permitted, such that
+\[
+S_{R+1} \subseteq S_R .
+\]
+
+
+% \begin{runningexample}{Running Example: CEP-Based SoTS Coordination}
+% The transitions and guards in the state charts are derived from the impairment abstraction described by \citet{parhami1994multi}, where errors correspond to failures at the information level. Because CEP coordination depends on correct event streams, impairments above the erroneous stage may be tolerated, while participation is restricted once erroneous behaviour emerges. 
+% \input{figures/Approach/tolerance.tex}
+% The thresholds shown reflect this CEP-based example, though other implementations may define them differently depending on domain requirements.
+% \end{runningexample}
+
+
+
+\section{Levels of Reliable SoS}
+
+The orthogonal reliability model defined above enables the definition of reliability levels based on restrictions over the composite state space \(S = B \times H\). These levels form a monotonic containment hierarchy:
+
+\[
+S_{R_4} \subset S_{R_3} \subset S_{R_2} \subset S_{R_1}.
+\]
+
+Higher reliability levels therefore permit fewer configurations of the system state space. Each successive level excludes additional configurations that may threaten mission stability, progressively reducing exposure to states where disturbances may emerge. This progression reflects both increasing strictness in the set of permitted configurations and earlier handling of disturbances by preventing entry into destabilizing states.
+
+An architectural trade-off emerges. Lower reliability levels preserve autonomy and loose coupling by addressing disturbances only after they occur, while higher levels introduce stronger oversight by constraining participation based on operational condition. This reduces systemic vulnerability but increases coordination and control requirements.
+
+To represent these reliability levels concretely, the abstract formulation is instantiated using state charts with orthogonal regions representing belonging and operational health.
+
+\subsection{Instantiation of the Model}
+
+The composite state space \(S = B \times H\) is realized through orthogonal state regions that capture participation and operational health. Each composite state \((b,h) \in S\) therefore represents the condition of a constituent at a given time, defined by both its participation status and its operational health.
+
+\subsubsection{Participation States (\( B \))}
+
+The participation dimension is grounded in the constituent lifecycle model proposed by \citet{axelsson2019refined}. We define
+\( B = \{\textit{Disengaged}, \textit{Prepared}, \textit{Passive}, \textit{Active}\} \).
+
+\begin{itemize}[noitemsep]
+    \item \textit{Disengaged}: the constituent does not participate in the SoTS.
+    \item \textit{Prepared}: the constituent is capable of participation but not currently engaged.
+    \item \textit{Passive}: the constituent participates with limited coordination.
+    \item \textit{Active}: the constituent is fully integrated and contributes to coordinated operations.
+\end{itemize}
+
+\subsubsection{Health States (\( H \))}
+
+The health dimension is grounded in the impairment abstraction proposed by \citet{parhami1994multi}, which distinguishes progressive stages of degradation between ideal operation and failure. We define
+\( H = \{\textit{Ideal}, \textit{Defective}, \textit{Faulty}, \textit{Erroneous}, \textit{Malfunctioning}, \textit{Degraded}, \textit{Failed}\} \).
+
+\begin{itemize}[noitemsep]
+    \item \textit{Ideal}: no defects or impairments are present.
+    \item \textit{Defective}: latent defects exist but have not yet activated.
+    \item \textit{Faulty}: active faults are present internally.
+    \item \textit{Erroneous}: internal state corruption has occurred.
+    \item \textit{Malfunctioning}: incorrect behavior is externally observable.
+    \item \textit{Degraded}: service is delivered with reduced capability.
+    \item \textit{Failed}: required service can no longer be delivered.
+\end{itemize}
+
+With these state dimensions defined, the following subsections introduce four reliability levels that correspond to increasingly restrictive sets of permitted configurations.
+
+\begin{runningexample}{Running Example: CEP-Based SoTS Coordination}
+The transitions and guards in the state charts are derived from the impairment abstraction described by \citet{parhami1994multi}, where errors correspond to failures at the information level. Because CEP coordination depends on correct event streams, impairments above the erroneous stage may be tolerated, while participation is restricted once erroneous behaviour emerges.
+
+\input{figures/Approach/tolerance.tex}
+
+The thresholds shown reflect this CEP-based example, though other implementations may define them differently depending on domain requirements.
+\end{runningexample}
+
+% ==========================================================
+\subsection{Level 1: Reactive}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/Approach/lv1.pdf}
+\caption{Level 1: Reactive}
+\label{fig:lv1}
+\end{figure}
+
+Level~1 establishes the baseline structure. Participation transitions (e.g., \textit{join SoS}, \textit{leave SoS}, \textit{join constellation}, \textit{leave constellation}) are always permitted and are accompanied only by mandatory \textit{announce} actions.
+
+All configurations are admissible, i.e., \( S_1 = B \times H \). Disturbances are handled purely reactively.
+
+% ------------------------------------------------
+
+\subsection{Level 2: Proactive}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\linewidth]{figures/Approach/lv2.pdf}
+\caption{Level 2: Proactive}
+\label{fig:lv2}
+\end{figure}
+
+Level~2 retains all Level~1 mechanisms and introduces health-conditioned guards and stabilization substates. Failed constituents are prevented from joining (\textit{[Health $\notin$ \{Failed\}]}) and failure during participation triggers enforced exit.
+
+The \textit{Active} state is refined into three substates: \textit{Pending Entry}, \textit{Participating}, and \textit{Pending Exit}. Temporal transitions (e.g., \textit{after}($\Delta$)) are introduced to stabilize entry and exit.
+
+These additions eliminate configurations in which failed constituents remain active or passive, yielding \( S_2 \subset S_1 \). Disturbance handling now prevents clearly unsafe participation states.
+
+% ------------------------------------------------
+
+\subsection{Level 3: Controlled}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\linewidth]{figures/Approach/lv3.pdf}
+\caption{Level 3: Controlled}
+\label{fig:lv3}
+\end{figure}
+
+Level~3 preserves all Level~2 constraints and introduces negotiated admission and controlled exit. The \textit{Passive} state is refined into \textit{Available} and \textit{Negotiating}, and participation in a constellation requires explicit \textit{join request} or \textit{join invitation} transitions conditioned on health.
+
+Exit transitions now include the possibility of \textit{exitDenied}, preventing immediate withdrawal under specified conditions.
+
+These additional states and guarded transitions further restrict admissible participation–health combinations, establishing \( S_3 \subset S_2 \). Disturbance regulation shifts to the admission and coordination phases.
+
+% ------------------------------------------------
+
+\subsection{Level 4: Adaptive}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\linewidth]{figures/Approach/lv4.pdf}
+\caption{Level 4: Adaptive}
+\label{fig:lv4}
+\end{figure}
+
+Level~4 extends Level~3 by introducing adaptive role refinement within active participation. The \textit{Participating} state is decomposed into hierarchical substates: \textit{Full Role} and \textit{Restricted Role}. Transitions between these substates are triggered by health conditions (e.g., impairment leading to role restriction).
+
+Additionally, degraded states trigger proactive \textit{leave request} transitions, ensuring managed withdrawal before complete failure.
+
+All prior mechanisms—announcement, guards, delays, negotiation, and denial—remain active. By refining participation semantics and proactively constraining degraded configurations, Level~4 satisfies \( S_4 \subset S_3 \). Reliability is achieved through both stricter admissibility and adaptive containment.
+
+
+
+\section{Architectural Mechanisms for Fault Tolerance in SoTS}
+At the highest reliability level, system stability is maintained not only by restricting participation but by adapting how impaired constituents contribute to the system. Rather than immediately removing degraded participants, the system may permit continued participation under modified conditions. In this context, constituents may operate in a \emph{reduced role}, where their participation is constrained to limit the propagation of disturbances.
+
+Defining such reduced roles raises an architectural question: how should impaired constituents be allowed to continue participating without compromising system-level reasoning? In many systems, the burden of compensating for impaired or unavailable services falls on dependent constituents. Instead, responsibility for managing degraded participation may be introduced at the architectural level. The fault-tolerance literature provides established strategies for addressing such situations. As described by \citet{hanmer2013patterns}, patterns such as compensation, redundancy, and graceful degradation enable systems to maintain functionality despite partial impairment. Within the orthogonal reliability framework, these mechanisms can be interpreted as architectural responses that regulate participation when composite states fall outside the admissible region.
+
+In the next chapter, this concept is operationalized through a middleware layer that monitors constituent health and applies compensation strategies when participants enter restricted roles. The approach is evaluated through fault-injection experiments that introduce disturbances into event streams and examine how the system maintains stable coordination under degraded conditions.

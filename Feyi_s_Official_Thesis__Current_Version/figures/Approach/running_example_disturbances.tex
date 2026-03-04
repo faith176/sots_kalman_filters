@@ -1,0 +1,120 @@
+
+\begin{tikzpicture}[
+    font=\small,
+    twin/.style={
+        rectangle, draw, rounded corners,
+        minimum width=2.4cm,
+        minimum height=1cm,
+        inner ysep=3pt,
+        fill=white,
+        align=center
+    },
+    affected/.style={
+        rectangle, draw=red, thick, rounded corners,
+        minimum width=2.4cm,
+        minimum height=1cm,
+        inner ysep=3pt,
+        fill=white,
+        align=center, text=red
+    },
+    failed/.style={
+        rectangle, draw=red, fill=red!20, thick,
+        rounded corners,
+        minimum width=2.4cm,
+        minimum height=1cm,
+        inner ysep=3pt,
+        align=center
+    },
+    partially/.style={
+        rectangle, draw=red, dashed, thick,
+        rounded corners,
+        minimum width=2.4cm,
+        minimum height=1cm,
+        inner ysep=3pt,
+        fill=white,
+        align=center
+    },
+    faded/.style={opacity=0.35},
+    dependency/.style={gray!60, thin},
+    disturbance/.style={red, dashed, very thick},
+    cep/.style={
+        rectangle,
+        draw,
+        thick,
+        fill=white,
+        minimum width=4.5cm,
+        align=center
+    }
+]
+
+% ---------------------------
+% Non-Participating DTs (TOP)
+% ---------------------------
+% \node[twin]   (dt7) at (2,3.5)  {DT$_7$\\[-3pt]Energy Unit};
+
+% DT1 after leaving (outside SoTS)
+\node[twin] (dt1_out) at (-4.8,3.2) {DT$_1$};
+
+% ---------------------------
+% SoS Boundary (CENTER)
+% ---------------------------
+\node[
+    draw=black!60,
+    thick,
+    fill=white,
+    rounded corners,
+    minimum width=10.2cm,
+    minimum height=4.4cm,
+    label=above:{\textbf{SoTS}}
+] (sos) at (0,0) {};
+
+% ---------------------------
+% Participating DTs
+% ---------------------------
+
+% DT1 inside (withdrawing / faded)
+\node[twin,faded] (dt1) at (-3,0.9) {DT$_1$};
+
+\node[failed]   (dt2) at (0,1.2)  {DT$_2$};
+\node[affected] (dt3) at (3,0.9)  {DT$_3$};
+
+\node[partially]      (dt4) at (-1.5,-1.1) {DT$_4$};
+\node[partially] (dt5) at (1.5,-1.1)  {DT$_5$};
+
+% ---------------------------
+% Interdependencies
+% ---------------------------
+
+\draw[dependency] (dt2) -- (dt3);
+\draw[dependency] (dt3) -- (dt5);
+
+% weakened dependency to withdrawing DT1
+\draw[gray!80, thin, dashed, ->] (dt1) -- (dt4);
+
+% ---------------------------
+% Disturbance propagation
+% ---------------------------
+
+\draw[disturbance, ->] (dt2) -- (dt3);
+\draw[disturbance, ->] (dt3) -- (dt5);
+
+% ---------------------------
+% Leave transition
+% ---------------------------
+
+\draw[->, thick]
+(dt1) to[out=115,in=-95]
+node[left, font=\scriptsize, black!90]{leave}
+(dt1_out);
+
+% ---------------------------
+% CEP Layer (BOTTOM)
+% ---------------------------
+
+\node[cep, below=-0.15cm of sos.south] (cep)
+{Complex Event Processing (CEP) Layer};
+
+\end{tikzpicture}
+
+\vspace{-4pt}
+{\footnotesize Disturbance propagation within a SoTS: failure of DT$_2$ degrades DT$_3$ and DT$_5$, while withdrawal of DT$_1$ affects its dependent unit DT$_4$.}

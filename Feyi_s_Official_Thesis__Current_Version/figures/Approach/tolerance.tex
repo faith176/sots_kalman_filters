@@ -1,0 +1,40 @@
+\begin{center}
+\begin{tikzpicture}[
+    font=\scriptsize,
+    level/.style={
+        rectangle,
+        draw,
+        rounded corners,
+        minimum width=2.2cm,
+        minimum height=0.6cm,
+        align=center
+    },
+    tolerated/.style={
+        level,
+        fill=green!10
+    },
+    restricted/.style={
+        level,
+        fill=red!10
+    },
+    arrow/.style={->, thick}
+]
+
+\node (dotsL) {...};
+
+\node[tolerated, right=1.3cm of dotsL] (fault) {Fault};
+\node[restricted, right=1.8cm of fault] (error) {Error};
+
+\node[right=1.3cm of error] (dotsR) {...};
+
+\draw[arrow] (dotsL) -- (fault);
+\draw[arrow] (fault) -- (error);
+\draw[arrow] (error) -- (dotsR);
+
+\node[below=6pt of fault] {tolerated};
+\node[below=6pt of error] {restricted};
+
+\draw[dashed] ($(fault.south)!0.5!(error.south)$) -- ++(0,-0.5);
+
+\end{tikzpicture}
+\end{center}

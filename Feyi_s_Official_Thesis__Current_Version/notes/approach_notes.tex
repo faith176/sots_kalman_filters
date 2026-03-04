@@ -1,0 +1,84 @@
+
+
+\cite{parhami1994multi}
+defines impairments with coresponding views
+component = defect
+logic = fault
+information = error
+system = malfunction
+service = degradation
+result = failure
+
+he mentions in each transition between the states, their are fields dedicated to - natural cause of the transition, impediment to the transition, techniques for faciliatting the transition, techniques for avoiding the transition, tools for modelling the transition
+
+defect tolerance - redundacy
+
+
+\cite{parhami2002defect}
+failure is a matter of function, not whether something is fully intact or not. Failures can result from unsatifiable requirements
+a system can be in one of seven states...: Ideal, Defective, Faulty, Erroneous, Malfunctioning, Degraded, Failed
+
+Certain system states can expose a defect, resuling in a fault which is an incorrect signal values or decisions within the system. If the fault is exercises, it may contaiminte data flow in the system, causing errors. Erroneous information or states may or may not cause the affected subsystem to malfunction, depending on designed error tolerance. Degradation of service eventually leads to system failure.
+
+A system may start up in any of the states. Moves between states through a series of deviations (events that take the systems to a lower state) and remedys (measures that enable the system to transition to a higher state)
+
+Show example scenarios:
+automobile break system
+
+\cite{ferreira2023towards}
+Define disturbance as "Something bad that may negatively affect the ability of a system (constituent or SoS) to deliver value or accomplish its mission."
+
+define at SoS and Constituent level
+
+Constituent disturbance - A disturbance that negatively affects a constituent system's ability to deliver value.
+Classified by:
+Origin - internal (component failure, software bug) or external (cyber attack, environmental event)
+
+Intent - accidental (operator error) or malevolent (malicious input, attack)
+
+SoS disturbance - A disturbance that negatively affects the SoS ability to accomplish its global mission
+they don't have to result in failures, instead originate from 
+interdependancies - 
+"While interdependencies enable capabilities at the SoS level, they can also affect a SoS negatively. High levels of dependencies imply an increased risk of cascading effect."
+"High levels of dependencies among constituents imply a higher risk of cascading failures in SoS."
+
+Evolution of constituents - 
+"Constituent systems can then exhibit unexpected behaviors over time."Not
+"A deliberate change in a constituent system can produce severe consequences to SoS, generate cascading disturbances, and affect reliability at the SoS level."
+"Failures in SoS may also occur due to the temporary inability of constituent systems to adequately provide functionalities."
+"Such inability may not necessarily be related to failures in constituent systems rather to the constituent system's unavailability to meet the SoS demands at the appropriate time."
+
+
+undesired emergent behavior -
+"Undesired emergent behavior: Emergent behaviors that produce negative effects in SoS."
+"As independent systems are connected to create a SoS, new behavioral properties can emerge from one or more systems behaving in unanticipated ways."
+
+
+disturbance is better to use than fault as constituents may still be working in isolation, but behaviour in cooperation can negatively impact the SoS, therefore reliability degradation can still occur without a traditional fault or failure
+
+\cite{ferreira2021reliability}
+Insights from the literature review
+The reliability of SoS requires up-to-date data. 
+Models should represent SoS specific characteristics.
+Optimized selection of constituent systems. 
+
+
+
+
+
+
+
+\cite{baldwin2011formation}
+belonging game matrix
+
+
+\cite{salado2015abandonment}
+
+
+\cite{salado2016exile}
+
+\cite{avizienis2004basic}
+
+
+% ----------------------------------------------------
+
