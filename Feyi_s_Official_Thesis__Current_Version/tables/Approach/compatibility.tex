@@ -1,23 +1,21 @@
 \begin{table}[htp]
 \centering
-\footnotesize
-\begin{tabular}{p{1.7cm} c c c c c c}
+\caption{Compatibility of SoTS Types with Reliability Levels}
+\label{tab:sots-reliability-compatibility}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Reliability Level} 
-& \textbf{Directed} 
-& \textbf{Acknowledged} 
-& \textbf{Collaborative} 
-& \textbf{Virtual} 
-& \textbf{Spec. DT}
-& \textbf{Spec. DT + PT} \\
+\textbf{} & \textbf{Reactive} & \textbf{Proactive} & \textbf{Controlled} & \textbf{Adaptive} \\
 \midrule
-
-Reactive     & X & X & X & X & X & X \\
-Proactive    & X & X & X &   & X & X \\
-Controlled   & X & X &   &   & X & X \\
-Adaptive     & X &   &   &   & X & X \\
-
+Directed & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
+Acknowledged & \ding{51} & \ding{51} & \ding{51} & $\triangle$ \\
+Collaborative & \ding{51} & \ding{51} & $\triangle$ & -- \\
+Virtual & \ding{51} & $\triangle$ & -- & -- \\
+Specialized DTs & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
+Specialized DTs + Systems & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
 \bottomrule
 \end{tabular}
-\caption{Compatibility of reliability levels with SoTS types}
+
+\vspace{0.5em}
+\footnotesize
+\ding{51} fully supported \quad $\triangle$ partially feasible \quad -- generally infeasible
 \end{table}

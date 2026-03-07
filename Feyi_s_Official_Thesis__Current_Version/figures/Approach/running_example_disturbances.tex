@@ -15,7 +15,7 @@
         minimum height=1cm,
         inner ysep=3pt,
         fill=white,
-        align=center, text=red
+        align=center
     },
     failed/.style={
         rectangle, draw=red, fill=red!20, thick,
@@ -26,7 +26,7 @@
         align=center
     },
     partially/.style={
-        rectangle, draw=red, dashed, thick,
+        rectangle, draw=red, thick,
         rounded corners,
         minimum width=2.4cm,
         minimum height=1cm,
@@ -36,7 +36,8 @@
     },
     faded/.style={opacity=0.35},
     dependency/.style={gray!60, thin},
-    disturbance/.style={red, dashed, very thick},
+    disturbance/.style={red, very thick},
+    disturbance_partial/.style={red, dashed, very thick},
     cep/.style={
         rectangle,
         draw,
@@ -117,4 +118,7 @@ node[left, font=\scriptsize, black!90]{leave}
 \end{tikzpicture}
 
 \vspace{-4pt}
-{\footnotesize Disturbance propagation within a SoTS: failure of DT$_2$ degrades DT$_3$ and DT$_5$, while withdrawal of DT$_1$ affects its dependent unit DT$_4$.}
+{\footnotesize Disturbance propagation within a SoTS:
+\textcolor{red}{\(\rightarrow\)} propagation,
+\tikz{\draw[red, thick, fill=red!20] (0,0) rectangle (0.25,0.25);} faulty DT,
+\tikz{\draw[red, thick] (0,0) rectangle (0.25,0.25);} affected DT.}
