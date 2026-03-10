@@ -17,6 +17,13 @@ The limited attention to dynamic SoS characteristics such as reconfiguration and
 Overall, the literature indicates that while the structural and conceptual foundations of SoTS are becoming clearer, the operational capabilities required to maintain reliable functioning are underdeveloped. The primary goals motivating SoTS, enhanced coordination, shared situational awareness, and informed decision-making, depend on behaviour that remains correct and continuous as conditions change. Yet current approaches provide limited support for preserving such behaviour when systems reconfigure or when the data they depend on becomes temporarily unavailable. Addressing this reliability gap is therefore essential for SoTS to progress beyond controlled prototypes and operate reliably in practice.
 
 
+% The effects of reliability challenges become particularly significant in SoTS. In these architectures, DT constituents provide higher-level services built on top of the behaviour and data of constituent systems. In the reviewed studies, these services most commonly include real-time monitoring, simulation, prediction, and optimization across distributed systems \chref{ch:literature-review}. Because these capabilities rely on continuous operational data and coordinated behaviour between constituents, instability or degradation in individual systems may propagate across both the physical and digital layers. This may lead to inaccurate system models, inconsistent coordination, or incorrect operational decisions.
+
+% Evidence from the systematic literature review \chref{ch:literature-review} reinforces this concern. The reviewed studies strongly emphasize interdependence between constituent systems, reflecting the need for coordination and information exchange that enable DTs to monitor and analyze system behaviour. However, dynamic SoS dimensions---such as autonomy, emergence, reconfiguration, and evolution---are addressed far less frequently. This imbalance suggests a practical tradeoff in SoTS design. Supporting stable coordination simplifies the execution of digital services provided by DTs, but it also limits explicit consideration of evolving or emergent behaviours. 
+
+% To better understand how reliability challenges arise during operation, it is necessary to examine the disruptions that affect system behaviour.
+
+
 \begin{recoframe}{Recommendation}
 Treat reliability as a primary architectural concern in SoTS. Existing approaches largely assume stable operating conditions and provide limited support for ensuring correct behaviour as systems reconfigure or conditions change. Future work should therefore incorporate explicit architectural support for preserving continuity of correct behaviour during system operation.
 \end{recoframe}
@@ -72,6 +79,3 @@ Increase empirical, field-based evaluations to establish stronger evidence for S
 %------------------------------------------------------------
 
 
-
-\section{Conclusion}
-These takeaways show that SoTS research is advancing in scope but remains limited in standardization, dynamic capability, and empirical grounding. Addressing these gaps is essential for enabling SoTS to move from early-stage prototypes toward deployable systems capable of operating in uncertain and rapidly changing environments. The next chapter builds on these observations to develop an architectural approach that responds directly to the reliability challenges identified here while aligning with the broader needs for scalable, adaptable, and well-structured SoTS.

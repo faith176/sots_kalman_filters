@@ -26,7 +26,7 @@ class Reconstructor(EventGenerator):
         self.event_stream = event_stream
 
 
-    def handle_observed(self, event: Event) -> None:
+    def handle_observed(self, event: Event) -> dict:
         """
         Update predictor state using an observed event.
         """
@@ -39,6 +39,11 @@ class Reconstructor(EventGenerator):
         logging.debug(
             f"[RECONSTRUCTOR-{self.source_id}] Predictor updated with observed value: {value}"
         )
+
+        return {
+            "confidence": self.predictor.confidence(),
+            "prediction":self.predictor.predict(),
+        }
 
 
 

@@ -51,3 +51,14 @@ Implements the proposed model and architecture within a CEP-based processing pip
 % =======================================================
 \vspace{1em}
 Together, these contributions establish a foundation for reasoning about reliability in SoTS by situating reliability challenges at the level of event-driven computation and showing how partial data availability can be addressed within this setting. The remainder of the thesis develops this foundation by first grounding the work in relevant background and existing research (\chref{ch:background}, \chref{ch:literature-review}), then introducing a conceptual approach, formal event model, and supporting architecture for reasoning under missing observations (\chref{ch:approach}, \chref{ch:model}, \chref{ch:architecture}). The feasibility and implications of the approach are examined through implementation and evaluation (\chref{ch:implementation}, \chref{ch:results}), followed by a discussion of limitations, broader implications, and directions for future research (\chref{ch:discussion}, \chref{ch:conclusion}).
+
+
+\begin{runningexample}{Running Example: CEP-Based SoTS Coordination}
+Throughout this part of the thesis, concepts are illustrated using a SoTS composed of DTs corresponding to physical assets. Each DT monitors its asset and emits timestamped events representing observable state changes. A CEP layer (see \chref{ch:background}) ingests these event streams and derives higher-level patterns describing the global system state. Based on these patterns, the CEP layer may emit warnings that influence DT behaviour.
+
+\begin{center}
+\input{figures/Approach/running_example.tex}
+\end{center}
+
+This CEP-based coordination scenario serves as the running example used throughout the remainder of the thesis.
+\end{runningexample}

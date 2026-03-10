@@ -51,3 +51,66 @@ As shown in \tabref{tab:trl-table}, most SoTS research remains at low to mid-lev
 \input{tables/Literature Review/RQs/rq6/standards}
 
 Standard adoption remains uneven (\tabref{tab:standards-table}). OPC~UA is most frequently used (\xofyp{13}{80}) for secure, interoperable communication among DTs \cite{dobie2024network, joseph2021aggregated}. The Asset Administration Shell (IEC~63278) appears in (\xofyp{8}{80}) studies to provide structured asset representation \cite{gill2022method, gollner2022collaborative}, while RAMI~4.0 supports layered architectural alignment \cite{binder2021utilizing}. Domain-specific standards such as VANET, IPv6, ISO/IEC/IEEE~15288, ISA-95, and IEC~61850 appear sporadically, and security-oriented standards (e.g., GDPR, OAuth~2.0) are rare. Most studies reference standards as guidance rather than strict compliance frameworks, reflecting the early-stage maturity of SoTS practice.
+
+
+
+% =======================================================
+% \section{Key Results from the Systematic Literature Review}
+% \label{sec:literature-review-results}
+
+% This section summarizes key observations from the systematic literature review conducted in this study (see \cite{adesanya2025systems} for the full review). The review analyzed 80 primary studies that combine DT and SoS principles.
+
+% \subsection{Motivations for Combining DTs and SoS}
+% \label{subsec:literature-review-results-motivations}
+
+% \input{tables/Literature Review/RQs/rq1/motivations.tex}
+
+% Most studies combine DT and SoS principles to support system-level optimization, integration, validation, and maintainability (\tabref{tab:motivations-table}). Optimization is the most common motivation (\xofyp{30}{80}), typically aiming to improve coordination and cross-system decision-making, such as reducing turnaround time in UAV–USV landing operations \cite{li2022cognitive}. Integration appears in \xofyp{25}{80} studies and focuses on connecting heterogeneous DTs to support coordinated system management in domains such as energy and manufacturing \cite{monsalve2021novel}. Validation appears in \xofyp{15}{80} studies and involves testing system interactions in controlled environments, including vehicle coordination scenarios \cite{dahmen2022modeling}. Maintainability appears in \xofyp{10}{80} studies and involves predictive diagnostics and lifecycle monitoring.
+
+% \subsection{SoTS Architectural Types}
+% \label{subsec:literature-review-results-sots-types}
+% \input{tables/Literature Review/RQs/rq2/sotsTypeTable}
+
+% To understand how DTs and SoS are combined, studies were classified using the SoTS framework described in \secref{sec:literature-review-classification}. As shown in \tabref{tab:sots-type-table}, Acknowledged SoTS are most prevalent (\xofyp{31}{80}), pairing distributed autonomy with a coordinating DT. For example, grid-scale Digital Twin Masters synchronize local clients in energy system coordination \cite{monsalve2021novel}. Directed SoTS appear in \xofyp{26}{80} studies and involve a controlling DT that enforces shared objectives, commonly reported in infrastructure and manufacturing settings \cite{reiche2021digital, li2024comprehensive}. Collaborative SoTS appear in \xofyp{19}{80} studies and involve peer-to-peer coordination between DTs, such as agents negotiating production tasks \cite{vogel-heuser2021approach}. Virtual SoTS appear in \xofyp{4}{80} studies and involve dynamically formed collaborations among autonomous systems \cite{esterle2021digital}.
+
+% \subsection{DT Services in SoTS}
+% \label{subsec:literature-review-results-dt-services}
+% \begin{figure}[htp]
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/Literature Review/rq3/dtServices.pdf}
+%     \caption{Combinations of DT services reported in the reviewed SoTS studies}
+%     \label{fig:dt-services}
+% \end{figure}
+
+% DTs in the reviewed SoTS studies provide a range of services supporting system monitoring and analysis (\figref{fig:dt-services}). The most frequently reported services are real-time monitoring (\xofyp{79}{80}), simulation (\xofyp{77}{80}), optimization (\xofyp{68}{80}), and prediction (\xofyp{56}{80}). These services support observation of system state, simulation of system behavior, and generation of recommendations or forecasts based on system data.
+
+% \subsection{SoS Dimensions Represented in SoTS}
+% \label{subsec:literature-review-results-sos-characteristics}
+
+% \begin{figure}[htp]
+%     \centering
+%     \includegraphics[width=1.05\linewidth]{figures/Literature Review/rq4/sosDimensions.pdf}
+%     \caption{Prevalence of System-of-Systems dimensions across reviewed SoTS studies}
+%     \label{fig:sos-dim}
+% \end{figure}
+
+% \figref{fig:sos-dim} summarizes the prevalence of SoS dimensions across the reviewed studies. Distribution (92.5\%) and independence (88.75\%) appear in the majority of studies. Interdependence (77.5\%) and interoperability (76.25\%) are also frequently reported. Other dimensions appear less consistently. Emergence is reported in 53.75\% of the studies and autonomy in 47.5\%. Reconfiguration (43.75\%) and evolution (37.5\%) appear in fewer studies than the other dimensions.
+
+% \subsection{Reliability in Existing SoTS Research}
+% \label{subsec:literature-review-results-reliability}
+% \input{tables/Literature Review/RQs/rq5/reliabilityTable}
+
+% Reliability is addressed in \xofyp{41}{80} studies. As summarized in \tabref{tab:reliability-table}, reported architectural strategies include fallback to local twins during communication loss \cite{alam2017c2ps, larsen2024towards}, asynchronous communication mechanisms for handling intermittent connectivity \cite{acharya2023twins, liu2020web-based}, and recalibration mechanisms to restore synchronization \cite{esterle2021digital, villalonga2021decision-making}. 
+
+% Two studies present formal reliability models, and three studies report validation through simulation or fault injection \cite{park2020digital, saraeian2022digital}.
+
+% \subsection{Maturity and Evaluation of SoTS Research}
+% \label{subsec:literature-review-results-maturity}
+
+% \input{tables/Literature Review/RQs/rq6/trlTable}
+% \label{subsec:literature-review-results-trl}
+% Technology Readiness Levels (TRLs) are used to classify the maturity of the reviewed systems. TRLs range from early-stage concept exploration to fully operational systems. The distribution of studies across TRLs is summarized in \tabref{tab:trl-table}. Demonstrative prototypes appear in \xofyp{35}{80} studies. Proof-of-concept systems appear in \xofyp{16}{80} studies, and early-stage prototypes appear in \xofyp{20}{80} studies. A small number of studies report deployed or operational systems.
+
+% \input{tables/Literature Review/RQs/rq6/hierarchicalEvaluationTable}
+% \label{subsec:literature-review-results-eval}
+% Evaluation methods reported in the reviewed studies are summarized in \tabref{tab:evaluation-structured-table}. Most studies report validation through simulation or prototyping. A smaller number of studies report evaluation through case studies, laboratory experiments, or mathematical analysis.

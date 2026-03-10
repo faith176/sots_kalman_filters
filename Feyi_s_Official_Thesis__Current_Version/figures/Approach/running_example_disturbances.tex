@@ -48,17 +48,13 @@
     }
 ]
 
-% ---------------------------
 % Non-Participating DTs (TOP)
-% ---------------------------
-% \node[twin]   (dt7) at (2,3.5)  {DT$_7$\\[-3pt]Energy Unit};
+% \node[twin]   (dt7) at (2,3.5)  {DT$_7$};
 
 % DT1 after leaving (outside SoTS)
 \node[twin] (dt1_out) at (-4.8,3.2) {DT$_1$};
 
-% ---------------------------
 % SoS Boundary (CENTER)
-% ---------------------------
 \node[
     draw=black!60,
     thick,
@@ -69,10 +65,8 @@
     label=above:{\textbf{SoTS}}
 ] (sos) at (0,0) {};
 
-% ---------------------------
-% Participating DTs
-% ---------------------------
 
+% Participating DTs
 % DT1 inside (withdrawing / faded)
 \node[twin,faded] (dt1) at (-3,0.9) {DT$_1$};
 
@@ -82,36 +76,26 @@
 \node[partially]      (dt4) at (-1.5,-1.1) {DT$_4$};
 \node[partially] (dt5) at (1.5,-1.1)  {DT$_5$};
 
-% ---------------------------
-% Interdependencies
-% ---------------------------
 
+% Interdependencies
 \draw[dependency] (dt2) -- (dt3);
 \draw[dependency] (dt3) -- (dt5);
 
 % weakened dependency to withdrawing DT1
 \draw[gray!80, thin, dashed, ->] (dt1) -- (dt4);
 
-% ---------------------------
-% Disturbance propagation
-% ---------------------------
 
+% Disturbance propagation
 \draw[disturbance, ->] (dt2) -- (dt3);
 \draw[disturbance, ->] (dt3) -- (dt5);
 
-% ---------------------------
 % Leave transition
-% ---------------------------
-
 \draw[->, thick]
 (dt1) to[out=115,in=-95]
-node[left, font=\scriptsize, black!90]{leave}
+node[left, font=\scriptsize, black!90]{left}
 (dt1_out);
 
-% ---------------------------
-% CEP Layer (BOTTOM)
-% ---------------------------
-
+% CEP Layer
 \node[cep, below=-0.15cm of sos.south] (cep)
 {Complex Event Processing (CEP) Layer};
 

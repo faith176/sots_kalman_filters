@@ -1,0 +1,14 @@
+# Logger: PatternLogger | Started: Mon Mar 09 17:48:56 EDT 2026
+fired_at,fired_offset_sec,pattern_name,pattern_type,subpatterns,subpattern_confidences,num_subpatterns,num_events,confidence,contributing_streams,nested_event_ids
+2026-03-09 17:48:59.689,2.758,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[d3655609-14c1-4c46-9d83-83a2848f1eae]]
+2026-03-09 17:49:00.515,3.584,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[d9e82887-75c1-4a3f-9bda-511b2202f036]]
+2026-03-09 17:49:01.423,4.492,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[ef1721ad-3831-4ae1-b078-07a52c6470a5]]
+2026-03-09 17:49:02.306,5.375,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[57851765-841c-4162-96fd-92d0da88146a]]
+2026-03-09 17:49:03.204,6.273,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[18369d75-b298-4fc0-bbcd-150c2506cdb2]]
+2026-03-09 17:49:04.080,7.149,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[984e36c3-2cc9-40da-a2e4-b712e4025c52]]
+2026-03-09 17:49:04.974,8.043,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[748fbed5-5194-455e-8e59-8db63b985602]]
+2026-03-09 17:49:05.864,8.933,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[02822861-dcbb-4fde-b41c-efc134e1d48b]]
+2026-03-09 17:49:06.752,9.821,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[62317170-ed18-4ccb-82bf-b6a4683aa9ff]]
+2026-03-09 17:49:07.640,10.709,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[dde7ced1-7938-4f85-a2d1-cce8e4538d74]]
+2026-03-09 17:49:08.531,11.600,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[502a38bf-575f-44d4-a016-0565a8c7f2dc]]
+2026-03-09 17:49:09.428,12.497,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[38b48fcd-7827-43bb-b031-267c4870f9a9]]

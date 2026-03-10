@@ -1,162 +1,254 @@
-\chapter{A Structural Model of Reliability in SoTS}\label{ch:approach}
-The systematic literature review presented in \chref{subsec:literature-review-results-reliability} shows that reliability is widely recognized in SoTS research, being discussed in \xofyp{41}{80} studies. However, it is predominantly treated as a reactive architectural concern rather than as a formally modeled system property. Most works emphasize practical mechanisms such as fallback strategies, synchronization, and runtime monitoring \cite{alam2017c2ps, larsen2024towards, acharya2023twins, liu2020web-based, esterle2021digital, villalonga2021decision-making}, while only two studies introduce explicit reliability models and three evaluate reliability through fault injection or simulation \cite{park2020digital, saraeian2022digital}. This imbalance shows that, although reliability is recognized as important, it is not yet systematically integrated into SoTS architectures. This motivates a more structured approach.
+\chapter{Disturbances and Reliability in Systems of Twinned Systems} \label{ch:reliable-sots}
+The systematic literature review presented in \chref{ch:literature-review} shows that reliability is addressed in 41 studies but rarely modeled or evaluated explicitly. Only 2 studies provide formal reliability models and 3 empirically evaluate reliability. These findings indicate that existing research provides limited guidance on how reliability in SoTS should be characterized or assessed.
 
-\section{Reliability in SoTS}
-In dependability theory, reliability is defined as the ability to deliver correct and continuous service \cite{avizienis2001fundamental}. A system is considered unreliable when it ceases to function as intended \cite{randell1978reliability}. To preserve service, fault tolerance mechanisms are introduced to detect, isolate, and recover from faults and errors \cite{hanmer2013patterns}.
+In SoS contexts, reliability can be understood as the ability to maintain mission fulfilment despite disturbances \cite{ferreira2023towards}. To reason about such disturbances more systematically, this chapter characterizes disturbances in SoTS and represents them along two interacting dimensions: belonging and operational health. Statechart models are then introduced to capture these dimensions and support reasoning about their implications for SoTS reliability.
 
-Extending this view to SoS, \citet{ferreira2023towards} define reliability as the ability of a SoS to accomplish its mission despite disturbances. These disturbances may arise from interdependencies, constituent evolution, temporary inability to meet demand, or undesired emergent behavior. Interdependencies increase the risk of cascading effects, behavioral changes disrupt coordination, temporary performance issues can impair mission execution even without failure, and emergent behaviours may generate negative global outcomes despite local correctness \cite{ferreira2021reliability}.
 
-To illustrate this, we revisit the illustrative scenario introduced in \chref{ch:example}. Consider a SoTS in which multiple DTs contribute event streams to a CEP engine responsible for monitoring an industrial process. The collective capability of the SoTS, such as detecting abnormal conditions, depends on the correctness and availability of these event streams. During operation, several situations may arise:
+\begin{runningexample}{Running Example: CEP-Based SoTS Coordination}
+Throughout this thesis, concepts are illustrated using a SoTS composed of DTs corresponding to physical assets. Each DT monitors its asset and emits timestamped events representing observable state changes. A CEP layer (see \chref{ch:background}) ingests these event streams and derives higher-level patterns describing the global system state. Based on these patterns, the CEP layer may emit warnings that influence DT behaviour.
 
+\begin{center}
+\input{figures/Approach/running_example.tex}
+\end{center}
+
+This CEP-based coordination scenario serves as the running example used throughout the remainder of the thesis.
+\end{runningexample}
+
+
+\section{The Importance of Reliability in SoTS}
+The effects of reliability challenges become particularly significant in SoTS. In these architectures, DT constituents provide higher-level services built on top of the behaviour and data of constituent systems. In the reviewed studies, these services most commonly include real-time monitoring, simulation, prediction, and optimization across distributed systems \chref{ch:literature-review}. Because these capabilities rely on continuous operational data and coordinated behaviour between constituents, instability or degradation in individual systems may propagate across both the physical and digital layers. This may lead to inaccurate system models, inconsistent coordination, or incorrect operational decisions.
+
+Evidence from the systematic literature review \chref{ch:literature-review} reinforces this concern. The reviewed studies strongly emphasize interdependence between constituent systems, reflecting the need for coordination and information exchange that enable DTs to monitor and analyze system behaviour. However, dynamic SoS dimensions---such as autonomy, emergence, reconfiguration, and evolution---are addressed far less frequently. This imbalance suggests a practical tradeoff in SoTS design. Supporting stable coordination simplifies the execution of digital services provided by DTs, but it also limits explicit consideration of evolving or emergent behaviours. 
+
+To better understand how reliability challenges arise during operation, it is necessary to examine the disruptions that affect system behaviour.
+
+\section{Disturbances in SoTS}
+In dependability theory, reliability is defined as the ability of a system to deliver correct and continuous service over time \cite{avizienis2001fundamental}. SoS differ fundamentally from traditional systems due to the operational and managerial independence of their constituent systems \cite{maier1998architecting}. As a result, reasoning about reliability in SoTS requires understanding the events that may disrupt the coordinated behaviour of these independently evolving constituents.
+
+In the SoS reliability literature, such events are often described as \emph{disturbances}. \citet{ferreira2023towards} define a disturbance as any structural or operational change that negatively affects the ability of a constituent system, or the SoS as a whole, to deliver capabilities required for mission fulfilment.
+
+Disturbances may arise from several sources, such as systems joining or leaving the SoS, reductions in the performance or availability of constituent systems, inconsistencies in how systems coordinate their activities, or faults within constituent systems. Because SoS capabilities emerge from the cooperation and interdependence of constituent systems, disturbances affecting individual systems may propagate to the SoS level. Consequently, SoTS reliability can be understood as the ability of the system to continue delivering mission capabilities despite such disturbances \cite{ferreira2023towards}.
+
+\begin{runningexample}{Disturbances in the CEP-Based SoTS}
+
+Returning to the running example introduced earlier, disturbances may arise in several ways:
+\begin{center}
+\input{figures/Approach/running_example_disturbances.tex}
+\end{center}
+\begin{itemize}[noitemsep]
+    \item A DT leaves unexpectedly, removing observations required for global event detection and affecting dependent systems.
+    \item A degraded DT emits missing, delayed, or noisy events, introducing bias and uncertainty into system-level reasoning.
+\end{itemize}
+\end{runningexample}
+
+Disturbance-handling techniques in SoTS research largely overlap with established approaches from SoS reliability. These approaches commonly use mechanisms such as redundancy, monitoring, reallocation, and predictive estimation to preserve mission performance under degradation \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive}. Similar mechanisms appear in SoTS studies, where state persistence, fallback mechanisms, and asynchronous communication are introduced to tolerate communication loss and partial observability \cite{esterle2021digital,larsen2024towards,lopez2023modeling,chen2018digital,joseph2021aggregated}.
+
+However, these techniques are largely reactive, restoring functionality only after disturbances become observable. In SoTS environments, where constituents continuously exchange data and state information, degraded or unstable participants may influence shared system knowledge before recovery mechanisms are triggered. This motivates considering how disturbances can be addressed before they manifest at the system level.
+
+\subsection{Disturbances Along Two Primary Dimensions}
+Disturbances in SoTS arise from two observable conditions: changes in which systems participate in the SoTS, and degradation in the behaviour of participating systems. I therefore distinguish two parallel disturbance dimensions: \emph{belonging} and \emph{health}.
+
+\input{tables/Approach/healthy_belong.tex}
+
+\subsubsection{Belonging.}
+In SoS, constituent systems retain autonomy and may freely decide whether to join or leave \cite{boardman2006system, baldwin2011formation}. \citet{salado2015abandonment} observes that this autonomy naturally leads to situations where systems withdraw from the SoS. Because SoS capabilities emerge from the interdependence of participating systems, such participation changes may destabilize the system by removing capabilities relied upon by other constituents \cite{salado2016exile}.
+
+Belonging captures whether a constituent system is currently part of the SoTS and able to contribute its capabilities:
 \begin{itemize}
-    \item A constituent DT temporarily suspends event transmission during peak demand due to maintenance or resource constraints
-    \item A constituent DT reduces its event sampling rate due to performance limitations
-    \item A constituent DT continues transmitting events while producing incomplete or stale data
+    \item \textbf{Belongs} - the system participates in the SoTS and contributes capabilities.
+    \item \textbf{Does not belong} - the system is not part of the SoTS and contributes no capabilities.
 \end{itemize}
 
-In isolation, variations in constituent behavior do not necessarily constitute system-level failure. A DT may suspend transmission, reduce event frequency, or operate in a degraded mode according to local constraints while the SoTS remains structurally operational. However, these variations directly constrain the capability of the SoTS and may affect higher-level correlation and inference. Because system-level capability emerges from coordinated interaction among digital services, reliability in SoTS depends not only on local correctness but also on constituent condition and participation dynamics. Disturbance handling cannot be separated from lifecycle, as joining, departure, and behavioral changes reshape dependencies and influence collective stability.
 
-\section{Constituent Lifecycle in SoS}
-The most developed lifecycle model of constituent participation in the SoS literature is proposed by \citet{axelsson2019refined} (Figure~\ref{fig:sos-lifecycle-model}). The model defines four structural states: \textit{Ignorant}, \textit{Prepared}, \textit{Passive}, and \textit{Active}. 
+\subsubsection{Health.}
+Even when a constituent system participates in the SoTS, impairments and faults may cause it to behave incorrectly or degrade its performance \cite{abbott1990resourceful}. Because SoS capabilities depend on the coordinated behaviour of interdependent constituents, such faults may propagate to dependent systems and affect their ability to deliver capabilities \cite{ferreira2024framework}.
+
+Health therefore captures whether a participating system correctly delivers its capabilities as intended:
+\begin{itemize}
+    \item \textbf{Healthy} - the system delivers its capabilities as intended.
+    \item \textbf{Unhealthy} - capability delivery is reduced, delayed, or incorrect.
+\end{itemize}
+
+Belonging determines whether disturbances arise from participation changes, while health determines whether disturbances arise from incorrect or impaired behaviour of participating systems.
+
+
+\section{Modeling SoTS Reliability through Belonging and Health}
+Participation modeling in SoS research defines lifecycle states governing structural integration \cite{axelsson2019refined, svenson2020situation, hristozov2023modeling}. In parallel, SoS reliability research focuses on the ability of systems to sustain mission performance under disturbance \cite{ferreira2024framework, uday2015designing, garro2014reliability, li2025reliability}. However, these perspectives are typically developed independently.
+
+In SoTS, these dimensions become closely intertwined when disturbances occur. Constituents may remain present while being operationally impaired, or may withdraw despite remaining capable of contributing. Reliability therefore depends not only on whether constituents participate, but also on their operational condition while participating.
+
+To capture this interaction, \emph{I propose a model of SoTS reliability based on two interacting state dimensions: belonging and operational health}. In this model, each constituent occupies a state defined by both its belonging to the SoTS and its operational condition.
+
+\textbf{Reliability can therefore be assessed through the admissible configurations of belonging and health across the system, where architectural constraints preserve reliability by restricting configurations capable of producing disturbances.}
+
+\subsection{Formalizing the SoTS Reliability Model}
+Let \(B\) represent the set of belonging states and \(H\) the set of operational health states. The composite state of a constituent is defined as the Cartesian product
+\[
+S = B \times H,
+\]
+where each \((b,h) \in S\) represents the state of a constituent at a given time, defined by its belonging state \(b\) and health state \(h\).
+
+Transitions between belonging states may depend on the constituent's operational health. For example, a transition from belonging state \(B_1\) to \(B_2\) may occur only when the health state satisfies a particular condition:
+\[
+B_1 \rightarrow B_2 \quad \text{if} \quad h \in \{h_1, h_2, \ldots, h_n\}.
+\]
+
+Here, \(h_1, h_2, \ldots, h_n \in H\) represent the health states under which the transition is permitted.
+
+SoTS reliability can therefore be assessed by restricting the admissible states of the space \(S\).
+For each reliability level \(R\), let
+\[
+S_R \subseteq S
+\]
+represent the set of permitted states. Higher levels of reliability correspond to stricter constraints on admissible states, such that
+\[
+S_{R+1} \subseteq S_R .
+\]
+
+
+\subsection{Assessing Levels of Reliable SoTS}
+The reliability model defined above enables the definition of reliability levels based on restrictions over the composite state space \(S = B \times H\). These levels form a monotonic hierarchy:
+
+\[
+S_{R_4} \subset S_{R_3} \subset S_{R_2} \subset S_{R_1}.
+\]
+
+Higher reliability levels permit fewer configurations of the system state space. Each successive level excludes additional configurations that may threaten mission stability, progressively reducing exposure to states where disturbances may arise. In this way, reliability increases as the set of admissible configurations becomes more restrictive.
+
+This hierarchy also reflects an architectural trade-off. Lower reliability levels preserve autonomy and loose coupling by addressing disturbances only after they occur, whereas higher levels introduce stronger coordination by constraining participation based on operational condition. While this reduces systemic vulnerability, it also increases control requirements across the SoTS.
+
+
+\section{Statechart Representation of the Model}
+The model defined above can be represented using statecharts, where belonging and operational health correspond to orthogonal regions defining the state of each constituent. The following statecharts illustrate these dimensions and show how reliability levels can be instantiated by constraining the admissible configurations of belonging and health.
+
+\subsection{State Dimensions}
+To instantiate the model, the belonging and health dimensions are defined using state sets derived from existing SoS \cite{axelsson2019refined} and dependability literature \cite{parhami1994multi}.
+
+\subsubsection{Belonging States (\( B \))}
+The belonging dimension is grounded in the SoS constituent lifecycle model proposed by \citet{axelsson2019refined}. We define
+\( B = \{\textit{Disengaged}, \textit{Prepared}, \textit{Passive}, \textit{Active}\} \).
+
+\begin{itemize}[noitemsep]
+    \item \textit{Disengaged}: the constituent does not participate in the SoTS.
+    \item \textit{Prepared}: the constituent is capable of participation but not currently engaged.
+    \item \textit{Passive}: the constituent participates with limited coordination.
+    \item \textit{Active}: the constituent is fully integrated into a constellation and contributes to coordinated operations.
+\end{itemize}
+
+\subsubsection{Health States (\( H \))}
+The health dimension is grounded in the impairment abstraction proposed by \citet{parhami1994multi}, which distinguishes progressive stages of degradation between ideal operation and failure. We define
+\( H = \{\textit{Ideal}, \textit{Defective}, \textit{Faulty}, \textit{Erroneous}, \textit{Malfunctioning}, \textit{Degraded}, \textit{Failed}\} \).
+
+\begin{itemize}[noitemsep]
+    \item \textit{Ideal}: no defects or impairments are present.
+    \item \textit{Defective}: latent defects exist but have not yet activated.
+    \item \textit{Faulty}: active faults are present internally.
+    \item \textit{Erroneous}: internal state corruption has occurred.
+    \item \textit{Malfunctioning}: incorrect behavior is externally observable.
+    \item \textit{Degraded}: service is delivered with reduced capability.
+    \item \textit{Failed}: required service can no longer be delivered.
+\end{itemize}
+
+\subsection{Reliability Levels in SoTS}
+The following reliability levels illustrate how progressively more restrictive constraints on admissible configurations reduce exposure to disturbance-producing states and by doing so increase system reliability.
+
+\begin{runningexample}{CEP-Based SoTS Coordination}
+
+The guards and transitions in the statecharts reflect the tolerance constraints of the CEP-based running example. Following \citet{parhami1994multi}, errors correspond to impairments at the information level. Because CEP consumes event streams from participating DTs, impairments at this stage cannot be tolerated. Consequently, participation may be permitted for constituents in the \textit{Ideal}, \textit{Defective}, or \textit{Faulty} states, but is restricted once the \textit{Erroneous} stage is reached, where incorrect information may enter the event stream.
+
+\input{figures/Approach/tolerance.tex}
+
+This example illustrates how reliability constraints can be instantiated for a particular application domain. Other domains may adopt different tolerance boundaries depending on their operational requirements.
+
+\end{runningexample}
+
+% ==========================================================
+\subsubsection{Level 1: Reactive Reliability}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/Approach/lv1.pdf}
+\caption{Level 1: Reactive}
+\label{fig:lv1}
+\end{figure}
+Level~1 establishes the baseline participation lifecycle.
+\citet{axelsson2019refined} notes that constituent systems must become aware of one another to participate in a SoS. This requirement is formalized through announcement actions on participation transitions such as \textit{join SoS}, \textit{leave SoS}, \textit{join constellation}, and \textit{leave constellation}, allowing constituents to observe changes in system composition.
+
+All configurations are admissible, i.e., \(S_1 = B \times H\), ensuring loose coupling where systems may join and leave freely.
+
+Disturbances are handled purely reactively: announcements expose participation changes after they occur, but no constraints exist to prevent destabilizing configurations from arising.
+
+
+% ------------------------------------------------
+
+\subsubsection{Level 2: Proactive Reliability}
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=0.5\linewidth]{figures/Approach/SoS Lifecycle Axelsson.png}
-\caption{SoS Lifecycle from \citet{axelsson2019refined}}
-\label{fig:sos-lifecycle-model}
+\includegraphics[width=\linewidth]{figures/Approach/lv2.pdf}
+\caption{Level 2: Proactive}
+\label{fig:lv2}
 \end{figure}
+\textit{Guarantees from Level~1 are preserved.}
+SoS participation occurs in open environments where constituents join and leave independently, requiring coordination to stabilize configuration changes \cite{axelsson2019refined, sage2007processes, fang2020architectural}. To represent this stabilization period, the \textit{Active} state is refined into three substates---\textit{Pending Entry}, \textit{Participating}, and \textit{Pending Exit}---with temporal transitions (e.g., \textit{after}($\Delta$)) regulating entry and exit.
 
-An \textit{Ignorant} system possesses relevant capability but does not meet participation requirements. It becomes \textit{Prepared} once technical, organizational, or contractual conditions are satisfied. A \textit{Prepared} system transitions to \textit{Passive} upon formally joining the SoS, and becomes \textit{Active} when it contributes to a specific SoS capability through coordinated interaction with other constituents.
+To preserve reliability, constituents in the \textit{Failed} state are prevented from joining the SoTS and failure during participation triggers enforced exit. According to \citet{parhami1994multi}, a failed constituent can no longer deliver the required service. Since participation states such as \textit{Active} or \textit{Passive} assume capability contribution in the lifecycle described by \citet{axelsson2019refined}, such configurations are disallowed.
 
-While the lifecycle model of \citet{axelsson2019refined} captures constituent belonging and capability contribution, participation is defined primarily by organizational and contractual readiness. Once requirements are satisfied, participation remains autonomous and independent of constituent condition. Reliability is considered external to lifecycle management. In SoTS environments with tightly coupled digital services, however, unrestricted participation can destabilize capability. DT services dependent on synchronized state and consistent event streams are sensitive to abrupt withdrawal or degraded contribution. Stronger regulation of participation is therefore required to preserve capability under dynamic conditions.
+This introduces an invariant over the composite state space \(S = B \times H\): configurations where \(b \in \{\textit{Active}, \textit{Passive}\}\) and \(h = \textit{Failed}\) are excluded. Consequently, \(S_2 \subset S_1\).
 
-\section{Proposal: Reliability Assessment Levels in SoTS}
-Although reliability is widely recognized as essential in SoTS environments (\secref{subsec:literature-review-results-reliability}), constituent lifecycle has been formally modeled \cite{axelsson2019refined}, and SoS reliability has been extensively studied \cite{ferreira2024framework, abdelmoumen2026comprehensive, uday2015designing, ferreira2021reliability, ferreira2023towards}, no framework explicitly links reliability to lifecycle governance. As a result, reliability remains primarily a service-level concern, where recovery mechanisms are applied only after instability manifests.
+Disturbances are mitigated by preventing failed constituents from joining and enforcing withdrawal upon failure. Entry and exit delays introduce a stabilization period to prepare for composition changes, reducing the risk that unstable or incapable systems disrupt dependent constituents.
 
-This work proposes reliability assessment levels defined at the SoTS lifecycle level. The central premise is that reliability can be strengthened not only through fault detection and recovery, but through structured regulation of participation itself. By progressively constraining how constituents join, leave, and reconfigure within the SoTS, architectural intervention is shifted earlier in the disturbance evolution process. This reduces propagation, prevents unsafe integration, and limits the structural conditions under which disturbances arise.
+% ------------------------------------------------
 
-\subsection{Progressive Reliability Levels for SoTS}
-\input{tables/Approach/levels.tex}
-\citet{axelsson2019refined}'s lifecycle model characterizes constituent participation but leaves the precise semantics of transitions application-specific. The proposed work preserves \citet{axelsson2019refined}'s original lifecycle states and transition semantics while extending the model through additional refinements. Minor terminological adjustments are introduced---\textit{Ignorant} is renamed to \textit{Disengaged}, and \textit{Ignore SoS} to \textit{Disengage from SoTS}---but all original states and transitions retain their intended meaning.
-
-Inspired by staged maturity frameworks \cite{paulk1993capability}, we define four progressive reliability levels that refine and extend the lifecycle by introducing increasing architectural regulation of constituent participation behaviour. Across the presented state charts, higher reliability levels shift the point of intervention earlier in the disturbance progression \cite{ferreira2023towards}. Rather than relying solely on reactive service-level compensation after structural change, the refined lifecycle progressively enables preventive and adaptive structural regulation of participation itself.
-
-\subsubsection{Level 1: Reactive}
-\citet{axelsson2019refined} notes that when joining, other constituent systems must become aware of the new participant to address it and establish necessary security precautions. Level 1 formalizes this requirement by encoding explicit announcement actions into the state chart. Transitions into and out now require announcement before completion, introducing visibility without restricting participation.
-
-With respect to disturbances, this level primarily mitigates risks arising from interdependencies. By making participation changes observable, cascading effects caused by unexpected structural modifications can be detected earlier. However, intervention still occurs at or immediately after disturbance impact, and service-level compensation remains the primary recovery mechanism.
-
+\subsubsection{Level 3: Controlled Reliability}
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=0.65\linewidth]{figures/Approach/lv1.pdf}
-\caption{Level 1}
-\label{fig:sos-lifecycle-model-lvl-1}
+\includegraphics[width=\linewidth]{figures/Approach/lv3.pdf}
+\caption{Level 3: Controlled}
+\label{fig:lv3}
 \end{figure}
+\textit{Guarantees from Level~2 are preserved.}
+SoS coordination often requires negotiation between participating constituents \cite{axelsson2019refined, fisher2006emergent, damm2015conceptual}. To represent this phase, the \textit{Passive} state is refined into two substates: \textit{Available} and \textit{Negotiating}. Constituents may initiate \textit{join requests} when in ideal health conditions, while constellations may issue \textit{join invitations} under less-than-ideal conditions when facing capability shortages. Exit behaviour is similarly constrained through the introduction of \textit{exitDenied}, preventing withdrawal when ongoing activities require continued participation.
+
+These mechanisms introduce a new invariant over the composite state space \(S = B \times H\): constituents may not transition directly into the \textit{Active} state without passing through negotiation states. Such configurations are excluded. Consequently, \(S_3 \subset S_2\).
+
+Disturbances are mitigated by regulating both admission and exit conditions. Negotiated admission prevents unstable collaborations from forming, while \textit{exitDenied} prevents constituents from withdrawing during safety-critical operations or when their capabilities are required to maintain system stability.
 
 
 
-\subsubsection{Level 2: Proactive}
 
-Level 2 introduces a \textit{Pending} and \textit{Participating} sub-states within the \textit{Active} state to enforce departure notice. While \citet{axelsson2019refined} discusses obligations and cost-benefit considerations, the original lifecycle allows for immediate withdrawal. If dependencies or commitments exist, however, abrupt departure may destabilize ongoing service delivery. The refined state chart inserts a temporal buffer between departure announcement and final exit. During this notice period, the constituent remains operational while other systems adapt their behavior.
-
-This refinement directly addresses disturbances caused by constituent evolution and temporary inability to meet demand. Participation changes are no longer abrupt. Instead, adaptation can begin before capability loss occurs. Intervention shifts to a point before the disturbance impact, reducing cascading effects.
+% ------------------------------------------------
+\subsubsection{Level 4: Adaptive Reliability}
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=0.65\linewidth]{figures/Approach/lv2.pdf}
-\caption{Level 2}
-\label{fig:sos-lifecycle-model-lvl-2}
+\includegraphics[width=\linewidth]{figures/Approach/lv4.pdf}
+\caption{Level 4: Adaptive}
+\label{fig:lv4}
 \end{figure}
 
+\textit{Guarantees from Level~3 are preserved.}
+SoS research recognizes that constituent roles may change as system conditions evolve \cite{axelsson2019refined}. To capture this adaptation, the \textit{Participating} state is refined into two substates: \textit{Full Role} and \textit{Restricted Role}. Transitions based on operational health allow impaired constituents to reduce their influence. Degraded conditions additionally trigger \textit{leave request} transitions, enabling controlled withdrawal before complete failure occurs.
+
+These mechanisms introduce a new invariant over the composite state space \(S = B \times H\): participation roles must correspond to operational health. Full participation is permitted only for sufficiently healthy constituents, while impaired constituents must transition to restricted roles or initiate controlled withdrawal. Configurations where degraded constituents remain in full participation roles are therefore excluded. Consequently, \(S_4 \subset S_3\).
+
+Disturbances are mitigated through adaptive containment. Impaired constituents are either constrained to restricted roles or withdrawn in a controlled manner, limiting the propagation of disturbances.
 
 
-
-\subsubsection{Level 3: Controlled}
-Level 3 formalizes negotiation and obligation enforcement within the lifecycle. \citet{axelsson2019refined} explicitly references contractual and monetary arrangements during joining and leaving, including compensation models and credential revocation. These imply that participation may be conditional and governed by enforceable commitments.
-
-The refined state chart introduces \textit{Available} and \textit{Negotiating} sub-states prior to admission, enabling constituents to signal readiness before entering formal negotiation. Membership approval becomes conditional, and exit transitions are guarded such that departure is denied while obligations remain active. Membership may also be revoked under defined conditions.
-
-This level mitigates disturbances associated with unstable participation and uncontrolled constituent evolution. Unsafe or non-compliant systems may be denied entry, and obligated participants cannot withdraw in ways that jeopardize capability delivery. Intervention now occurs before structural integration or withdrawal, preventing disturbance formation rather than compensating for its consequences.
-
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv3.pdf}
-\caption{Level 3}
-\label{fig:sos-lifecycle-model-lvl-3}
-\end{figure}
-
-
-
-
-\subsubsection{Level 4: Adaptive}
-
-\citet{axelsson2019refined} describes how constituents join constellations to deliver capabilities but does not explicitly model how the SoS adapts when a constituent leaves and capability delivery is affected. SoS research emphasizes dynamic reconfiguration to compensate for structural loss, including architectural reallocation, role reassignment, and runtime composition under disruption (\cite{fang2020improving, fang2024integrated, manzano2020dynamic, pradhan2016achieving, pape2013fuzzy, petitdemange2016assisting, mohsin2019modeling, derhamy2019system, blair2015holons}).
-
-Level 4 integrates this principle directly into the lifecycle by refining the \textit{Participating} state into \textit{Performing Role} and \textit{Adjusting Role} sub-states. The SoTS may enforce role reassignment to preserve capability, while constituents may formally request role changes or withdraw if reassignment is unacceptable.
-
-The state chart now controls both participation and functional allocation. This level directly addresses disturbances arising from interdependencies and undesired emergent behavior by enabling structural reconfiguration before capability breakdown occurs.  The SoTS adapts its composition and role distribution to preserve mission delivery and prevents the pre conditions for the disturbance from arising.
-
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv4.pdf}
-\caption{Level 4}
-\label{fig:sos-lifecycle-model-lvl-4}
-\end{figure}
-
-
-
-
-
-\subsection{Compatibility with SoTS Types}
+\subsection{Compatibility of Reliability Levels with SoTS Types}
 \input{tables/Approach/compatibility.tex}
-The feasibility of implementing the levels of reliability depends on the coordination authority and managerial independence of the SoTS (\secref{ch:literature-review}). Directed SoTS, and specialized DT-based systems, support higher reliability levels due to centralized or structurally embedded control. Acknowledged SoTS can implement controlled participation through negotiation, though full adaptive reconfiguration may be limited by constituent autonomy. Collaborative and virtual SoTS prioritize independence and emergent coordination, constraining the applicability of strong lifecycle regulation. High levels of reliability are not universally applicable. Greater constituent autonomy increases exposure to disturbances and shifts responsibility toward service-level fault tolerance. Stronger coordinating authority enables earlier architectural intervention and reduces reliance on reactive recovery mechanisms.
+The reliability levels introduced in this chapter impose increasing architectural constraints on participation and behaviour within the SoTS. However, not all SoTS organizational forms can support such constraints. As discussed in \chref{ch:literature-review}, SoTS types differ in the degree of coordination authority and constituent autonomy they permit. Consequently, higher reliability levels are most naturally supported in directed SoTS, where a coordination layer can observe constituent behaviour and regulate participation decisions. In contrast, virtual SoTS retain greater constituent autonomy, limiting the ability to impose strong architectural constraints.
 
 
+\section{SoTS-Level Reliability for Reducing Service-Level Fault Tolerance}
 
-\subsection{Orthogonal State Machine: Lifecycle and Operational Health Integration}
-\citet{parhami2002defect} proposes operational states that reflect the capability of a system over time. As discussed previously, participation in a SoTS is tied to capability; therefore, the operational condition of a constituent also affects its ability to participate.
+The reliability levels introduced above reduce the set of admissible configurations in which disturbances may arise. However, disturbances cannot be eliminated entirely. Systems may still experience impairments, communication loss, or unexpected withdrawal of constituents during operation. In such cases, additional mechanisms are required to detect, contain, and recover from faults. 
+% Lower reliability levels rely primarily on reactive fault-tolerance mechanisms, whereas higher levels increasingly prevent disturbances through architectural constraints.
 
-We extend the previously introduced lifecycle state machines by incorporating an orthogonal parallel region representing constituent health. In this formulation, lifecycle participation and operational reliability are modeled separately but interact through defined transition constraints. Changes in constituent health may therefore enforce or restrict participation decisions within the SoTS.
+Fault-tolerance patterns described by \citet{hanmer2013patterns} provide such mechanisms. These patterns address how systems detect, contain, and recover from faults before they manifest as service failures. They include mechanisms such as monitoring, redundancy, recovery, and compensation that allow systems to continue delivering service despite component impairments.
 
-\textbf{TODO ONCE RELIABILITY STATES ARE FINALIZED AND PREVIOUS STATE MACHINES ARE GIVEN FEEDBACK BY PROF}
+In a SoTS environment with architectural oversight, these fault-tolerance mechanisms can be coordinated by the system-level controller that governs participation. Monitoring of constituent health enables early detection of faults, while architectural controls such as admission regulation, role adaptation, and controlled withdrawal provide containment barriers that prevent errors from propagating across the SoTS. Recovery strategies may then be coordinated at the system level. For example, compensation mechanisms can be orchestrated by the controller by redistributing responsibilities among healthy constituents when a participant becomes impaired, estimating missing observations when a constituent disappears, or temporarily restricting decisions to the subset of reliable participants.
 
+Reliability therefore emerges from a layered combination of architectural constraints and coordinated fault tolerance. The reliability model restricts the set of admissible system configurations, while system-level fault-tolerance mechanisms manage disturbances that still occur. As a result, part of the reliability burden traditionally placed on individual constituents can be shifted to the coordination layer, enabling more consistent disturbance management across the SoTS.
 
-INITAL IDEAS
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv1_rel.pdf}
-\caption{Level 4}
-\label{fig:sos-lifecycle-model-lvl-1-o}
-\end{figure}
-
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv2_rel.pdf}
-\caption{Level 4}
-\label{fig:sos-lifecycle-model-lvl-2-o}
-\end{figure}
-
-
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv3_rel.pdf}
-\caption{Level 4}
-\label{fig:sos-lifecycle-model-lvl-3-o}
-\end{figure}
-
-
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.85\linewidth]{figures/Approach/lv4_rel.pdf}
-\caption{Level 4}
-\label{fig:sos-lifecycle-model-lvl-4-o}
-\end{figure}
-
-
-
+The following chapter evaluates .... (TBD)

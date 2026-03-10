@@ -1,18 +1,22 @@
-\begin{center}
-\footnotesize
-\begin{tabular}{p{2.5cm}|p{6cm}|p{6cm}}
-& \textbf{Healthy} & \textbf{Unhealthy} \\
+\begin{table}[htp]
+\centering
+\small
+% \renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{2cm}|p{6cm}|p{6cm}}
+ & \textbf{Healthy} & \textbf{Unhealthy} \\
 \hline
 \textbf{Belongs}
-& \textbf{Stable participation.} 
-\newline The system participates and delivers its capabilities as intended.
-& \textbf{Impaired participation.} 
-\newline The system participates but delivers incorrect or reduced capabilities, introducing disturbances for dependent systems. \\
+& \textbf{Capable and participating.} 
+\newline The system participates in the SoTS and delivers its capabilities as intended.
+& \textbf{Degraded but participating.} 
+\newline The system participates but delivers reduced, delayed, or incorrect capabilities, potentially introducing disturbances for dependent systems. \\
 
 \textbf{Does not belong}
-& \textbf{Structural withdrawal.} 
-\newline The system is capable but absent from the SoTS; its absence may disrupt systems that depend on it.
-& \textbf{External disturbance.} 
-\newline The system is absent and impaired; instability remains outside the SoTS but may affect it if the system later participates. \\
+& \textbf{Capable but absent.} 
+\newline The system is capable of contributing but is not currently part of the SoTS. Its absence may disrupt systems that depend on its capabilities.
+& \textbf{Degraded and absent.} 
+\newline The system is not participating and its capabilities are currently impaired or unavailable. \\
 \end{tabular}
-\end{center}
+\caption{Constituent states defined by belonging and health in a SoTS.}
+\label{tab:belonging-health}
+\end{table}
