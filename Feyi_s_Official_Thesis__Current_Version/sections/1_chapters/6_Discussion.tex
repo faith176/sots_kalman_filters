@@ -1,0 +1,35 @@
+\chapter{Discussion}\label{ch:discussion}
+
+\section{Utility of the Proposed SoTS Model}
+
+\subsection{Ensuring Reliability in SoTS through Control at the SoTS Level}
+Managing participation in SoTS according to constituent health opens new opportunities for ensuring reliable and consistent system behaviour. By coordinating disturbances related to participation and degradation at the SoTS level, reliability concerns can be separated from individual service implementations, allowing SoTS engineers to manage system-level coordination while service engineers focus on their own services.
+
+\subsection{Implications of the CEP-Based Demonstration}
+The CEP-based demonstration illustrates how reliability responsibilities can shift from individual services to a statechart-controlled middleware that adapts constituent contributions to the CEP pipeline based on lifecycle state.
+
+
+\section{Extending and Verifying State-Based Coordination}
+\subsection{Extending State-Based Control}
+While this work models disturbances using belonging and health, other dimensions such as data quality, communication availability, capability readiness, and trust between constituents could also be coordinated through architectural state models.
+
+\subsection{Formal Verification of Coordination Policies}
+Executable coordination models could be combined with formal verification techniques to analyse whether lifecycle constraints guarantee broader dependability properties such as safety, availability, reliability, and maintainability under disturbance conditions.
+
+
+\section{Engineering Implications for SoTS Development}
+
+Statecharts provide an executable representation of coordination policies that can be shared across teams and organizational boundaries, making SoTS coordination logic accessible to organizations with varying levels of technical maturity.
+
+\subsection{Human Oversight in Human-Centred SoTS}
+Making coordination policies explicit and inspectable improves transparency of SoTS behaviour and supports human-centred digital twin approaches that emphasize human oversight of system decisions.
+
+
+\section{Future Directions for Reliable SoTS}
+
+\subsection{Adaptive Selection of Fault Tolerance and Compensation Strategies}
+Future systems could dynamically select compensation or recovery strategies based on the evolving health and participation states of constituents.
+
+\subsection{Learning Coordination Policies}
+Future work could explore how lifecycle coordination policies might be partially learned or refined using operational data or machine learning to allow SoTS coordination strategies to evolve over time.
+

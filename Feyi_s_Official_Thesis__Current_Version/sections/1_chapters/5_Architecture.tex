@@ -1,0 +1,194 @@
+\chapter{Demonstration of Utility}\label{ch:demonstration}
+
+This chapter demonstrates the practical utility of the reliability model introduced in \chref{ch:reliable-sots} by implementing its concepts within a concrete system architecture. The Level~4 adaptive reliability mechanisms are implemented in a proof-of-concept middleware supporting a CEP-based SoTS. In this running example, constituents produce observations that are converted into events and analysed by a CEP service. Executable lifecycle statecharts regulate how observations contribute to system-level reasoning and when compensation mechanisms reconstruct missing observations during constituent degradation.
+
+The chapter first presents the system architecture used to realize the reliability model (\secref{sec:architecture}). It then describes the implementation of the CEP-based middleware (\secref{sec:implementation}) and explains how executable lifecycle statecharts enforce participation constraints, including compensation and estimation under restricted roles (\secref{sec:statechart-behaviour}). Finally, the chapter introduces the experimental setup used to evaluate the impact of lifecycle control and compensation on system reliability (\secref{sec:evaluation}).
+
+\paragraph{Limitations of the Demonstration}
+The architecture is implemented as a proof-of-concept in a controlled setting and does not reflect the full complexity of large-scale, real-world systems-of-systems deployments. The demonstration considers disturbances from missing observations rather than faulty data, with compensation focused on reconstructing absent events.
+
+
+\section{System Architecture}\label{sec:architecture}
+This section presents the architecture used to realize a Level~4 reliable SoTS within the CEP-based running example introduced in \chref{ch:introduction}. In this setting, constituent observations are transformed into events and processed to detect system-level behaviour, while lifecycle statecharts regulate how constituents participate and contribute.
+
+\subsection{Architectural Realization of Level~4 SoTS Adaptive Reliability}
+The Level~4 adaptive reliability model (see \secref{sec:lv4}) introduces requirements for regulating participation and limiting the influence of degraded constituents. These motivate architectural mechanisms for state-aware event production, compensation, and controlled contributions. At the core, executable lifecycle statecharts govern when constituents contribute and how their behaviour is constrained. To realize this within the CEP infrastructure, a set of architectural components is introduced, derived directly from Level~4 to support these behaviours.
+
+The resulting architecture is structured around the following key mechanisms:
+
+\begin{itemize}
+    \item \textbf{State-aware contribution control:} The \textit{Event Source} component interacts with lifecycle statecharts to ensure that event emission is enabled, suppressed, or modified based on the constituent's current belonging state and participation role.
+    
+    \item \textbf{Compensation-enabled participation:} The \textit{Event Compensator} component, including the \textit{Reconstructor} and \textit{Predictor}, supports continued participation during periods of instability. Constituents in \textit{Restricted Role} contribute through reconstructed or estimated observations when direct outputs are unreliable.
+
+    \item \textbf{Uncertainty-bounded contribution:} Compensation outputs include confidence measures that are evaluated against thresholds. When uncertainty exceeds acceptable limits, the \textit{Lifecycle Manager} component enforces transitions that restrict or terminate participation.
+
+    \item \textbf{Separation of observation and system-level reasoning:} The \textit{Event Stream} and \textit{Event Processor} components isolate event production from higher-level behaviour detection, ensuring that only validated or compensated observations influence system-level reasoning.
+\end{itemize}
+
+\subsection{Component Model of Architecture}
+
+\figref{fig:component-model} illustrates the architectural components derived from the Level~4 adaptive reliability model. At the centre of the architecture, the \textbf{Lifecycle Manager}, implemented using executable statecharts, governs constituent participation by enforcing role transitions and contribution constraints. \textbf{Event Sources} generate events from observations in accordance with lifecycle state. These events are distributed via the \textbf{Event Stream} and analysed by the \textbf{Event Processor} to detect higher-level system behaviour. When disturbances affect event availability or reliability, the \textbf{Event Compensator} reconstructs observations to enable continued participation under constrained conditions.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.65\textwidth]{figures/Architecture/High Level Component Diagram.drawio.pdf}
+\caption{Component model of the demonstrated architecture}
+\label{fig:component-model}
+\end{figure}
+
+The primary architectural components are:
+
+\begin{itemize}
+
+\item \textbf{Lifecycle Manager} maintains the lifecycle state of each constituent using executable statecharts and enforces adaptive participation constraints based on health conditions and uncertainty thresholds.
+
+\item \textbf{Event Source} converts observations into events and publishes them to the event stream in accordance with lifecycle state and participation role, enabling state-aware control over contribution.
+
+\item \textbf{Event Stream} distributes events between producers and consumers using a publish-subscribe model, decoupling event production from system-level processing.
+
+\item \textbf{Event Processor} consumes events and detects higher-level system behaviours through event pattern detection, operating only on validated or compensated inputs.
+
+\item \textbf{Event Compensator} monitors the event stream and supports continued participation during periods of instability by reconstructing missing or unreliable observations. It evaluates the confidence of reconstructed outputs and signals when uncertainty exceeds acceptable bounds, enabling the Lifecycle Manager to restrict or terminate participation.
+
+\begin{itemize}
+\item \textbf{Event Reconstructor}, which generates and publishes reconstructed events to the stream.
+\item \textbf{Predictor}, which estimates expected measurements used during reconstruction.
+\end{itemize}
+
+\end{itemize}
+
+\section{System Implementation}\label{sec:implementation}
+The architecture is implemented as an event-driven middleware with Python-based coordination services and a Java-based CEP engine. The Python layer manages lifecycle state and event generation via a \textit{lifecycle manager} implemented using Itemis CREATE statecharts. Events are transmitted through a ZeroMQ-based \textit{event stream} and processed by an \textit{event processor} built with Esper CEP Engine. An \textit{event compensator} monitors the stream and reconstructs events when needed using a Kalman filter-based \textit{predictor}.
+
+
+\subsection{UML Model of Implementation}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/Architecture/UML Model.drawio.pdf}
+\caption{UML model of architecture}
+\label{fig:uml-model}
+\end{figure}
+\figref{fig:uml-model} presents the runtime structure of the system using a UML component model. \textit{Event Generator} and \textit{Event Consumer} define abstract roles for components that produce and consume events, respectively. The \textit{event source} realizes the \textit{Event Generator} interface, while both the \textit{event processor} and \textit{event compensator} act as \textit{Event Consumers}. The \textit{event stream} provides a transport mechanism between generators and consumers, with publish-subscribe interactions indicated through associations. The \textit{event compensator} maintains an internal \textit{predictor}, implemented as a Kalman filter, to support reconstruction. The \textit{lifecycle manager} is queried by other components to obtain the current participation state.
+
+\subsection{Enforcing the SoTS Reliability Model with Executable Statecharts}\label{sec:statechart-behaviour}
+The reliability model introduced in \secref{sec:reliability-levels} defines lifecycle constraints governing how constituents participate and contribute in a SoTS. In this implementation, these constraints are enforced through executable lifecycle statecharts associated with each constituent, which maintain belonging and health states. Event publishing and compensation behaviours are determined by the constituent's current state, allowing the lifecycle model to directly govern runtime behaviour.
+
+\subsubsection{Executable Statecharts with Itemis CREATE}
+Lifecycle statecharts are implemented using Itemis CREATE\footnote{{itemis CREATE is a statechart modelling and code generation environment developed by itemis AG. See: \url{https://www.itemis.com/en/products/itemis-create}.}}, which provides a modelling environment for defining state machines and generating executable code. The Python code generator compiles lifecycle models into executable controllers integrated into the runtime system. Each constituent is associated with a statechart instance that exposes lifecycle states, transitions, and events through a runtime interface. System components can raise lifecycle events and query state during execution, enabling the reliability constraints defined by the model to directly influence system behaviour.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/Architecture/itemis.pdf}
+\caption{Executable statechart implementing the Level 4: Adaptive SoTS reliability model in itemis CREATE}
+\label{fig:itemis-diagram}
+\end{figure}
+
+\subsubsection{Statechart-Controlled Runtime Behaviour}
+The system enforces the Level~4 adaptive reliability model (\secref{sec:lv4}) within the CEP-based SoTS. Lifecycle state governs participation, and thus contributions, as health evolves. Both event sources and the compensation service consult the controller to determine when emission, updates, and reconstruction are permitted. Table~\ref{tab:state-behaviour} summarizes the behaviours associated with each lifecycle state.
+
+\input{tables/Architecture/state_restrictions.tex}
+
+\paragraph{Event Contribution and Consumption}
+Belonging in the SoTS is tied to providing capability, represented in the CEP-based running example by supplying events for processing. In \textit{Active} states, constituents emit events to the stream for system-level processing. In \textit{Passive} states, events are used only for internal processing. In \textit{Prepared} and \textit{Disengaged} states, constituents do not contribute to the event stream.
+
+\paragraph{Event Reconstruction}
+When health degrades and a constituent transitions to the \textit{Restricted Role}, observations may become incomplete or unavailable. In this case, the compensation service reconstructs missing events to maintain a consistent event stream, allowing continued participation while limiting the effects of degraded sensing or communication.
+
+\paragraph{Estimator Updates}
+The state estimator updates whenever observations are available. Updates therefore occur across \textit{Passive} and \textit{Active} states, maintaining an internal estimate of system behaviour even when participation not actively participating.
+
+
+\subsection{Compensation under Restricted Roles}
+The \textit{Restricted Role} introduced in Level~4 allows degraded constituents to continue participating while limiting their influence on system-level reasoning. Within this role, compensation is tightly integrated with lifecycle statecharts: reconstructed observations are accompanied by a confidence measure that directly controls behavioural transitions. As long as confidence remains within acceptable bounds, the constituent may continue operating in a restricted capacity; otherwise, the statecharts enforce withdrawal to prevent unreliable contributions from affecting the system.
+
+\paragraph{State Estimation for Compensation}
+In the CEP-based SoTS, disturbances caused by unavailable observations are addressed through an estimation-based compensation service \cite{hanmer2013patterns}. This service maintains an internal estimate of system behaviour and reconstructs missing events to support continued participation during temporary degradation. State estimation is implemented using Kalman filters \cite{kalman1960filtering} (see \secref{sec:kalman-background}), with estimators implemented in Python using the FilterPy library\footnote{FilterPy is a Python library for Kalman filtering and Bayesian estimation. \url{https://filterpy.readthedocs.io}}. When observations are available, the estimator updates its internal state; when they are not, it produces predicted values that act as substitutes for missing data.
+\paragraph{Limits of Compensation and Confidence Quantification}
+Compensation is inherently temporary, as estimation uncertainty increases over time in the absence of observations. As uncertainty grows, reconstructed events become less reliable. Kalman filters explicitly represent this uncertainty, which is quantified using consistency diagnostics such as the normalized innovation squared (NIS) \cite{bar2001estimation,simon2006optimal}. From this, a confidence measure is derived for reconstructed events. This confidence provides a principled basis for determining when compensation remains valid and when it must be discontinued.
+
+
+
+
+\subsection{Supporting Event Processing Infrastructure}
+To allow the lifecycle to manage constituent contributions, observations are distributed through an event-processing pipeline.
+
+\subsubsection{Event Generation and Transport}
+Observations produced by constituents are translated into structured events, serialized as JSON, and published to an event stream. Event transport is implemented using ZeroMQ (ZMQ)\footnote{ZeroMQ is a high-performance messaging library supporting publish-subscribe communication. \url{https://zeromq.org}}, which provides a lightweight publish--subscribe layer connecting the Python middleware with the Java-based CEP engine. A ZMQ broker routes events between publishers and subscribers, while topic-based routing distinguishes between observed and reconstructed events.
+
+\input{tables/Implementation/topic_filtering.tex}
+
+\subsubsection{Complex Event Processing}
+System-level behaviour is derived from the event stream using the Esper CEP engine\footnote{Esper is a complex event processing engine for analysing event streams. \url{https://www.espertech.com/esper}}. The engine evaluates event patterns written in the Event Processing Language (EPL), where atomic patterns detect conditions over individual events and complex patterns combine them to identify higher-level behaviours across constituents or time intervals.
+
+
+
+\section{Evaluation}\label{sec:evaluation}
+This evaluation is structured as a demonstration of utility. It shows that the Level~4 lifecycle model produces controlled and adaptive system behaviour under disturbance, without requiring manual reasoning about constituent states. The evaluation considers disturbances caused by missing observations, as outlined in \secref{sec:limitations}. A controlled scenario is used in which observation availability is progressively reduced, allowing the behaviour of the system to be observed as constituents transition between lifecycle states.
+
+The evaluation is organized around a few key claims, each demonstrating a different aspect of the proposed approach.
+
+\subsection{Statechart-Driven Behaviour Enforcement}
+Demonstrates that behaviour is enforced directly by lifecycle statecharts without manual coordination logic.
+
+The evaluation will show:
+\begin{itemize}
+    \item Mapping between lifecycle states and system behaviour
+    \item Automatic triggering of behaviour changes through transitions
+\end{itemize}
+
+\subsubsection{State-Behaviour Trace Validation}
+Verifies that observed behaviour aligns with lifecycle definitions using execution traces of state transitions and corresponding system actions.
+
+
+
+\subsection{Graceful Degradation through Compensation}
+This section demonstrates that the system degrades gracefully under missing observations, enabled by compensation mechanisms that sustain participation during disturbance.
+
+The evaluation will show:
+\begin{itemize}
+    \item Sustained availability of events under increasing data loss
+    \item Proportion of observed versus reconstructed events over time
+    \item Reconstruction accuracy during periods of missing data
+    \item Mean Time To Failure (MTTF)
+\end{itemize}
+
+\subsubsection{Event Availability and Lifecycle State Duration Analysis}
+Measures event availability and the duration of constituents in each lifecycle state to assess whether degradation occurs progressively. 
+
+\subsubsection{Reconstruction Error Analysis (MAE/RMSE)}
+Quantifies reconstruction accuracy using MAE and RMSE by comparing predicted and ground truth values, evaluating how long compensation remains effective under disturbance.
+
+
+
+\subsection{Uncertainty-Driven Lifecycle Control}
+Demonstrates that lifecycle behaviour is updated based on quantified uncertainty, enabling the compensation mechanism to assess its reliability and appropriately influence constituent participation.
+
+The evaluation will show:
+\begin{itemize}
+    \item Evolution of uncertainty over time
+    \item Threshold at which compensation becomes unreliable
+    \item Resulting lifecycle transitions
+\end{itemize}
+
+\subsubsection{Threshold Sensitivity Analysis}
+Evaluates how different uncertainty thresholds affect lifecycle transitions, assessing whether thresholds trigger withdrawal at appropriate levels of degradation.
+
+\subsubsection{Uncertainty-Error Correlation Analysis}
+Evaluates whether estimator uncertainty correlates with reconstruction error, validating it as a control signal.
+
+
+
+\subsection{Reduction in Implementation Complexity}
+Demonstrates that executable statecharts reduce the complexity of implementing adaptive reliability behaviour while preserving correctness of lifecycle enforcement.
+
+The evaluation will show:
+\begin{itemize}
+    \item Size of generated code
+    \item Number of states and transitions handled automatically
+    \item Estimated complexity of a manual implementation
+\end{itemize}
+
+\subsubsection{Cyclomatic Complexity Analysis}
+Estimates reduction in control logic complexity by comparing the statechart-based implementation to a hypothetical manual approach.
+

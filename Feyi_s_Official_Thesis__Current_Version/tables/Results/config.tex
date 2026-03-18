@@ -1,0 +1,27 @@
+\begin{table}[htp]
+\centering
+\caption{Experimental configuration parameters}
+\label{tab:experiment-config}
+\small
+\begin{tabular}{p{4cm}p{2cm}p{2.5cm}p{6cm}}
+\toprule
+\textbf{Parameter} & \textbf{Symbol} & \textbf{Actual Value} & \textbf{Description} \\
+\midrule
+
+Number of Constituents & $N$ & 10 & Total simulated constituents generating observations. \\
+
+Simulation Duration & $T$ & 500 steps & Total number of simulation time steps per experiment. \\
+
+Observation Interval & $\Delta t$ & 0.5 s & Time between expected observations from each constituent. \\
+
+Health Transition Probability & $f_h$ & 5\% & Probability of health state transition (degradation or recovery) per time step. \\
+
+Observation Drop Probability & $f_d(h)$ & 0\% - 35\% & Missing observation probability increases by 5\% for each degradation level of the constituent health state. \\
+
+Belonging Transition Probability & $f_b$ & 5\% & Probability that a constituent attempts to leave or rejoin the SoTS. \\
+
+Random Seed & $s$ & 42 & Deterministic seed used to generate reproducible disturbance patterns. \\
+
+\bottomrule
+\end{tabular}
+\end{table}

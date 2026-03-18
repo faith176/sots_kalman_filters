@@ -10,7 +10,7 @@
       "start_value": 20.0,
       "drift": 2.0,
       "noise": 4.0,
-      "drop_chance": 0.15
+      "drop_chance": 0.5
     },
     "predictor_template": "kf_fast"
   },
@@ -26,7 +26,7 @@
       "start_value": 25.0,
       "drift": 0.3,
       "noise": 1.5,
-      "drop_chance": 0.1
+      "drop_chance": 0.5
     },
     "predictor_template": "kf_medium"
   },
@@ -42,7 +42,7 @@
       "start_value": 50.0,
       "drift": -0.5,
       "noise": 0.1,
-      "drop_chance": 0.1
+      "drop_chance": 0.5
     },
     "predictor_template": "kf_slow"
   }

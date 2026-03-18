@@ -1,60 +1,70 @@
+import threading
 import time
 import logging
-from typing import Any
 
-from ..schema.Event import Event, make_event
-from ..runtime.EventStream import EventStream
-from ..runtime.EventGenerator import EventGenerator
-from .predictor_types.BasePredictor import BasePredictor
-
-__author__ = "Feyi Adesanya"
+from ..schema.EventConsumer import EventConsumer
+from ..schema.EventGenerator import EventGenerator
+from ..schema.Event import make_event
+from .predictor_types import *
 
 
-class Reconstructor(EventGenerator):
+class Reconstructor(EventConsumer, EventGenerator):
+
     """
-    Applies a predictor to reconstruct missing events.
+    Reconstructor service responsible for compensating missing
+    events using a predictor (e.g., Kalman filter).
+
+    Behaviour:
+
+    passive / full_role  → update predictor with observations
+    restricted_role      → reconstruct missing events
     """
+
+    # --------------------------------
+    # POLICY CONFIGURATION
+    # --------------------------------
+
+    CONSUME_POLICY = {
+        "passive": "observe",
+        "pending_exit": "observe",
+        "pending_entry": "observe",
+        "full_role": "observe",
+    }
+
+    MONITOR_POLICY = {
+        "restricted_role": "reconstruct",
+    }
+
+    # --------------------------------
+
     def __init__(
         self,
         *,
-        source_id: str,
-        predictor: BasePredictor,
-        event_stream: EventStream,
+        source_id,
+        predictor,
+        event_stream,
+        lifecycle,
+        schedule
     ):
+
         self.source_id = source_id
         self.predictor = predictor
-        self.event_stream = event_stream
+        self.stream = event_stream
+        self.lifecycle = lifecycle
+        self.schedule = schedule
 
+        self._running = False
 
-    def handle_observed(self, event: Event) -> dict:
-        """
-        Update predictor state using an observed event.
-        """
-        value = event.get("value")
-        if value is None:
-            return
+        # Subscribe to all observed partitions
+        self.stream.subscribe(self, "observed.*", self.source_id)
 
-        self.predictor.update(value)
+    # --------------------------------
+    # EVENT GENERATION
+    # --------------------------------
 
-        logging.debug(
-            f"[RECONSTRUCTOR-{self.source_id}] Predictor updated with observed value: {value}"
-        )
+    def generate_event(self, event_params):
 
-        return {
-            "confidence": self.predictor.confidence(),
-            "prediction":self.predictor.predict(),
-        }
-
-
-
-    def generate_event(self, event_params: dict[str, Any] | None = None) -> Event:
-        event_params = event_params or {}
-        if "prediction" not in event_params:
-            raise ValueError("requires 'prediction' in event_params")
-        if "expected_ts" not in event_params:
-            raise ValueError("requires 'expected_ts' in event_params")
-        
-        event = make_event(
+        return make_event(
             type="simulated",
             src=self.source_id,
             event_status="reconstructed",
@@ -62,35 +72,130 @@ class Reconstructor(EventGenerator):
             event_ts=event_params["expected_ts"],
             confidence=event_params["confidence"],
             extras={
-                "reconstruction_method": self.predictor.name,
-                "reconstruction_time": time.time(),
-            },
+                "interval": self.schedule.interval,
+                "reconstruction_method": getattr(self.predictor, "name", "predictor"),
+                "reconstruction_time": time.time()
+            }
         )
+
+    # --------------------------------
+
+    def emit_event(self, event_params):
+
+        event = self.generate_event(event_params)
+
+        # attach partition metadata for logging
+        event["partition"] = "reconstructed"
+
+
+        ctx = self.lifecycle.constituents.get(self.source_id)
+        if ctx:
+            ctx.reconstructed_events += 1
+
+        self.stream.add_event(
+            event,
+            "reconstructed",
+            self.source_id
+        )
+
         return event
 
+    # --------------------------------
+    # EVENT CONSUMPTION
+    # --------------------------------
 
-    def emit_event(self, reconstrcuted_event):
-        self.event_stream.add_event(
-            reconstrcuted_event,
-            partition="reconstructed",
-            source_id=self.source_id,
+    def consume_event(self, event):
+
+        ts = event.get("event_ts", time.time())
+
+        state = self.lifecycle.get_state(self.source_id)
+
+        if not state:
+            return
+
+        belonging_main = state["belonging_main"]
+        belonging_sub = state["belonging_sub"]
+
+        policy = (
+            self.CONSUME_POLICY.get(belonging_sub)
+            or self.CONSUME_POLICY.get(belonging_main)
         )
 
-
-    # Reconstruction (called by Coordinator on absence)
-    def reconstruct(self, expected_ts: float) -> Event:
-        """
-        Reconstruct a missing event at the given expected timestamp and publish it to the EventStream.
-        """
-        event_params = {
-            "confidence": self.predictor.confidence(),
-            "prediction":self.predictor.predict(),
-            "expected_ts": expected_ts
-        }
-        reconstrcuted_event = self.generate_event(event_params)
-        self.emit_event(reconstrcuted_event)
+        value = event["value"]
 
         logging.debug(
-            f"[RECONSTRUCTOR-{self.source_id}] Reconstructed event "
-            f"at {expected_ts:.3f}"
+            f"[RECONSTRUCTOR-{self.source_id}] "
+            f"state={belonging_main}/{belonging_sub} "
+            f"value={value}"
+        )
+
+        if policy == "observe":
+            self.predictor.update(value)
+
+        while ts >= self.schedule.next_ts:
+            self.schedule.advance()
+
+
+
+    def start(self):
+
+        if self._running:
+            return
+
+        self._running = True
+
+        threading.Thread(
+            target=self._monitor_loop,
+            daemon=True,
+            name=f"reconstructor-{self.source_id}"
+        ).start()
+
+    # --------------------------------
+
+    def _monitor_loop(self):
+
+        while self._running:
+            while self.schedule.is_missed(time.time()):
+
+                state = self.lifecycle.get_state(self.source_id)
+
+                if state:
+
+                    belonging_sub = state["belonging_sub"]
+
+                    logging.debug(
+                        f"[RECONSTRUCTOR-{self.source_id}] "
+                        f"missed event | state={belonging_sub}"
+                    )
+
+                    policy = self.MONITOR_POLICY.get(belonging_sub)
+
+                    if policy == "reconstruct":
+
+                        self.reconstruct(self.schedule.next_ts)
+
+                self.schedule.advance()
+
+            time.sleep(0.05)
+
+    # --------------------------------
+    # RECONSTRUCTION
+    # --------------------------------
+
+    def reconstruct(self, expected_ts):
+
+        prediction = self.predictor.predict()
+        confidence = self.predictor.confidence()
+
+        self.emit_event({
+            "prediction": prediction,
+            "expected_ts": expected_ts,
+            "confidence": confidence
+        })
+
+        logging.info(
+            f"[RECONSTRUCTION] {self.source_id} "
+            f"prediction={prediction:.3f} "
+            f"confidence={confidence:.3f}"
+            f"reconstructed event at {expected_ts}"
         )

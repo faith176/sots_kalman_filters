@@ -1,2 +1,0 @@
-# Logger: PatternLogger | Started: Mon Mar 09 17:48:11 EDT 2026
-fired_at,fired_offset_sec,pattern_name,pattern_type,subpatterns,subpattern_confidences,num_subpatterns,num_events,confidence,contributing_streams,nested_event_ids

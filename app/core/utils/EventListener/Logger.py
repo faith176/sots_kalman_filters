@@ -3,7 +3,7 @@ import threading, queue, csv, os, time
 import logging
 
 from ...schema.Event import Event
-from ...runtime.EventConsumer import EventConsumer
+from ...schema.EventConsumer import EventConsumer
 LOG = logging.getLogger(__name__)
 
 

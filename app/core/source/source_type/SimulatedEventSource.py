@@ -10,6 +10,7 @@ from ...runtime.EventStream import EventStream
 
 __author__ = "Feyi Adesanya"
 
+
 @register_source_type("simulated")
 class SimulatedEventSource(EventSource):
     """
@@ -35,7 +36,8 @@ class SimulatedEventSource(EventSource):
         mandatory_count: int = 3,
         start_value: Optional[float] = None,
     ):
-        super().__init__(id=id, type=type, stream=stream)
+        # lifecycle injected later by orchestrator
+        super().__init__(id=id, type=type, stream=stream, lifecycle=None)
 
         self.interval = interval
         self.min_value = min_value
@@ -59,51 +61,83 @@ class SimulatedEventSource(EventSource):
         self._running = False
         self._thread: Optional[threading.Thread] = None
 
+    # --------------------------------------------------
+    # Lifecycle
+    # --------------------------------------------------
 
     def start(self) -> None:
+
         if self._running:
             return
+
         self._running = True
-        self._thread = threading.Thread(target=self._run_loop, daemon=True)
+
+        self._thread = threading.Thread(
+            target=self._run_loop,
+            daemon=True
+        )
+
         self._thread.start()
 
     def stop(self) -> None:
+
         self._running = False
+
         if self._thread:
             self._thread.join(timeout=1.0)
             self._thread = None
-        logging.info("[EVENT SOURCE] Shutting down...")
 
+        logging.info(f"[EVENT SOURCE-{self.id}] stopped")
+
+    # --------------------------------------------------
+    # Simulation Loop
+    # --------------------------------------------------
 
     def _run_loop(self) -> None:
+
         next_ts = time.time()
 
         while self._running:
+
             now = time.time()
+
             if now < next_ts:
                 time.sleep(next_ts - now)
                 continue
 
             next_ts += self.interval
+
             self._step(now)
 
+    # --------------------------------------------------
+    # Simulation Step
+    # --------------------------------------------------
 
     def _step(self, now: float) -> Optional[Any]:
+
         drift_step = random.uniform(-self.drift, self.drift)
         noise_step = random.gauss(0, self.noise)
 
         self.current_value += drift_step + noise_step
+
         self.current_value = max(
-            self.min_value, min(self.current_value, self.max_value)
+            self.min_value,
+            min(self.current_value, self.max_value)
         )
 
         self.generated_count += 1
 
-        # simulate dropouts (absence, not malformed events)
+        # simulate missing events
         if self.generated_count > self.mandatory_count:
+
             if random.random() < self.drop_chance:
-                logging.debug(f"[EVENT SOURCE-{self.id}] SKIPPING EVENT for {now}")
+
+                logging.debug(
+                    f"[EVENT SOURCE-{self.id}] skipping event at {now}"
+                )
+
                 return None
+
 
         return self.emit_event({
             "value": self.current_value,

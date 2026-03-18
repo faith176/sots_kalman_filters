@@ -1,37 +1,26 @@
 \begin{table}[htp]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{p{2.2cm} p{4.5cm} p{2cm} p{4cm}}
+\caption{Summary of SoTS reliability levels}
+\label{tab:reliability-levels}
+\begin{tabular}{p{3.5cm} p{4.5cm} p{6.5cm}}
 \toprule
-\textbf{Level} & \textbf{Refinement} & \textbf{Intervention Point} & \textbf{Disturbance Coverage} \\
+\textbf{Name} & \textbf{Disturbance \newline Handling} & \textbf{Statechart Mechanism} \\
 \midrule
+Level 1: Reactive \newline Reliability 
+& Response to disturbances as they occur 
+& Announcements on entry and exit transitions \\
 
-L1 -- Reactive 
-& Joining, departure, and role changes must be announced. Participation remains uncontrolled but becomes structurally visible. 
-& During/after impact 
-& Improves detection of interdependency cascades \newline 
-limited influence on evolution or temporary inability \\
+Level 2: Proactive \newline Reliability 
+& Preparation before disturbances occur 
+& Temporary stabilization states with timed transitions for entry and exit \\
 
-L2 -- Proactive 
-& Joining and departure are delayed through enforced notice periods, buffering structural change and reducing instability. 
-& Before impact 
-& Mitigates disruption from constituent evolution and temporary inability \newline
-reduces cascade severity \\
+Level 3: Controlled \newline Reliability 
+& Temporary prevention of disturbances 
+& Negotiation states for admission and transitions preventing uncontrolled withdrawal \\
 
-L3 -- Controlled 
-& Participation becomes conditional, with enforceable obligations, admission approval, and regulated withdrawal. 
-& Before formation 
-& Prevents unstable integration and abrupt withdrawal \newline
-strongly addresses evolution-driven disturbances \\
-
-L4 -- Adaptive 
-& Responsibilities may be reassigned to preserve capability, enabling structural reconfiguration under change. 
-& Before structural conditions 
-& Actively compensates for structural loss \newline
-mitigates interdependencies, evolution, and partial capability degradation \\
-
+Level 4: Adaptive \newline Reliability 
+& Adaptive mitigation of disturbances 
+& Participation state triggering compensation actions under worsened health with transitions enforcing exit before failure \\
 \bottomrule
 \end{tabular}
-\caption{Reliability Levels}
 \end{table}

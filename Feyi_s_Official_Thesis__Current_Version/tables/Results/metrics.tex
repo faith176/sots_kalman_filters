@@ -1,62 +1,57 @@
-\begin{table*}[h!]
+\begin{table*}[htp]
 \centering
 \caption{Evaluation metrics}
 \label{tab:metrics}
 \footnotesize
 \setlength{\tabcolsep}{0.6em}
-\begin{tabular}{@{}p{3cm}p{4.5cm}p{8.5cm}@{}}
+\begin{tabular}{@{}p{3cm}p{4cm}p{7.5cm}@{}}
 \toprule
 \multicolumn{1}{c}{\textbf{Category}} &
 \multicolumn{1}{c}{\textbf{Metric}} &
 \multicolumn{1}{c}{\textbf{Description}} \\  
 \midrule
 
-
-\textbf{Prediction Accuracy} &
-Mean Absolute Error (MAE), Root Mean Squared Error (RMSE) &
-Measure the reconstruction error between the observed and predicted sensor values:
-\[
-\text{MAE} = \frac{1}{N} \sum_{i=1}^{N} | \hat{x}_i - x_i |, 
-\qquad
-\text{RMSE} = \sqrt{ \frac{1}{N} \sum_{i=1}^{N} (\hat{x}_i - x_i)^2 }.
-\]
-Lower values indicate more accurate compensation during data loss and directly quantify reconstruction performance. \\
-
-\addlinespace[0.4em]
-\textbf{Event Detection Performance} &
+\textbf{CEP Detection Accuracy} &
 Precision, Recall, F1-score &
-Quantify how accurately the CEP engine detects true complex events from both observed and reconstructed inputs: 
-$\text{Precision} = \tfrac{TP}{TP + FP}$, 
-$\text{Recall} = \tfrac{TP}{TP + FN}$, 
-$\text{F1} = 2 \cdot \tfrac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$.
+Accuracy of CEP event detection compared to the oracle stream:
+\[
+\begin{aligned}
+\text{Precision} &= \tfrac{TP}{TP + FP}, \qquad
+\text{Recall} = \tfrac{TP}{TP + FN} \\
+\text{F1} &= 2 \cdot \tfrac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{aligned}
+\]
+\\
 
+\addlinespace[0.4em]
+\textbf{Constituent Reliability} &
+Observation Reliability &
+Probability that a constituent produces observations when expected:
+\[
+R_c = \frac{E_{produced}}{E_{expected}}.
+\]
+\\
 
-F1 captures the balance between false alarms and missed detections, providing a compact measure of event reasoning correctness. \\
-
+\textbf{Reconstruction Accuracy} &
+Mean Absolute Error (MAE), Root Mean Squared Error (RMSE) &
+Reconstruction error between predicted and observed values:
+\[
+\begin{aligned}
+\text{MAE} &= \frac{1}{N} \sum_{i=1}^{N} | \hat{x}_i - x_i | \\
+\text{RMSE} &= \sqrt{ \frac{1}{N} \sum_{i=1}^{N} (\hat{x}_i - x_i)^2 }
+\end{aligned}
+\]
+\\
 
 
 \addlinespace[0.4em]
-\textbf{Event Timing Accuracy} &
-Average Event Delay (AED) &
-Evaluates how closely the detected or reconstructed events occur relative to their expected timestamps.
-Defined as 
-$\mathrm{AED} = \frac{1}{N}\sum_i |t_i^{\text{detected}} - t_i^{\text{expected}}|$.
-An average delay under a defined threshold (e.g., $1\,\mathrm{s}$) indicates real-time stability. Large deviations imply delayed or missed event detection. \\
-
-\addlinespace[0.4em]
-\textbf{Confidence–Error Correlation} &
-Pearson Correlation ($\rho_{c,e}$) &
-Assesses the calibration between reconstruction confidence and actual reconstruction error. Computed as the correlation between predicted confidence and absolute error across all samples.
-A strong negative correlation ($\rho_{c,e} \approx -1$) indicates that confidence estimates are well aligned with prediction reliability. \\
-
-% \addlinespace[0.4em]
-% \textbf{Uncertainty Quality} &
-% Normalized Estimation Error Squared (NEES) &
-% Standard consistency test for stochastic estimators such as Kalman or Particle Filters. Defined as 
-% $\mathrm{NEES} = (x - \hat{x})^\top P^{-1}(x - \hat{x})$,
-% where $P$ is the estimated covariance. Values within the expected $\chi^2$ confidence bounds indicate well-calibrated uncertainty. \\
-
-
+\textbf{Lifecycle State Distribution} &
+State Duration Ratio &
+Fraction of execution time constituents operate in each lifecycle state:
+\[
+S_i = \frac{T_{state_i}}{T_{total}}
+\]
+\\
 \bottomrule
 \end{tabular}
 \end{table*}

@@ -1,0 +1,22 @@
+\begin{table}[htp]
+\small
+\centering
+\caption{Lifecycle state influence on event emission and compensation behaviour.}
+\label{tab:state-behaviour}
+
+\begin{tabular}{p{2cm} p{2.8cm} p{2.5cm} p{3cm} p{2.5cm}}
+\toprule
+\textbf{Main State} & \textbf{Substate} & \textbf{Event \newline Emission} & \textbf{Event \newline Reconstruction} & \textbf{Estimator Updates} \\
+\midrule
+Disengaged & -- & Disabled & Disabled & Disabled \\
+Prepared & -- & Disabled & Disabled & Disabled \\
+Passive & Negotiating & Suppressed & Disabled & Enabled \\
+Passive & Available & Suppressed & Disabled & Enabled \\
+Active & Pending Entry & Suppressed & Disabled & Enabled \\
+Active & Full Role & Enabled & Disabled & Enabled \\
+Active & Restricted Role & Enabled & Enabled & Enabled \\
+Active & Pending Exit & Suppressed & Disabled & Enabled \\
+\bottomrule
+\end{tabular}
+
+\end{table}
