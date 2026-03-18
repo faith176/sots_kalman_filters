@@ -1,0 +1,211 @@
+\chapter{Background}\label{ch:background}
+This chapter introduces the foundational concepts required for the remainder of the thesis. 
+It reviews the core ideas underlying systems, SoS, DTs, and reliabilty in engineered systems. 
+
+\section{Systems of Systems}
+A system of systems (SoS) is a collection of independent systems that collaborate to achieve outcomes unattainable by any single constituent \cite{maier1998architecting}.
+
+% \subsection{Systems Theory}\label{sec:background-systems}
+
+% A system is often defined as a set of interconnected elements that interact to achieve a common objective. In General Systems Theory, systems are described as organized wholes whose behavior emerges from interactions among their components rather than from the isolated behavior of individual parts \cite{von1950theory}. Systems are typically described in terms of interacting components, hierarchical organization, and boundaries separating the system from its environment.
+
+% Early systems theory also recognized that systems exist within larger hierarchies of increasing complexity. \citet{boulding1956general} described larger systems as compositions of interacting subsystems, while later work emphasized understanding systems through the relationships among their components \cite{jordan1960some}. As engineered infrastructures increased in scale, researchers described configurations consisting of independently developed systems cooperating to achieve shared objectives. Such configurations have been described as geographically distributed collections of systems supporting a common mission \cite{eisner1991computer} and as networks or arrays of coordinated systems \cite{shenhar19952}.
+
+\subsection{Definitions and Types}\label{subsec:background-sos-definitions}
+
+\citet{maier1998architecting} defined a system of systems as a collection of operationally and managerially independent systems that collaborate to achieve outcomes beyond their individual capabilities. Operational independence refers to the ability of constituent systems to operate outside the SoS, while managerial independence reflects that constituent systems are developed and governed by different authorities. These properties lead to decentralized control, evolving participation, and coordination among heterogeneous systems.
+
+Several classifications describe how SoS are organized according to the degree of centralized coordination. Directed SoS are centrally managed to achieve a specific purpose while constituent systems retain independent operation. Acknowledged SoS have recognized objectives and coordination mechanisms but maintain independent ownership and development of constituent systems. In collaborative SoS, systems cooperate to achieve shared goals without centralized authority. Virtual SoS lack centralized management and explicit system-level objectives \cite{nielsen2015systems,dahmann2008systems}.
+
+\subsection{Core Characteristics}
+
+Systems of systems exhibit structural and behavioral properties associated with the interaction of independent systems. \citet{boardman2006system} describe SoS as purposeful organizations of systems connected through decentralized authority and shared objectives. \citet{nielsen2015systems} synthesized several prior perspectives---including \cite{boulding1956general,ackoff1971towards,pei2000system,boardman2006system,keating2003system,kotov1999systems,maier1998architecting,shenhar19952}---into an eight-dimensional taxonomy for analyzing SoS.
+
+The taxonomy identifies the following dimensions:
+\begin{enumerate}[noitemsep]
+\item \textbf{Autonomy} the extent to which constituent systems pursue their own objectives.
+\item \textbf{Independence} the ability of a constituent system to operate outside the SoS.
+\item \textbf{Distribution} the spatial and logical separation of constituent systems.
+\item \textbf{Evolution} changes in constituent systems and their relationships over time.
+\item \textbf{Reconfiguration} adjustments in system relationships during operation.
+\item \textbf{Emergence} behaviors arising from interactions among systems.
+\item \textbf{Interdependence} reliance between systems to achieve system-level objectives.
+\item \textbf{Interoperability} the ability of heterogeneous systems to exchange information and services.
+\end{enumerate}
+
+\subsection{Lifecycle of Constituents in a System of Systems}
+To describe how systems participate in an SoS, \citet{axelsson2019refined} proposed a model describing the states that a system may occupy relative to the SoS.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.5\linewidth]{figures/Background/SoS Lifecycle Axelsson.png}
+\caption{Constituent State Model from \cite{axelsson2019refined}}
+\label{fig:sos-constituent-state-model}
+\end{figure}
+
+In this model, a relevant system is any system possessing capabilities that may contribute to the SoS. When the system satisfies the technical or organizational requirements for participation, it becomes \textit{prepared}. When a prepared system joins the SoS, it becomes a constituent system. Constituent systems may occupy either passive or active states depending on their current participation. A \textit{passive} system belongs to the SoS but is not currently engaged in delivering a system-level capability, whereas an \textit{active} system participates in a temporary collaboration structure, referred to as a constellation, through which SoS capabilities are produced.
+
+
+% -------------------------------------------------------------
+\section{Digital Twins}\label{sec:background-dt}
+A DT is a dynamic virtual counterpart of a physical asset that 
+remains continuously synchronized through real-time data exchange \cite{kritzinger2018digital}.
+
+\subsection{Definitions and Core Characteristics}
+
+A DT is defined as a virtual representation of a physical asset or system that remains synchronized with its real-world counterpart through bidirectional data exchange and feedback mechanisms \cite{david2024infonomics}. The concept builds on earlier practices in aerospace engineering where replicated systems were used to mirror operational conditions for monitoring and diagnosis \cite{boschert2016digital}, and was later formalized within product lifecycle management by \citet{grieves2005product}, who described maintaining a digital representation of a product linked to its physical counterpart throughout its lifecycle.
+
+In this formulation, data collected from the physical system updates the digital representation, while the digital model may generate simulations, predictions, or optimization results that are fed back to the physical system to support monitoring, control, and operational decision-making. \citet{tao2018digital} describe this interaction as a closed-loop process in which information continuously flows between the physical system and its digital counterpart.
+
+\citet{vanderhorn2021digital} describe a DT as consisting of three elements: a physical entity, a virtual representation, and the interconnections that link them. The physical entity corresponds to the real system and its operating environment, while the virtual representation models aspects of that system using computational approaches that may combine physics-based simulations, data-driven models, or hybrid methods \cite{negri2017review}. The interconnections, supported by sensing technologies and networked communication infrastructures, enable bidirectional information exchange, including physical-to-virtual data transfer that updates the digital representation and virtual-to-physical communication that provides feedback or control information.
+
+\citet{kritzinger2018digital} further classify digital representations into three categories: digital models, which have no automated data exchange with the physical system; digital shadows, which support one-way data flow from physical to digital; and DTs, which support bidirectional data exchange between the two.
+
+\subsection{Digital Twin Architectures}
+
+DT architectures are commonly described using layered models that structure the interaction between physical systems and their digital representations. \citet{tao2018digital} proposed a three-layer architecture consisting of physical, virtual, and connection layers. This model was later extended to a five-layer architecture that introduced dedicated data and service layers to support analytics, monitoring, and lifecycle management \cite{tao2019digital}. Further extensions incorporate infrastructure components such as IoT gateways, cloud platforms, and simulation services to support industrial-scale deployments \cite{redelinghuys2020six}. Standardization efforts have also defined reference architectures for DT systems. The Reference Architectural Model for Industry~4.0 (RAMI~4.0) situates DT functionality across hierarchy levels, lifecycle stages, and functional layers \cite{DIN91345}, while ISO~23247 specifies a reference architecture for manufacturing systems including observable entities, communication interfaces, DT services, and user applications \cite{ISO23247-1}.
+
+\subsection{Digital Twins in Distributed Systems}
+
+DTs are increasingly studied in distributed environments where multiple physical systems interact and exchange information. In such settings, DTs are used for monitoring system behavior, analyzing operational data, and supporting simulation and predictive maintenance activities \cite{negri2017review, tao2018digital}. The expansion of Industry~4.0 infrastructures has led to deployments of DT technologies across distributed industrial systems \cite{liu2021review}. Industrial platforms such as GE's Predix and Siemens' MindSphere provide implementations supporting monitoring and analytics across connected assets \cite{gepredixoverview, siemensmindsphere}. Academic studies report applications in domains including healthcare, transportation, manufacturing, and smart infrastructure \cite{barricelli2019survey, botin2022digital}. For example, within the NIST Smart Manufacturing Test Bed, DTs are used for machine health monitoring, production scheduling, and virtual commissioning of manufacturing processes \cite{shao2021use}.
+
+Recent research also examines architectures that integrate multiple DTs operating within shared environments. Federated DT models describe networks of autonomous DTs that exchange information and coordinate system representations \cite{vergara2023federated}. Distributed and hierarchical DT architectures have also been proposed to integrate multiple specialized twins representing different subsystems of a larger infrastructure \cite{kunnari2025distributed}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Digital Twins}\label{sec:background-dt}
+
+A digital twin (DT) is a dynamic virtual counterpart of a physical asset that remains continuously synchronized through real-time data exchange \cite{kritzinger2018digital}.
+
+\subsection{Definitions and Core Characteristics}
+
+DTs represent physical systems through continuously updated digital models connected via bidirectional data exchange \cite{david2024infonomics}. Data from the physical system updates the digital representation, while the digital model supports simulation, prediction, and decision-making that may influence physical operation, forming a closed-loop interaction \cite{tao2018digital}. Conceptually, a DT consists of three core elements: a physical entity, a virtual representation, and the connections enabling data exchange between them \cite{vanderhorn2021digital}. The virtual representation may combine physics-based and data-driven models to capture system behaviour \cite{negri2017review}. DTs are often distinguished from related concepts such as digital models and digital shadows. Digital models lack automated data exchange, while digital shadows support one-way communication from physical to digital. DTs extend these by enabling bidirectional interaction, allowing both monitoring and control \cite{kritzinger2018digital}.
+
+\subsection{Digital Twin Architectures}
+DT architectures are commonly described using layered models that separate physical systems, digital representations, and communication infrastructure \cite{tao2018digital}. Extensions introduce additional layers for data management and services, supporting analytics, monitoring, and lifecycle management \cite{tao2019digital}. Industrial implementations incorporate infrastructure such as IoT platforms, cloud services, and simulation engines to support large-scale deployments \cite{redelinghuys2020six}. Standardization efforts, including RAMI~4.0 \cite{DIN91345} and ISO~23247 \cite{ISO23247-1}, define reference architectures for structuring DT systems across lifecycle stages and functional layers.
+
+\subsection{Digital Twins in Distributed Systems}
+
+DTs are increasingly deployed in distributed environments where multiple physical systems interact and exchange information. In such settings, DTs support monitoring, simulation, and predictive analysis across interconnected assets \cite{negri2017review, tao2018digital}. Recent research explores architectures that integrate multiple DTs operating within shared environments. Federated DT models describe networks of autonomous twins that exchange information while maintaining independence \cite{vergara2023federated}, while hierarchical architectures organize multiple specialized twins representing subsystems of a larger infrastructure \cite{kunnari2025distributed}. These developments provide the foundation for coordinating multiple DTs within larger system structures.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Event-Driven Processing and Complex Event Processing}\label{sec:background-cep}
+Event-driven processing is a computational model in which system behaviour advances in response to the occurrence of events \cite{kommera2020power}. An event represents a discrete, observable occurrence within a system or its environment, such as a state change, measurement, or notable condition, and is commonly modeled as a record carrying a payload and a timestamp \cite{etzion2010event}. Events are produced asynchronously by sources such as sensors, software components, workflow engines, or external services, and are collected into event streams that reflect the evolving behaviour of a system over time. CEP extends the event-driven model by enabling the detection of higher-level situations through the interpretation and correlation of multiple events over time \cite{cugola2015complex}. CEP systems evaluate continuous event streams against declarative rules or patterns that specify temporal, logical, or causal relationships among events, including sequencing, aggregation, concurrency, negation, and time windows \cite{cugola2012processing,cugola2015complex}. When a pattern is satisfied, the system emits a composite or complex event representing the detection of a meaningful situation.
+
+To support incremental pattern detection, CEP engines maintain internal state to track partial matches over time. Common execution models rely on automata-based or state-machine-based techniques to manage long-running patterns and temporal constraints, introducing trade-offs between expressiveness, memory usage, and performance \cite{cugola2015complex}. CEP originated in academic systems such as SASE and Cayuga, which introduced declarative models for event sequence and pattern detection over unbounded streams \cite{wu2006high,brenna2007cayuga}. These ideas were later adopted in industrial CEP engines such as Esper and Siddhi for real-time event processing \cite{esper_reference,suhothayan2011siddhi}, and increasingly integrated into large-scale distributed stream processing frameworks such as Apache Flink \cite{carbone2015apache,dayarathna2018recent}.
+
+CEP has been applied across domains including logistics, finance, manufacturing, infrastructure monitoring, and healthcare, where timely detection of evolving situations is required \cite{buchmann2009complex,manchana2021event}. As systems have evolved toward distributed, event-driven and microservice-based architectures, CEP has emerged as a foundational abstraction for interpreting and coordinating behaviour across heterogeneous and distributed event sources \cite{kommera2020power,dayarathna2018recent}.
+
+
+
+% -------------------------------------------------------------
+\section{Reliability in Engineered Systems}
+\label{sec:background-reliability}
+
+Dependability theory describes the trustworthiness of engineered systems. 
+\citet{avizienis2004basic} define dependability as the justified confidence that a system delivers correct service, even under adverse conditions. Within this framework, reliability refers to the continuity of correct service over time and is defined as the ability of a system to deliver correct service during a specified time interval under stated operating conditions \cite{avizienis2004basic}.
+
+\subsection{Dependability Attributes}
+
+Dependability is characterized through a set of attributes, including availability, reliability, safety, integrity, and maintainability \cite{avizienis2004basic}. Availability refers to the readiness of a system to deliver correct service when required, whereas reliability describes the continuity of correct service over time. These attributes are complementary: reliability quantifies the probability of failure-free operation over a specified time interval, while availability captures the proportion of time a system is operational, accounting for both failures and restorations \cite{laprie1985dependable}. Safety concerns the avoidance of catastrophic consequences arising from system failures, integrity ensures that system state and data are protected from improper modification, and maintainability reflects the ease with which a system can be repaired or adapted.
+
+\subsection{Threats to Dependability}
+
+Dependability theory distinguishes between faults, errors, and failures to describe how impairments propagate within a system \cite{avizienis2004basic}. A \textit{fault} represents the underlying cause of an abnormal condition. When activated, a fault produces an \textit{error}, corresponding to an incorrect internal system state. If the error propagates to the system boundary and affects the delivered service, a \textit{failure} occurs. These events are considered threats to dependability attributes because they interrupt the delivery of correct service.
+
+\subsection{Reliability}
+
+Reliability focuses on the sustained delivery of correct service over time. In reliability engineering, reliability is commonly defined as the probability that a system performs its intended function without failure for a specified period under stated operating conditions \cite{ram2013system, alma991032896202207371}. In this formulation, reliability represents the likelihood that a system continues to operate satisfactorily throughout its intended design life and environmental conditions.
+
+Within dependability theory, reliability therefore describes the continuity of correct service during system operation \cite{laprie1996software,avizienis2004basic}. A system may alternate between periods of correct service and incorrect service, where failures interrupt normal operation.
+
+\subsection{Reliability Strategies}
+
+Several engineering approaches are described in the literature for achieving dependable system operation \cite{avizienis2004basic}. \textit{Fault prevention} aims to avoid introducing faults during system design through disciplined engineering methods. \textit{Fault removal} identifies and corrects faults through testing, verification, and maintenance activities. \textit{Fault forecasting} estimates the likelihood and consequences of failures using reliability models and risk analysis. Finally, \textit{fault tolerance} enables systems to continue operating despite faults through mechanisms such as redundancy, monitoring, and recovery. Together these approaches describe commonly referenced strategies for maintaining dependable system behavior throughout the system lifecycle.
+
+
+
+\section{Kalman Filtering}\label{sec:kalman-background}
+The Kalman filter is a recursive state estimation method that estimates system state while maintaining an explicit representation of uncertainty in the estimate \cite{kalman1960filtering,bishop2001introduction}. In the Kalman filter framework, the state of a dynamical system at time step $k$ is represented by a state vector $\vec{x}_k$. Uncertainty in the estimate is represented by a covariance matrix $\Sigma_k$, which captures both the variance of state variables and correlations between them. Estimation proceeds through a recursive prediction and update cycle.
+
+\paragraph{Prediction step.}
+During the prediction step, the previous state estimate is propagated forward using a system model represented by the state transition matrix $\mathbf{F}_k$. External inputs may be incorporated through a control vector $\vec{u}_k$ and control matrix $\mathbf{B}_k$. Uncertainty associated with system dynamics is represented by the process noise covariance matrix $\mathbf{Q}_k$. The predicted state and covariance are
+
+\[
+\vec{x}_{k|k-1} = \mathbf{F}_k \vec{x}_{k-1} + \mathbf{B}_k \vec{u}_k,
+\qquad
+\Sigma_{k|k-1} = \mathbf{F}_k \Sigma_{k-1} \mathbf{F}_k^{T} + \mathbf{Q}_k.
+\]
+
+\paragraph{Update step.}
+When a measurement $\vec{z}_k$ becomes available, the prediction is refined using the measurement model $\mathbf{H}_k$, which maps the system state to the measurement space. Measurement uncertainty is represented by the noise covariance matrix $\mathbf{R}_k$. The Kalman gain $\mathbf{K}_k$ determines how the predicted state is adjusted based on the measurement:
+
+\[
+\mathbf{K}_k =
+\Sigma_{k|k-1}\mathbf{H}_k^{T}
+\left(\mathbf{H}_k\Sigma_{k|k-1}\mathbf{H}_k^{T} + \mathbf{R}_k\right)^{-1}.
+\]
+
+Using the Kalman gain, the updated state estimate and covariance are
+
+\[
+\vec{x}_k = \vec{x}_{k|k-1} + \mathbf{K}_k(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}),
+\qquad
+\Sigma_k = \Sigma_{k|k-1} - \mathbf{K}_k\mathbf{H}_k\Sigma_{k|k-1}.
+\]
+\subsection{Normalized Innovation Squared}
+
+The normalized innovation squared (NIS) is a statistical consistency diagnostic used with Kalman filters \cite{bar2001estimation,simon2006optimal}. It is based on the innovation, defined as the difference between an observed measurement $\vec{z}_k$ and its predicted value obtained from the filter state estimate:
+
+\[
+\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}.
+\]
+
+The expected uncertainty of this innovation is represented by the innovation covariance
+
+\[
+\mathbf{S}_k =
+\mathbf{H}_k\Sigma_{k|k-1}\mathbf{H}_k^{T} + \mathbf{R}_k,
+\]
+
+where $\Sigma_{k|k-1}$ represents the predicted state covariance and $\mathbf{R}_k$ represents measurement noise.
+
+The NIS statistic is defined as
+
+\[
+\mathrm{NIS}_k =
+(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1})^{T}
+\mathbf{S}_k^{-1}
+(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}).
+\]

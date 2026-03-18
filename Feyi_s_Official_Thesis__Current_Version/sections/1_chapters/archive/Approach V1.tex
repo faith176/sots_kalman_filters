@@ -1,61 +1,162 @@
-\chapter{Approach to Reliable Event-Driven Reasoning in Systems of Twinned Systems}\label{ch:approach}
-This chapter presents the approach adopted in this thesis to address reliability challenges in SoTS. It describes the role of event processing in supporting DT reasoning, identifies missing observations as a fundamental challenge, and outlines how continued reasoning is supported under partial data availability.
+\chapter{Towards Reliable Systems of Twinned Systems}\label{ch:approach}
+
+This chapter presents an approach to building reliability in SoTS. Building on the gaps identified in the literature review, it formalizes reliability in the context of constituent lifecycle dynamics and defines explicit levels of reliability under disturbance and reconfiguration.
+
+
+\section{Reliability in SoTS}
+In classical dependability theory, reliability is defined as the probability that a system performs its intended function without failure for a specified period of time \cite{avizienis2004basic}. In SoS, this notion must be extended to account for operational independence, emergent behavior, and dynamic reconfiguration. Reliability is therefore increasingly framed in terms of disturbance tolerance rather than isolated failures \cite{ferreira2023towards}. Disturbances may arise from constituent faults, communication breakdowns, independent evolution, or misaligned services \cite{ferreira2021reliability}. Because constituents are interdependent, such disturbances can propagate across system boundaries and ultimately affect system-level capability.
+
+These challenges are amplified in SoTS. DTs rely on continuous synchronization between their physical counterparts and on coordinated interaction with other twins. When participation changes, communication is challenged, or state updates are delayed, representational fidelity can deteriorate.  Recent work on DT architectures highlights the importance of reliability and trust in maintaining alignment between physical and DTs \cite{ferko2022architecting}. Experts emphasize that a DT must accurately reflect what is occurring in its physical counterpart in order to remain useful.  Reliability in SoTS therefore concerns not only sustaining system-level functionality, but also preserving the correctness, timeliness, and alignment of digital representations as system configurations evolve.
+
+The systematic literature review (\secref{sec:literature-review-key-takeaways}) confirms this gap. Although reliability is frequently cited as a motivation or quality attribute in SoTS studies, it is rarely modeled explicitly or validated at runtime. Most contributions address reliability indirectly through structural redundancy, communication fallback mechanisms, state persistence, or distributed deployment architectures, rather than treating it as an property that must be formally assessed and maintained during execution.
+
+
+\input{tables/Approach/sos_reliability_techniques.tex}
+\section{Existing Strategies for Reliable SoTS} \label{approach:reliability-strategies}
+Techniques for preserving reliability in SoS align closely with the fault-tolerance pattern families described by \citet{hanmer2013patterns}. As summarized in \tabref{tab:sos-reliability-techniques}, the approaches identified in major SoS reliability surveys \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive} span: architectural mechanisms (structural organization and redundancy to contain faults), error detection (mechanisms to identify abnormal behavior at runtime), error recovery (strategies to restore acceptable operation after disruption), error mitigation (techniques that limit the impact of errors during operation), and fault treatment (analysis and modeling approaches that identify, diagnose, or eliminate underlying causes).
+
+Existing SoTS studies predominantly emphasize architectural patterns and error mitigation mechanisms. Most implementations rely on structural redundancy and component substitution, including fallback communication layers, state persistence, and data caching during disconnection \cite{acharya2023twins, aziz2022empowering, larsen2024towards, lopez2023modeling}. Error detection and recovery is occasionally supported through runtime monitoring, event-triggered replanning, or dynamic rescheduling \cite{park2020digital, villalonga2021decision-making}. In contrast, comparatively few studies incorporate explicit fault treatment approaches such as parametric reliability modeling, uncertainty reasoning, or fault tree analysis (FTA) \cite{kutzke2021subsystem, oquendo2019dealing, saraeian2022digital}. 
+
+
+\section{Ensuring Reliable Participation and Stable Operation in SoTS}
+
+A foundational principle in SoS architecting is the notion of stable intermediate forms \cite{maier1998architecting}: partial configurations must remain operational throughout deployment and evolution. Subsequent work reinforces that SoS adaptation must proceed through viable configurations that preserve service continuity \cite{rechtin1991systems, rechtin2010art, mekdeci2014pliability, petitdemange2021design, weyns2013challenges}. However, SoS configurations are inherently dynamic. Constituents may join, leave, suspend participation, or shift roles over time \cite{fang2020improving, manzano2020dynamic, pradhan2016achieving, mohsin2019modeling}. Each transition alters the operational boundary of the system.
+
+In SoTS, such transitions additionally affect the integrity of shared digital state. When a DT joins, withdraws, or operates under constrained conditions, the collective digital representation changes. If unmanaged, these transitions may produce stale data, partial synchronization, or inconsistent views across twins. Preserving stable intermediate forms in SoTS therefore requires governing how DTs enter, participate, compensate, and recover under disturbance. Reliability must be preserved not within a static architecture, but across evolving configurations.
+
+To address this challenge, we first ground our approach in existing SoS lifecycle research before introducing a structured model of operational reliability for SoTS.
+
+\section{Operational Reliability Levels in SoTS}
+
+Research in SoS engineering has formalized constituent lifecycle states in several ways. \citet{axelsson2019refined} distinguish ignorant, prepared, passive, and active states; \citet{hristozov2023modeling} define a state machine for safe initialization and withdrawal; and \citet{petitdemange2021design} structure reconfiguration through coordinated active-passive transitions. Other studies introduce negotiation states \cite{qin2016contract}, standby and replacement roles \cite{du2024reconfiguration}, or lifecycle-driven participation models \cite{svenson2020situation}.
+
+Although terminology differs, the underlying distinctions are consistent: a constituent may be outside the SoS, prepared to participate, actively contributing, temporarily limited, or transitioning between configurations.
+
+Building on these distinctions, this thesis adopts the states \emph{Idle}, \emph{Standby}, \emph{Participating}, \emph{Impaired}, and \emph{Negotiating}, adapted to Systems of Twinned Systems (SoTS).
+
+\begin{enumerate}
+    \item \emph{Participating} denotes active contribution of DT capabilities to the coalition.
+    \item \emph{Standby} denotes readiness without active contribution.
+    \item \emph{Idle} denotes non-participation in the current configuration, without implying shutdown, since DTs may belong to multiple coalitions simultaneously.
+    \item \emph{Impaired} represents limited but still functioning operation under disturbance, enabling mitigation without immediate withdrawal.
+    \item \emph{Negotiating} captures controlled joining, leaving, or recovery decisions.
+\end{enumerate}
+
+The \emph{Negotiating} state assumes the presence of a coordination capability within the SoTS. In practice, this may be realized as a digital integration layer that mediates participation among DTs. Existing SoTS architectures already introduce such higher-layer components, including integration platforms \cite{ehemann2023digital}, runtime monitoring and adaptation frameworks \cite{parri2019jarvis}, and orchestration services coordinating distributed DTs \cite{aziz2022empowering}. Such a mediator can enforce participation constraints, evaluate recovery decisions, and trigger compensatory actions.
+
+Using these states as a foundation, we now introduce four operational reliability levels. Each level progressively strengthens control over participation dynamics and integrates fault-tolerance mechanisms more deeply into the constituent lifecycle.
+
+
+\paragraph{Level 1 — Reactive Participation with Local Error Detection and Mitigation}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.425\textwidth]{figures/Approach/lv1.pdf}
+\caption{Reliable SoTS Level 1}
+\label{fig:level1}
+\end{figure}
+
+
+At the most basic level, a constituent transitions between \emph{Idle} and \emph{Participating} without coordination. Entry and exit occur implicitly through \texttt{join()}, \texttt{leave()}, or \texttt{crash()} events. Level~1 includes local disturbance handling. Runtime detection may trigger transition to \emph{Impaired}, where temporary mitigation is applied before resuming participation if the condition clears. However, participation itself remains unmanaged. Configuration evolution is unconstrained, and stable intermediate forms are not enforced. Reliability depends on local mitigation and passive architectural tolerance of abrupt change. Level~1 therefore provides minimal operational reliability.
+
+
+\paragraph{Level 2 --- Announced Participation with Fault Treatment}
+
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/Approach/lv2.pdf}
+\caption{Reliable SoTS Level 2}
+\label{fig:level2}
+\end{figure}
+
+Level~2 introduces \emph{Standby} to structure transitions between \emph{Idle} and \emph{Participating}. Join and leave operations are announced and temporally bounded (e.g., \texttt{after($t_{\text{notice}}$)}), reducing abrupt participation change. Detection and mitigation remain as in Level~1. In addition, \emph{fault treatment} may be performed while in \emph{Standby}, enabling corrective action without disrupting active participation.
+The key improvement is announced participation changes: membership evolution becomes predictable through explicit announcements and bounded notice periods for joining and leaving.
 
 
 
-\section{Reliability Challenges in SoTS}
-
-The literature review (\secref{sec:literature-review-key-takeaways}) identifies a recurring reliability gap in systems of twinned systems: although reliability is frequently cited as a motivation or architectural concern, existing SoTS research rarely adopts formal models or validation mechanisms to reason about reliable behaviour during operation. Instead, reliability is typically addressed implicitly through architectural assumptions or infrastructure-level measures, rather than being treated as a property that must be maintained and assessed at runtime.
-
-This gap is particularly problematic given the inherent characteristics of SoTS as a SoS. As emphasized by \citet{jamshidi2008system}, knowledge of an SoS is inherently incomplete and continuously evolving, and its boundaries are fluid and negotiable as constituent systems join, leave, or change roles over time. These dynamics directly affect what is observed, by whom, and under what assumptions. As a result, the availability, timing, and interpretation of observations cannot be assumed to remain stable during operation. For DT-based services that rely on continuous streams of observational data, this instability manifests as incomplete, delayed, or missing observations that arise naturally from SoTS operation. In such situations, DT-based services may stall or continue operating using outdated or partial information, leading to divergence between digital representations and the physical behaviour they are intended to reflect.
-
-Consequently, reliability challenges in SoTS cannot be resolved solely through redundancy, synchronization, or fault-tolerance mechanisms at the infrastructure level. While such measures may mitigate data loss or communication failures, they do not address how reasoning should proceed when observations are incomplete or absent during execution. Reliability must therefore also be considered at the level of computation, where  reasoning is updated from incoming observations and where uncertainty introduced by missing data directly influences the correctness of derived results.
-
-% FOCUS ON THIS TOMORROW
-% From a dependability perspective, this challenge reflects a broader issue identified in prior work: dependability claims are inherently uncertain and rely on incomplete and evolving evidence. As argued by \citet{bloomfield2007confidence}, confidence must be treated as a first-class concern in dependability assessment, capturing uncertainty not only in system behavior but also in the observations and evidence used to reason about that behavior. In SoTS, where observations are distributed, delayed, or missing, this uncertainty manifests during operation rather than solely at design time, necessitating mechanisms that explicitly represent and manage confidence during execution.
+\paragraph{Level 3 --- Negotiated Participation}
 
 
+\begin{figure}[htp]
+\centering
+\includegraphics[width=1\textwidth]{figures/Approach/lv3.pdf}
+\caption{Reliable SoTS Level 3.}
+\label{fig:level3}
+\end{figure}
 
-\section{Event-Driven Computation in SoTS}
-DTs observe and track physical systems through discrete observations of state changes produced by sensors, controllers, and other constituent systems. These observations arrive over time, originate from multiple autonomous sources, and reflect changes in system state as they occur. As a result, DT operation aligns naturally with event-driven computation, in which reasoning advances in response to events that represent observed changes in the system \cite{alghamdi2024synchronization}. This view is reflected in established standards, which characterize synchronization and interaction in terms of event-triggered updates and asynchronous communication \citep{iso23247_1_2021, aas_details_2018_p1}.
-
-Each event captures an observation at a specific point in time and serves as a trigger for updating the digital representation. By processing sequences of such events, DTs maintain alignment with the evolving physical system and support subsequent simulation, analysis, and decision-making. This perspective also introduces the notion of expected events. When expected observations arrive, event-consuming services can proceed according to their defined semantics. When expected events do not arrive, their absence constitutes information about the system, indicating increased uncertainty regarding the current system state and the alignment between digital and physical counterparts.
-
-
-\section{Uncertainty Handling in Complex Event Processing}
-Event-driven reasoning in SoTS can be realized through complex event processing (CEP). While CEP provides mechanisms for detecting patterns over event streams, it offers limited support for assessing how missing observations affect detected results. The CEP literature distinguishes several forms of uncertainty that arise during event processing. \citet{wasserkrug2006taxonomy} classify uncertainty along multiple dimensions, including event occurrence, event values, temporal ordering, and pattern inference. Of particular relevance to SoTS is occurrence uncertainty, which arises when it is unclear whether an expected event has occurred, been delayed, or failed to occur altogether. This form of uncertainty originates at the event source and directly affects the progression of event-driven computation.
-
-Prior work has explored a range of techniques for representing and propagating uncertainty in CEP. Bayesian-network--based approaches assign probabilities to observed and derived events and use probabilistic inference to evaluate event patterns \citep{wasserkrug2010efficient, wasserkrug2012model}. Interval-based temporal models represent event timestamps as ranges to accommodate imprecise ordering \citep{zhang2013recognizing}. Other probabilistic CEP engines maintain likelihoods over detected patterns using lineage tracking or automata-based evaluation \citep{shen2008probabilistic, kawashima2010complex, chuanfei2010complex, wang2013complex}. Frameworks such as CEP2U and uncertainty-aware extensions of Esper and Flink integrate these ideas into existing CEP engines by supporting uncertainty in event values and rule evaluation \citep{cugola2015introducing, moreno2019managing}.
-
-Across this literature, uncertainty is primarily treated as a property of event values or inference mechanisms, with computation progressing only in response to arriving events. As a result, existing CEP engines provide limited support when expected observations do not arrive. Survey work identifies missing data as a common challenge in real-world event streams and shows that gaps in input data can undermine the effectiveness of complex event processing, particularly in large-scale and high-velocity environments \citep{tawsif2018review}. Unlike noisy or imprecise observations, missing data corresponds to the absence of expected information, disrupting the progression of event-driven computation itself.
-% REVIEW THIS flouris2017issues, dayarathna2018recent
-
-Recent work has addressed this limitation through compensation mechanisms. Event-fabrication techniques replace missing sensor events using interpolation or smoothing to preserve stream continuity \citep{gkoulis2025assessing}. Prediction-based approaches integrate state estimation, such as Kalman filtering, into CEP engines to allow computation to continue during short-term interruptions \citep{vijayakumar2009missing}. Petri-net--based techniques reconstruct missing events by reasoning over process models to complete incomplete event sequences \citep{wang2013efficient}.
+Level~3 introduces explicit control of participation. Entry into and withdrawal from the SoTS no longer occur solely through announcement. They require approval through a bounded negotiation process. Detection, mitigation, and fault treatment continue as established in Level~2. The defining extension is that participation itself becomes negotiated. A constituent must enter the \emph{Negotiating} state and obtain approval before entry or departure. System stability and reliability is strengthened because participation changes cannot occur without coordinated agreement.
 
 
-\section{Design Strategy for Event Absence in SoTS}
-The limitations discussed in the previous section show that existing event-driven approaches provide limited support when expected observations fail to arrive. While uncertainty-aware CEP frameworks acknowledge imperfect data, they generally assume that computation progresses only in response to observed events. As a result, the absence of an expected observation is not explicitly represented during execution, even though such absence can carry important semantic meaning in systems where reasoning depends on continuous streams of observations.
+\paragraph{Level 4 --- Lifecycle-Integrated Fault-Tolerant Participation}
 
-In the CEP literature, uncertainty management is recognized as a fundamental capability for systems operating over real-world data. In particular, \citet{cugola2015complex} identify three essential capabilities for handling uncertainty during event processing: (i) identifying uncertainty in input data, (ii) explicitly representing uncertainty, and (iii) propagating uncertainty from primitive to derived events. In SoTS, missing observations constitute a recurring operational challenge for digital-twin-based reasoning. Addressing this challenge, therefore requires mechanisms that can recognize when expected observations do not occur, represent the resulting uncertainty explicitly, and allow reasoning to continue while accounting for its impact on derived results. Integrating these uncertainty-management principles at the level of event-driven computation allows existing event processing logic to remain operational, while making the effects of missing data explicit to downstream reasoning.
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/Approach/lv4.pdf}
+\caption{Reliable SoTS Level 4}
+\label{fig:level4}
+\end{figure}
 
-
-The approach adopted in this thesis addresses these requirements by treating the absence of observations explicitly during execution. The system maintains expectations about when observations should occur and detects when those expectations are not met at runtime. When an expected observation is absent, the approach uses state-based prediction to infer a plausible replacement observation. Crucially, inferred observations are represented as events and annotated with confidence values that quantify the uncertainty introduced by prediction, ensuring that inferred information remains distinguishable from directly observed data and uncertainty can be propogated in higher level detections.
-
-At a conceptual level, the strategy consists of three steps:
-\begin{itemize}
-    \item maintaining expectations about when observations should occur,
-    \item detecting the absence of expected observations during execution, and
-    \item continuing reasoning by incorporating predicted observations together with explicit uncertainty information.
-\end{itemize}
-
-Together, these steps provide a basis for supporting reliable event-driven reasoning in SoTS. By making absence explicit and integrating prediction with uncertainty-aware event processing, the approach enables CEP-based systems to remain operational under partial data availability while preserving transparency about the uncertainty and correctness of derived results.
+Level~4 integrates fault tolerance directly into participation dynamics. Detection and mitigation remain active during participation, but recovery now produces explicit compensation plans that are negotiated and executed within the lifecycle. Compensation execution activates architectural mechanisms (e.g., redundancy activation, interface rebinding, state transfer) and recovery strategies (e.g., task reallocation). Once stability is restored (\texttt{[systemStable]}), normal participation resumes. Fault treatment remains available in \emph{Standby}. At this level, detection, mitigation, recovery, and treatment are formally embedded into the lifecycle of the constituents. Stable intermediate forms are actively maintained across both configuration change and operational disturbances.
 
 
-\section{Scope and Assumptions}
-The approach assumes that missing observations arise from finite, short-term interruptions rather than prolonged or permanent data loss. It focuses on supporting continued reasoning during such interruptions rather than retroactively correcting inferred results when delayed observations arrive. Handling prolonged outages, long-term model drift, and post hoc reconciliation are considered out of scope and left for future work (\chref{ch:discussion}).
 
 
-\vspace{1em}
-This chapter has motivated an event-driven approach to reliability in SoTS and outlined a strategy for handling missing observations during execution. The next chapter formalizes this approach by introducing an abstract model of event-driven processing that defines events, expected observations, and reconstruction under missing data.
+\section{Reliable SoTS Requirements}
+\label{sec:reliable-sots-requirements}
 
-% =======================================
+\input{tables/Approach/reliability_levels_capabilities.tex}
+
+As summarized in \tabref{tab:reliability-capability-matrix}, the four reliability levels progressively introduce structure into constituent lifecycle control and disturbance handling. From these levels, we derive a set of requirements for reliable SoTS. The requirements are cumulative: higher reliability levels encompass the requirements of lower levels and introduce additional constraints on lifecycle control and fault tolerance.
+
+
+\subsection{Foundational Lifecycle Control (Level~1)}
+
+\textbf{R1 — Explicit Lifecycle States.}  
+Each constituent shall expose explicit lifecycle states including \emph{Idle}, \emph{Participating}, and \emph{Impaired}.
+
+\noindent 
+\textbf{R2 — Defined State Transitions.}  
+Transitions between lifecycle states shall occur through explicit triggers and guards.
+
+\noindent 
+\textbf{R3 — Runtime Disturbance Detection.}  
+While in \emph{Participating}, a constituent shall monitor for disturbances that threaten operational capability or digital-physical alignment.
+
+\noindent 
+\textbf{R4 — Local Mitigation in Impaired State.}  
+Upon disturbance detection, a constituent shall transition to \emph{Impaired} and apply mitigation without immediate withdrawal from the SoTS.
+
+
+\subsection{Controlled Participation and Fault Treatment (Level~2)}
+ 
+\textbf{R5 — Controlled Participation.}  
+Activation and withdrawal shall pass through \emph{Standby}, introducing control over SoTS configuration change.
+
+\noindent
+\textbf{R6 — Fault Treatment.}  
+Fault treatment and corrective actions shall be performed in \emph{Standby} whenever possible, avoiding disruption of active participation.
+
+
+\subsection{Negotiated Participation (Level~3)}
+
+\textbf{R7 — Negotiated Participation Changes.}  
+Entry and withdrawal from the SoTS shall require explicit approval through a mediator mechanism (\emph{Negotiating} state).
+
+\noindent
+\textbf{R8 — Bounded Negotiation.}  
+Negotiation processes shall proceed through defined proposal and evaluation steps and shall be bound by a timeout.
+
+
+\subsection{Stable Configuration Preservation (Level~4)}
+
+\textbf{R9 — Coordinated Recovery Planning.}  
+If local mitigation is insufficient, compensation actions shall be negotiated and approved prior to structural reconfiguration.
+
+\noindent
+\textbf{R10 — Stable Intermediate Forms.}  
+During participation change and disturbance handling, the SoTS shall maintain a viable configuration capable of delivering acceptable functionality.
+
+
+\section*{Chapter Summary}
+This chapter formalized reliability in SoTS as four operational levels and translated them into explicit requirements. The remainder of this thesis develops a middleware architecture implementing Level~1 reliable SoTS, realizing disturbance detection and local mitigation within constituent DT. This provides a foundation for future extensions toward higher reliability levels.
