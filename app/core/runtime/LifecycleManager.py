@@ -3,15 +3,11 @@ import time
 from typing import Dict
 from dataclasses import dataclass, field
 
+from ..utils.EventListener.Logger import LifecycleLogger
 
-class ExperimentClock:
-
-    start_time = time.time()
-
-    @staticmethod
-    def now():
-        return time.time() - ExperimentClock.start_time
-
+# ==================================================
+# CONTEXT
+# ==================================================
 
 @dataclass
 class ConstituentContext:
@@ -24,14 +20,16 @@ class ConstituentContext:
 
     last_event_ts: float = field(default_factory=time.time)
 
-    observed_events: int = 0
-    reconstructed_events: int = 0
 
+# ==================================================
+# LIFECYCLE MANAGER
+# ==================================================
 
 class LifecycleManager:
 
-    def __init__(self):
+    def __init__(self, run_dir: str):
         self.constituents: Dict[str, ConstituentContext] = {}
+        self.lifecycle_logger = LifecycleLogger(run_dir)
 
     # --------------------------------------------------
     # REGISTRATION
@@ -79,59 +77,6 @@ class LifecycleManager:
             return None
 
         return ctx.runtime
-
-    # --------------------------------------------------
-    # EVENT METRICS
-    # --------------------------------------------------
-
-    def increment_observed(self, source_id):
-
-        ctx = self.constituents.get(source_id)
-
-        if ctx:
-            ctx.observed_events += 1
-            ctx.last_event_ts = ExperimentClock.now()
-
-    def increment_reconstructed(self, source_id):
-
-        ctx = self.constituents.get(source_id)
-
-        if ctx:
-            ctx.reconstructed_events += 1
-
-    # --------------------------------------------------
-    # METRICS EXPORT
-    # --------------------------------------------------
-
-    def metrics(self):
-
-        results = {}
-
-        for source_id, ctx in self.constituents.items():
-
-            results[source_id] = {
-                "observed": ctx.observed_events,
-                "reconstructed": ctx.reconstructed_events,
-                "last_event_time": ctx.last_event_ts
-            }
-
-        return results
-
-    def system_event_totals(self):
-
-        observed = 0
-        reconstructed = 0
-
-        for ctx in self.constituents.values():
-
-            observed += ctx.observed_events
-            reconstructed += ctx.reconstructed_events
-
-        return {
-            "observed": observed,
-            "reconstructed": reconstructed,
-            "total": observed + reconstructed
-        }
 
     # --------------------------------------------------
     # SYSTEM SNAPSHOT
@@ -184,13 +129,21 @@ class LifecycleManager:
             runtime = ctx.runtime
 
             try:
-                runtime.ensure_active()
+                runtime.ensure_participating()
 
             except Exception as e:
 
                 logging.warning(
                     f"[LIFECYCLE] Failed to activate {source_id}: {e}"
                 )
+
+    # --------------------------------------------------
+    # CLEANUP
+    # --------------------------------------------------
+
+    def close(self):
+        """Ensure lifecycle logs are flushed properly."""
+        self.lifecycle_logger.close()
 
     # --------------------------------------------------
     # DEBUG

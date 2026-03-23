@@ -4,8 +4,8 @@ import os
 import pandas as pd
 from tqdm import tqdm
 from app.core.schema.Event import make_event
-from app.core.reconstruction.PredictorRegistry import get_predictor_class
-from app.core.reconstruction.Reconstructor import Reconstructor
+from app.core.compensator.PredictorRegistry import get_predictor_class
+from app.core.compensator.Reconstructor import Reconstructor
 from app.core.utils.UtilsFuncs import _load_json
 
 LOG = logging.getLogger(__name__)

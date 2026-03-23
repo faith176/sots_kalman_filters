@@ -105,3 +105,37 @@ class CSVLogger(BaseLogger):
         self.csvfile.close()
         logging.info("[LOGGER] Shutting down...")
 
+
+class LifecycleLogger(BaseLogger):
+    def __init__(self, run_dir: str):
+        super().__init__(run_dir)
+
+        self.filepath = os.path.join(run_dir, "lifecycle.csv")
+        self.file = open(self.filepath, "w", newline="")
+
+        self.writer = None
+        self.fields = None
+
+        LOG.info(f"[LIFECYCLE LOGGER] Writing to {self.filepath}")
+
+    def consume_event(self, event: dict):
+        """
+        Expects event as dict (not Event object)
+        """
+        # Initialize header on first event
+        if self.writer is None:
+            self.fields = list(event.keys())
+            self.writer = csv.DictWriter(self.file, fieldnames=self.fields)
+
+            self.file.write(f"# Started {time.ctime()}\n")
+            self.writer.writeheader()
+
+        self.writer.writerow(event)
+        self.file.flush()
+
+    def close(self):
+        if self.file:
+            self.file.flush()
+            self.file.close()
+            LOG.info("[LIFECYCLE LOGGER] Shutting down...")
+

@@ -1,13 +1,27 @@
-\begin{table*}[]
-\centering
+{\scriptsize
+\renewcommand{\arraystretch}{0.85}
 \setlength{\tabcolsep}{1em}
-\caption{Modeling and simulation formalisms}
-\label{tab:modeling-methods-structured-table}
-\scriptsize
-\begin{tabular}{@{}p{5cm} l p{7.5cm}@{}}
+\begin{longtable}{@{}p{5cm} l p{7.5cm}@{}}
+\caption{Modeling and Simulation Formalisms}
+\label{tab:modeling-methods-structured-table} \\
+
 \toprule
 \textbf{Category} & \textbf{Frequency} & \textbf{Studies} \\
 \midrule
+\endfirsthead
+
+\toprule
+\textbf{Category} & \textbf{Frequency} & \textbf{Studies} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
 \textbf{Architectural and Structural} & \textbf{\maindatabar{31}} & \\
 \;\;\corner{} Systems Modeling Language (SysML) & \subdatabar{13} & \cite{ashtaritalkhestani2019architecture,dahmen2022modeling,dickopf2019holistic,gollner2022collaborative,jiang2022novel,kutzke2021subsystem,lopez2023modeling,parri2019jarvis,parri2021framework,pickering2023towards,schluse2017experimentable,wagner2023using,zhang2022multi-scale} \\
 \;\;\corner{} Unified Modeling Language (UML) & \subdatabar{12} & \cite{dahmen2022modeling,duan2023digital,gil2024integrating,gill2022method,gollner2022collaborative,heithoff2023challenges,hofmeister2024semantic,jiang2022novel,lee2022simulation,parri2019jarvis,parri2021framework,vogel-heuser2021approach} \\
@@ -16,18 +30,21 @@
 \;\;\corner{} Subject-Oriented Modeling (S-BPM) & \subdatabar{2} & \cite{heininger2021capturing,stary2022privacy} \\
 \;\;\corner{} State Models & \subdatabar{2} & \cite{kruger2022towards,reiche2021digital} \\
 \;\;\corner{} \textit{Other} & \subdatabar{8} & \cite{binder2021utilizing,dahmen2022modeling,dobie2024network,gil2024integrating,gollner2022collaborative,kulkarni2019towards,villalonga2021decision-making,wagner2023using} \\
+
 \textbf{Spatial and Visual Modeling} & \textbf{\maindatabar{24}} & \\
 \;\;\corner{} Computer-Aided Design (CAD) & \subdatabar{12} & \cite{ashtaritalkhestani2019architecture,becue2018cyberfactory,coupaye2023graph-based,duan2023digital,ehemann2023digital,jiang2022novel,joseph2021aggregated,liu2020web-based,novak2022digitalized,park2020digital,reiche2021digital,zhang2021bi-level} \\
 \;\;\corner{} 3D Modeling & \subdatabar{10} & \cite{bao2024digital,chavezbaliguat2023digital,ehemann2023digital,hatledal2020co-simulation,malayjerdi2022combined,mavromatis2024umbrella,priyanta2024is,samak2023autodrive,somma2023digital,vermesan2021internet} \\
 \;\;\corner{} Geometric Models & \subdatabar{2} & \cite{duan2023digital,ehemann2023digital} \\
 \;\;\corner{} Parametric Models & \subdatabar{2} & \cite{li2024comprehensive,wagner2023using} \\
 \;\;\corner{} \textit{Other} & \subdatabar{6} & \cite{becue2018cyberfactory,chavezbaliguat2023digital,coupaye2023graph-based,demir2023vertically-integrated,ehemann2023digital,priyanta2024is} \\
+
 \textbf{Mathematical and Statistical} & \textbf{\maindatabar{23}} & \\
 \;\;\corner{} Bayesian Networks (BN) & \subdatabar{5} & \cite{alam2017c2ps,kutzke2021subsystem,lippi2023enabling,maheshwari2022digital,vogel-heuser2021approach} \\
 \;\;\corner{} General Mathematical Models & \subdatabar{5} & \cite{hatledal2020co-simulation,howard2021greenhouse,jiang2022novel,kruger2022towards,maheshwari2022digital} \\
 \;\;\corner{} Fuzzy Logic & \subdatabar{2} & \cite{alam2017c2ps,altamiranda2019system} \\
 \;\;\corner{} Model Reference Adaptive Control (MRAC) & \subdatabar{2} & \cite{clark2021chapter,kulkarni2019towards} \\
 \;\;\corner{} \textit{Other} & \subdatabar{18} & \cite{altamiranda2019system,barden2022academic,bertoni2022digital,chavezbaliguat2023digital,dobie2024network,esterle2021digital,folds2019digital,gil2023modeling,gill2022method,heininger2021capturing,howard2021greenhouse,jiang2022novel,kulkarni2019towards,lippi2023enabling,maheshwari2022digital,pillai2023digital,saraeian2022digital,vogel-heuser2021approach} \\
+
 \textbf{Ontological and Knowledge Representation} & \textbf{\maindatabar{19}} & \\
 \;\;\corner{} Web Ontology Language (OWL) & \subdatabar{7} & \cite{ashtaritalkhestani2019architecture,bao2024digital,gil2023modeling,hofmeister2024semantic,jiang2022novel,li2024comprehensive,liu2020web-based} \\
 \;\;\corner{} AutomationML & \subdatabar{5} & \cite{ashtaritalkhestani2019architecture,gil2023modeling,gollner2022collaborative,liu2020web-based,novak2022digitalized} \\
@@ -35,29 +52,34 @@
 \;\;\corner{} Property Graphs (PGs) & \subdatabar{2} & \cite{coupaye2023graph-based,mahoro2023articulating} \\
 \;\;\corner{} Information Model & \subdatabar{2} & \cite{hatledal2020co-simulation,reiche2021digital} \\
 \;\;\corner{} \textit{Other} & \subdatabar{10} & \cite{coupaye2023graph-based,demir2023vertically-integrated,gil2023modeling,hofmeister2024cross-domain,hofmeister2024semantic,li2022cognitive,li2024comprehensive,monsalve2021novel,park2020digital,pickering2023towards} \\
+
 \textbf{Formal and State Based Methods} & \textbf{\maindatabar{14}} & \\
 \;\;\corner{} Finite State Machines (FSM) & \subdatabar{5} & \cite{alam2017c2ps,dahmen2022modeling,liu2020web-based,savur2019hrc-sos,vogel-heuser2021approach} \\
 \;\;\corner{} Fault Tree Analysis (FTA) & \subdatabar{3} & \cite{parri2019jarvis,parri2021framework,saraeian2022digital} \\
 \;\;\corner{} \textit{Other} & \subdatabar{7} & \cite{chen2018digital,hatledal2020co-simulation,heininger2021capturing,heithoff2023challenges,larsen2024towards,oquendo2019dealing,parri2019jarvis} \\
+
 \textbf{AI and Machine Learning} & \textbf{\maindatabar{13}} & \\
 \;\;\corner{} Machine Learning & \subdatabar{4} & \cite{dobie2024network,esterle2021digital,folds2019digital,jiang2022novel} \\
 \;\;\corner{} Reinforcement Learning (RL) & \subdatabar{2} & \cite{clark2021chapter,kulkarni2019towards} \\
 \;\;\corner{} Genetic Algorithms (GA) & \subdatabar{2} & \cite{kutzke2021subsystem,park2020digital} \\
 \;\;\corner{} \textit{Other} & \subdatabar{5} & \cite{altamiranda2019system,bao2024digital,chen2018digital,saraeian2022digital,villalonga2021decision-making} \\
+
 \textbf{Continuous Simulation} & \textbf{\maindatabar{12}} & \\
 \;\;\corner{} System Dynamics Models (SDM) & \subdatabar{4} & \cite{folds2019digital,gill2022method,kulkarni2019towards,pickering2023towards} \\
 \;\;\corner{} Kinematic Models & \subdatabar{3} & \cite{duan2023digital,gil2023modeling,schluse2017experimentable} \\
 \;\;\corner{} General Physics Models & \subdatabar{2} & \cite{demir2023vertically-integrated,hatakeyama2018systems} \\
 \;\;\corner{} Finite Element Method (FEM) & \subdatabar{2} & \cite{demir2023vertically-integrated,li2024comprehensive} \\
 \;\;\corner{} \textit{Other} & \subdatabar{4} & \cite{altamiranda2019system,demir2023vertically-integrated,gil2023modeling,monsalve2021novel} \\
+
 \textbf{Agent-Based Simulation} & \textbf{\maindatabar{10}} & \\
 \;\;\corner{} Multi Agent System (MAS) & \subdatabar{9} & \cite{clark2021chapter,heininger2021capturing,howard2021greenhouse,jirsa2024use,liu2020web-based,marah2023architecture,samak2023autodrive,vogel-heuser2021approach,zhang2021bi-level} \\
 \;\;\corner{} Agent Based Modeling (ABM) & \subdatabar{2} & \cite{barden2022academic,clark2021chapter} \\
 \;\;\corner{} \textit{Other} & \subdatabar{1} & \cite{marah2023architecture} \\
+
 \textbf{Discrete-Event Simulation} & \textbf{\maindatabar{8}} & \\
 \;\;\corner{} Discrete Event Simulation (DES) & \subdatabar{4} & \cite{bertoni2022digital,clark2021chapter,demir2023vertically-integrated,villalonga2021decision-making} \\
 \;\;\corner{} Discrete Event System Specification (DEVS) & \subdatabar{2} & \cite{lee2022simulation,oquendo2019dealing} \\
 \;\;\corner{} \textit{Other} & \subdatabar{3} & \cite{lee2022simulation,wang2024construction,zhang2022multi-scale} \\
-\bottomrule
-\end{tabular}
-\end{table*}
+
+\end{longtable}
+}

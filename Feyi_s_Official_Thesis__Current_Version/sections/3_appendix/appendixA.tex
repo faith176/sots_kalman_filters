@@ -1,4 +1,74 @@
-\chapter{Your Appendix}
+\chapter{Kalman Filtering Formulation}
 \label{appendix_a}
 
-Your appendix goes here.
+This appendix provides the full formulation of the Kalman filtering approach used for state estimation and confidence derivation in the proposed architecture. The Kalman filter is employed as the predictor within the compensation mechanism to reconstruct missing observations while maintaining an explicit representation of uncertainty.
+
+\section{Kalman Filter Formulation}
+\label{sec:kalman-formulation}
+
+\paragraph{Overview.}
+The Kalman filter is a recursive state estimation method that estimates the hidden state of a dynamical system from noisy observations while minimizing mean squared estimation error \cite{kalman1960filtering,bishop2001introduction}. The system state at time step $k$ is represented by a state vector $\vec{x}_k$, with associated uncertainty captured by a covariance matrix $\Sigma_k$.
+
+\paragraph{System model.}
+The Kalman filter assumes a linear dynamical system of the form:
+\[
+\vec{x}_k = \mathbf{F}_k \vec{x}_{k-1} + \mathbf{B}_k \vec{u}_k + \vec{w}_k,
+\qquad
+\vec{z}_k = \mathbf{H}_k \vec{x}_k + \vec{v}_k,
+\]
+where:
+\begin{itemize}
+    \item $\mathbf{F}_k$ is the state transition matrix,
+    \item $\mathbf{B}_k$ is the control input matrix,
+    \item $\vec{u}_k$ is the control input,
+    \item $\mathbf{H}_k$ is the observation matrix,
+    \item $\vec{w}_k \sim \mathcal{N}(0, \mathbf{Q}_k)$ is process noise,
+    \item $\vec{v}_k \sim \mathcal{N}(0, \mathbf{R}_k)$ is measurement noise.
+\end{itemize}
+
+\paragraph{Prediction step.}
+The prediction step propagates the previous state estimate forward:
+\[
+\vec{x}_{k|k-1} = \mathbf{F}_k \vec{x}_{k-1} + \mathbf{B}_k \vec{u}_k,
+\qquad
+\Sigma_{k|k-1} = \mathbf{F}_k \Sigma_{k-1} \mathbf{F}_k^{T} + \mathbf{Q}_k.
+\]
+
+\paragraph{Update step.}
+When a measurement $\vec{z}_k$ is available, the prediction is refined:
+\[
+\mathbf{K}_k =
+\Sigma_{k|k-1} \mathbf{H}_k^{T}
+\left( \mathbf{H}_k \Sigma_{k|k-1} \mathbf{H}_k^{T} + \mathbf{R}_k \right)^{-1}.
+\]
+
+\[
+\vec{x}_k = \vec{x}_{k|k-1} + \mathbf{K}_k \left( \vec{z}_k - \mathbf{H}_k \vec{x}_{k|k-1} \right),
+\qquad
+\Sigma_k = \Sigma_{k|k-1} - \mathbf{K}_k \mathbf{H}_k \Sigma_{k|k-1}.
+\]
+
+This recursive structure allows the estimator to maintain an updated state estimate and uncertainty representation over time.
+
+\section{Confidence Derivation using Normalized Innovation Squared}
+\label{sec:predictor-confidence}
+To assess the reliability of reconstructed observations, confidence values are derived from the NIS, a statistical consistency measure for Kalman filters \cite{bar2001estimation,simon2006optimal}.
+
+The innovation represents the discrepancy between observed and predicted measurements:
+\[
+\vec{y}_k = \vec{z}_k - \mathbf{H}_k \vec{x}_{k|k-1}.
+\]
+
+Its expected uncertainty is given by the innovation covariance:
+\[
+\mathbf{S}_k = \mathbf{H}_k \Sigma_{k|k-1} \mathbf{H}_k^{T} + \mathbf{R}_k.
+\]
+
+The NIS statistic is defined as:
+\[
+\mathrm{NIS}_k =
+\vec{y}_k^{T} \mathbf{S}_k^{-1} \vec{y}_k.
+\]
+
+\paragraph{Interpretation and confidence in reconstruction.}
+The NIS quantifies the consistency between an observation and the predicted state given its associated uncertainty. Under standard Kalman filter assumptions, NIS follows a chi-square distribution with degrees of freedom equal to the measurement dimension, enabling it to be interpreted as a measure of statistical consistency: low NIS values indicate high agreement (and thus higher confidence), while high NIS values indicate low agreement (and reduced confidence). In the proposed architecture, NIS is used to derive confidence values for reconstructed events. During periods with available measurements, NIS reflects the degree of agreement between the model and observations, whereas during periods without measurements, confidence decays over time as the estimator covariance increases, reflecting growing uncertainty in prediction-based reconstruction.

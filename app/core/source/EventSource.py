@@ -5,24 +5,16 @@ from typing import Any
 from ..schema.Event import Event, make_event
 from ..schema.EventGenerator import EventGenerator
 from .source_type import *
+from ..utils.UtilsFuncs import _as_observer
 
 
 class EventSource(EventGenerator):
-
     """
     Base class for all event sources.
 
     Routes emitted events to partitions depending on the
     lifecycle state of the constituent.
     """
-
-    PARTITION_MAP = {
-        "disengaged": None,
-        "prepared": None,
-        "passive": "observed",
-        "active": "observed.validated",
-    }
-
     def __init__(
         self,
         *,
@@ -34,11 +26,30 @@ class EventSource(EventGenerator):
         self.id = id
         self.type = type
         self.stream = stream
+
         self.lifecycle = lifecycle
 
-    # --------------------------------------------------
-    # Event Construction
-    # --------------------------------------------------
+        self.allow_observed = False
+        self.allow_validated = False
+
+
+
+    def connect(self):
+        runtime = self.lifecycle.get_runtime(self.id)
+
+        runtime.emit_observed.subscribe(
+            _as_observer(self._on_observed_changed)
+        )
+
+        runtime.emit_validated.subscribe(
+            _as_observer(self._on_validated_changed)
+        )
+
+    def _on_observed_changed(self, value: bool):
+        self.allow_observed = value
+
+    def _on_validated_changed(self, value: bool):
+        self.allow_validated = value
 
     def generate_event(self, params: dict[str, Any]) -> Event:
 
@@ -54,49 +65,38 @@ class EventSource(EventGenerator):
             extras=params.get("extras"),
         )
 
-    # --------------------------------------------------
-    # Event Emission
-    # --------------------------------------------------
 
     def emit_event(self, params):
-
-        # snapshot lifecycle state (prevents race conditions)
-        state = self.lifecycle.get_state(self.id)
-
-        if not state:
+        if not self.allow_observed:
+            logging.debug(f"[SOURCE {self.id}] blocked → no emission")
             return None
 
-        belonging_main = state["belonging_main"]
-
-        partition = self.PARTITION_MAP.get(belonging_main)
-
-        # drop event if lifecycle policy says so
-        if partition is None:
-            logging.debug(
-                f"[SOURCE {self.id}] state={belonging_main} → dropped"
-            )
-            return None
-
-        # create event
         event = self.generate_event(params)
+
         state = self.lifecycle.get_state(self.id)
 
-        event["extras"]={
-            "health": state["health_main"],
-            "role": state["belonging_sub"]
-        }
+        if state:
+            event["extras"] = {
+                "health": state["health_main"],
+                "belonging_main": state["belonging_main"],
+                "belonging_sub": state["belonging_sub"]
+            }
+
+        if self.allow_validated:
+            partition = "observed.validated"
+            event["event_status"] = "validated"
+        else:
+            partition = "observed"
+            event["event_status"] = "observed"
 
         event["partition"] = partition
-
-        ctx = self.lifecycle.constituents.get(self.id)
-        if ctx:
-            ctx.observed_events += 1
 
         # publish
         self.stream.add_event(event, partition, self.id)
 
         logging.debug(
-            f"[SOURCE {self.id}] state={belonging_main} → partition={partition}"
+            f"[SOURCE {self.id}] → {partition} "
+            f"(obs={self.allow_observed}, val={self.allow_validated})"
         )
 
         return event

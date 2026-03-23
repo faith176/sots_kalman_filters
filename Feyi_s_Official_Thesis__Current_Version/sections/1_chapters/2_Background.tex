@@ -70,12 +70,9 @@ DTs are increasingly deployed in distributed environments where multiple physica
 Reliability is a fundamental attribute of dependability that characterises a system's ability to sustain correct operation over time \cite{avizienis2004basic}.
 
 \subsection{Definition of Reliability}
-Dependability theory describes the trustworthiness of engineered systems as the justified confidence that a system delivers correct service under stated conditions \cite{avizienis2004basic}. It encompasses attributes such as availability, reliability, safety, integrity, and maintainability. Within this framework, reliability refers to the continuity of correct service, which is, the ability of a system to operate without failure over a specified time interval.
-
-In reliability engineering, this is commonly expressed as the probability that a system performs its intended function without failure for a given period \cite{ram2013system, alma991032896202207371}. System operation can be viewed as alternating between correct and incorrect service, where failures interrupt normal behaviour \cite{laprie1996software}. Accordingly, reliability is characterised through the failure process, capturing the occurrence and timing of failures over time. It is inherently time-dependent and is described using concepts such as time to failure and failure rate, with summary measures including mean time to failure (MTTF) and mean time between failures (MTBF).
+Dependability theory describes the trustworthiness of engineered systems as the justified confidence that a system delivers correct service under stated conditions \cite{avizienis2004basic}. It encompasses attributes such as availability, reliability, safety, integrity, and maintainability. Within this framework, reliability refers to the continuity of correct service, which is, the ability of a system to operate without failure over a specified time interval. In reliability engineering, this is commonly expressed as the probability that a system performs its intended function without failure for a given period \cite{ram2013system, alma991032896202207371}. System operation can be viewed as alternating between correct and incorrect service, where failures interrupt normal behaviour \cite{laprie1996software}. Accordingly, reliability is characterised through the failure process, capturing the occurrence and timing of failures over time. It is inherently time-dependent and is described using concepts such as time to failure and failure rate, with summary measures including mean time to failure (MTTF) and mean time between failures (MTBF).
 
 \subsection{Faults, Errors, and Failures}
-
 Dependability theory distinguishes between faults, errors, and failures to describe how impairments propagate within a system \cite{avizienis2004basic}. A fault is the underlying cause of an abnormal condition; when activated, it produces an error, corresponding to an incorrect internal state. If this error propagates to the system boundary and affects delivered service, a failure occurs. Faults may originate from hardware or software sources, including physical degradation, environmental influences, or design and implementation defects, and may arise across interacting components in complex systems \cite{ahmed2013survey}.
 
 \begin{figure}[htp]
@@ -88,13 +85,11 @@ Dependability theory distinguishes between faults, errors, and failures to descr
 To characterise the impact of such impairments, \citet{parhami2002defect} describe system behaviour in terms of progressive levels of impairment, where a system transitions through states reflecting increasing degradation of operation. A system is defective when it contains latent imperfections. When activated, these lead to a faulty state with incorrect internal behaviour. If faults contaminate system state or data, the system becomes erroneous. When errors affect externally observable behaviour, the system is malfunctioning. Continued impact results in a degraded state with reduced performance, and ultimately a failed state where intended service can no longer be delivered.
 
 
-
 \subsection{Approaches to Achieving Reliability}
 Several engineering approaches are described in the literature for achieving dependable system operation \cite{avizienis2004basic}. Fault prevention aims to avoid introducing faults during system design through disciplined engineering methods. Fault removal identifies and corrects faults through testing, verification, and maintenance activities. Fault forecasting estimates the likelihood and consequences of failures using reliability models and risk analysis. Fault tolerance enables systems to continue operating despite faults through mechanisms such as redundancy, monitoring, and recovery, allowing systems to detect, isolate, and mitigate the impact of faults during operation \cite{hanmer2013patterns}. These approaches collectively address different stages in the lifecycle of faults, errors, and failures. In this context, reliability depends on how effectively such mechanisms manage and mitigate these impairments during system operation.
 
 
 % \subsubsection{Reliability in DTs}
-
 
 % \subsubsection{Reliability in SoS}
 % Reliability in SoS is addressed through a range of architectural and fault-tolerance mechanisms. Existing approaches include structural techniques such as redundancy and substitution, runtime monitoring and verification for error detection, dynamic reallocation and reconfiguration for recovery, and estimation or prediction methods to address incomplete or degraded information \cite{ferreira2021reliability, uday2015designing, abdelmoumen2026comprehensive}. These techniques correspond to established fault-tolerance pattern families \cite{hanmer2013patterns}, including architectural mechanisms, error detection, recovery, mitigation, and fault treatment.
@@ -105,59 +100,3 @@ Several engineering approaches are described in the literature for achieving dep
 Event-driven processing is a computational model in which system behaviour advances in response to events \cite{kommera2020power}. An event represents a discrete occurrence within a system or its environment, typically modeled as a record with a payload and timestamp \cite{etzion2010event}. Events are produced asynchronously by sources such as sensors or software components and are collected into event streams that capture system behaviour over time. CEP extends this model by enabling the detection of higher-level situations through the interpretation and correlation of events over time \cite{cugola2015complex}. CEP systems evaluate continuous event streams against declarative patterns specifying temporal and logical relationships, such as sequencing, aggregation, and time windows \cite{cugola2012processing,cugola2015complex}. When a pattern is satisfied, a composite event is emitted representing a meaningful system-level condition. To support incremental pattern detection, CEP engines maintain internal state to track partial matches over time, commonly using automata-based or state-machine-based execution models. These approaches introduce trade-offs between expressiveness, memory usage, and performance \cite{cugola2015complex}.
 
 CEP originated in academic systems such as SASE and Cayuga \cite{wu2006high,brenna2007cayuga}, and was later adopted in industrial engines such as Esper and Siddhi and integrated into distributed stream processing frameworks such as Apache Flink \cite{esper_reference,suhothayan2011siddhi,carbone2015apache,dayarathna2018recent}. CEP has been applied across domains including logistics, finance, manufacturing, infrastructure monitoring, and healthcare \cite{buchmann2009complex,manchana2021event}. As systems increasingly adopt distributed and event-driven architectures, CEP provides a foundation for interpreting and coordinating behaviour across heterogeneous event sources \cite{kommera2020power,dayarathna2018recent}.
-
-
-
-\section{Kalman Filtering}\label{sec:kalman-background}
-The Kalman filter is a recursive state estimation method that estimates system state while maintaining an explicit representation of uncertainty in the estimate \cite{kalman1960filtering,bishop2001introduction}. In the Kalman filter framework, the state of a dynamical system at time step $k$ is represented by a state vector $\vec{x}_k$. Uncertainty in the estimate is represented by a covariance matrix $\Sigma_k$, which captures both the variance of state variables and correlations between them. Estimation proceeds through a recursive prediction and update cycle.
-
-\paragraph{Prediction step.}
-During the prediction step, the previous state estimate is propagated forward using a system model represented by the state transition matrix $\mathbf{F}_k$. External inputs may be incorporated through a control vector $\vec{u}_k$ and control matrix $\mathbf{B}_k$. Uncertainty associated with system dynamics is represented by the process noise covariance matrix $\mathbf{Q}_k$. The predicted state and covariance are
-
-\[
-\vec{x}_{k|k-1} = \mathbf{F}_k \vec{x}_{k-1} + \mathbf{B}_k \vec{u}_k,
-\qquad
-\Sigma_{k|k-1} = \mathbf{F}_k \Sigma_{k-1} \mathbf{F}_k^{T} + \mathbf{Q}_k.
-\]
-
-\paragraph{Update step.}
-When a measurement $\vec{z}_k$ becomes available, the prediction is refined using the measurement model $\mathbf{H}_k$, which maps the system state to the measurement space. Measurement uncertainty is represented by the noise covariance matrix $\mathbf{R}_k$. The Kalman gain $\mathbf{K}_k$ determines how the predicted state is adjusted based on the measurement:
-
-\[
-\mathbf{K}_k =
-\Sigma_{k|k-1}\mathbf{H}_k^{T}
-\left(\mathbf{H}_k\Sigma_{k|k-1}\mathbf{H}_k^{T} + \mathbf{R}_k\right)^{-1}.
-\]
-
-Using the Kalman gain, the updated state estimate and covariance are
-
-\[
-\vec{x}_k = \vec{x}_{k|k-1} + \mathbf{K}_k(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}),
-\qquad
-\Sigma_k = \Sigma_{k|k-1} - \mathbf{K}_k\mathbf{H}_k\Sigma_{k|k-1}.
-\]
-\subsection{Normalized Innovation Squared}
-
-The normalized innovation squared (NIS) is a statistical consistency diagnostic used with Kalman filters \cite{bar2001estimation,simon2006optimal}. It is based on the innovation, defined as the difference between an observed measurement $\vec{z}_k$ and its predicted value obtained from the filter state estimate:
-
-\[
-\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}.
-\]
-
-The expected uncertainty of this innovation is represented by the innovation covariance
-
-\[
-\mathbf{S}_k =
-\mathbf{H}_k\Sigma_{k|k-1}\mathbf{H}_k^{T} + \mathbf{R}_k,
-\]
-
-where $\Sigma_{k|k-1}$ represents the predicted state covariance and $\mathbf{R}_k$ represents measurement noise.
-
-The NIS statistic is defined as
-
-\[
-\mathrm{NIS}_k =
-(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1})^{T}
-\mathbf{S}_k^{-1}
-(\vec{z}_k - \mathbf{H}_k\vec{x}_{k|k-1}).
-\]

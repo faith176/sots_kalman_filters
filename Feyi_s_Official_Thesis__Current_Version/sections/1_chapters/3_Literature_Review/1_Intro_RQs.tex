@@ -6,6 +6,24 @@
     The contents of this chapter have been accepted for publication in the International Journal on Software and Systems Modeling (SoSyM).
 \end{publicationbox}
 
-SoTS arise at the intersection of SoS and DTs. As these research directions converge, an increasing body of work describes systems in which multiple digitally twinned systems interact, coordinate, and evolve under SoS principles.
+SoTS arise at the intersection of SoS and DTs. As these research directions converge, an increasing body of work describes systems in which multiple digitally twinned systems interact, coordinate, and evolve under SoS principles. To systematically characterize this emerging paradigm, this chapter presents a systematic literature review conducted according to the study design described in \secref{sec:literature-review-study-design}.
 
-To characterize SoTS, this chapter presents a systematic literature review conducted according to the study design described in \secref{sec:literature-review-study-design}. The review applies explicit inclusion, exclusion, and data extraction criteria to analyze how existing research combines DTs with SoS principles. The chapter then introduces a classification framework for SoTS (\secref{sec:literature-review-classification}). This framework is used to identify and compare recurring architectural patterns and coordination strategies across the literature. The results of the review are presented in \secref{sec:literature-review-results} and summarized through a set of key takeaways that ground the problem addressed in subsequent chapters.
+The review is guided by seven research questions that collectively examine the motivations, structure, characteristics, and maturity of SoTS. Specifically, we investigate:
+
+\begin{itemize}
+    \item \textbf{RQ1} (Why): Why DT and SoS principles are applied jointly, including the motivations, intents, and application domains of SoTS.
+    
+    \item \textbf{RQ2} (How): How DTs and SoS are combined, focusing on architectural configurations and the nature of constituent systems.
+    
+    \item \textbf{RQ3} (DT characteristics): The technical characteristics of DTs in SoTS, including autonomy, services, and modeling approaches.
+    
+    \item \textbf{RQ4} (SoS characteristics): The characteristics of SoS in SoTS, including supported SoS dimensions and types of emergent behavior.
+    
+    \item \textbf{RQ5} (Non-functional properties): How non-functional properties, particularly reliability (i.e., continuity of correct service~\cite{avizienis2004basic}) and security, are addressed, modeled, and evaluated.
+    
+    \item \textbf{RQ6} (Maturity): The technical and research maturity of SoTS, including Technology Readiness Levels (TRLs), evaluation practices, and use of standards.
+    
+    \item \textbf{RQ7} (Technological choices): The technologies used to implement SoTS, including programming languages, frameworks, and platforms.
+\end{itemize}
+
+To support this analysis, the chapter introduces a classification framework for SoTS (\secref{sec:literature-review-classification}), which is used to identify and compare recurring architectural patterns and coordination strategies across the literature. The results of the review are presented in \secref{sec:literature-review-results} and synthesized into key takeaways in \secref{sec:literature-review-key-takeaways}, which ground the problem addressed in subsequent chapters. Related work is discussed in \secref{sec:literature-review-related-work}.

@@ -75,9 +75,8 @@ The architecture is implemented as an event-driven middleware with Python-based 
 The reliability model introduced in \secref{sec:reliability-levels} defines lifecycle constraints governing how constituents participate and contribute in a SoTS. In this implementation, these constraints are enforced through executable lifecycle statecharts associated with each constituent, which maintain belonging and health states. Event publishing and compensation behaviours are determined by the constituent's current state, allowing the lifecycle model to directly govern runtime behaviour.
 
 \subsubsection{Executable Statecharts with Itemis CREATE}
-Lifecycle statecharts are implemented using Itemis CREATE\footnote{{itemis CREATE is a statechart modelling and code generation environment developed by itemis AG. See: \url{https://www.itemis.com/en/products/itemis-create}.}}, which provides a modelling environment for defining state machines and generating executable code. The Python code generator compiles lifecycle models into executable controllers integrated into the runtime system, where each constituent is associated with a statechart instance exposing lifecycle states, transitions, and events through a runtime interface.
+Lifecycle statecharts are implemented using Itemis CREATE\footnote{{itemis CREATE is a statechart modelling and code generation environment developed by itemis AG. See: \url{https://www.itemis.com/en/products/itemis-create}.}}, which provides a modelling environment for defining state machines and generating executable code. The Python code generator compiles lifecycle models into executable controllers integrated into the runtime system. Each constituent is associated with a statechart instance that exposes lifecycle states, transitions, and events through a runtime interface. System components can raise lifecycle events and query state during execution, enabling the reliability constraints defined by the model to directly influence system behaviour.
 
-Itemis CREATE also generates observable streams for statechart events, enabling a reactive execution model. System components subscribe to these observables and update their behaviour in response to emitted signals (e.g., enabling or disabling event emission or compensation). This establishes reactive coupling between lifecycle models and system behaviour, ensuring that coordination policies defined in the statechart are enforced automatically at runtime.
 \begin{figure}[htp]
 \centering
 \includegraphics[width=0.7\textwidth]{figures/Architecture/itemis.pdf}
@@ -101,6 +100,9 @@ The state estimator updates whenever observations are available. Updates therefo
 
 
 \subsection{Compensation under Restricted Roles}
+% 2–3 paragraphs: intuition + role in SoTS
+% + minimal equations (state + observation model)
+% + one sentence: "full formulation provided in Appendix X"
 The \textit{Restricted Role} introduced in Level~4 allows degraded constituents to continue participating while limiting their influence on system-level reasoning. Within this role, compensation is tightly integrated with lifecycle statecharts: reconstructed observations are accompanied by a confidence measure that directly controls behavioural transitions. As long as confidence remains within acceptable bounds, the constituent may continue operating in a restricted capacity; otherwise, the statecharts enforce withdrawal to prevent unreliable contributions from affecting the system.
 
 \paragraph{State Estimation for Compensation}
@@ -130,73 +132,53 @@ This evaluation is structured as a demonstration of utility. It shows that the L
 
 The evaluation is organized around a few key claims, each demonstrating a different aspect of the proposed approach.
 
-3 lanes at the same time, no push for event, push for events, and compensation - this will give us the abvility to get upper and lower bounds, then also track reconstruction is working correctly
-nice to get all the analysis done at once in one experiment
-ideally we want to show that statechart drives the behaviour so for each constituent we could 
-- potencially track each state their in and what behaviour is happening, like how many updates the kalman gets, and then how much is pushed to observed, and then how much is pushed but not entering the event stream
-- we can also track time and health state in each belonging state so its cler whats happening and stuff
+\subsection{Statechart-Driven Behaviour Enforcement}\label{sec:eval-statechart-enforcement}
+Demonstrates that behaviour is enforced directly by lifecycle statecharts without manual coordination logic.
 
-degradation would introduce addtional behaviour where we have the disturbances, 
-for this I would want to have the missing data present at different levels for each
-maybe preassign missing data percentage likelyhood for each one and then I feel like showing random behaviours would be best in this cause, like say I ran i a simulatuion and try to find areas where lets say we got denied entry into a certain state - this also helps prove the other one where the state chart controls behaviour  - so we'll want to add to the ensure functions kind of logs of like denied entry to XYZ kind of thing, or something in raise that shows when you don't move so it can be logged in the logger and tracked
-- so then we could have a breakdown like denial of bad constitents and things like that 
-- I think there should be a likelyhood to recover and likehood to be worse Ideally the stats would be good enough to trigger our degradation scenario atleast once
-- we already track confidence with all reconstruction which is good
+The evaluation will show:
+\begin{itemize}
+    \item Mapping between lifecycle states and system behaviour
+    \item Automatic triggering of behaviour changes through transitions
+\end{itemize}
 
--- for simplicty we can just override event source to send force events into one new event stream called ground truth, for each pattern we define we can have only checks for patterns  
-lower bound - observed.validated
-Mid bound - observed.validated + reconstructed\
-Upper bound - ground truth
-
--- easy enough to look do graphs for the confidence over time and the confidence error correlation, we can define patterns that trigger that different percentages for confidence two and do an analysis on like the trade off
-
-make sure everything logs and tracks with the experiemnt clock to make things straightforward
-
--- we need to keep things simple so decide on the scenario slightly in advace, like if its just gonna be simple signals and we detect certain spikes I think, with the upper and lower bound implemented we no longer have to simplify so we know exactly when things will trigger - so we can define the inital patterns and then generate more of them based on the intial set, it should be something simple like 3 atomic, 2 complex, or 3 atomic 1 complex
-
-implemntation complexity won't need anything else added to it, other than analyzing the code produced by the state machine, potencially a good breakdown for this would be showing the increasing complexity from the each reliability level, so I can say converting all of them into XYZ starts to increase complexity so its like theres a comparison as you do more complecx behaviours
-- we could so how like lines of code, cyclomatic complexity, amount of functions, variables things like that for each, and then explain how reproducinig this kind of behaviour in each service would be extremely difficult
+\subsubsection{State-Behaviour Trace Validation}\label{sec:eval-trace-validation}
+Verifies that observed behaviour aligns with lifecycle definitions using execution traces of state transitions and corresponding system actions.
 
 
 
+\subsection{Graceful Degradation through Compensation}\label{sec:eval-graceful-degradation}
+This section demonstrates that the system degrades gracefully under missing observations, enabled by compensation mechanisms that sustain participation during disturbance.
+
+The evaluation will show:
+\begin{itemize}
+    \item Sustained availability of events under increasing data loss
+    \item Proportion of observed versus reconstructed events over time
+    \item Reconstruction accuracy during periods of missing data
+    \item Mean Time To Failure (MTTF)
+\end{itemize}
+
+\subsubsection{Event Availability and Lifecycle State Duration Analysis}\label{sec:eval-availability-duration}
+Measures event availability and the duration of constituents in each lifecycle state to assess whether degradation occurs progressively. 
+
+\subsubsection{Reconstruction Error Analysis (MAE/RMSE)}\label{sec:eval-reconstruction-error}
+Quantifies reconstruction accuracy using MAE and RMSE by comparing predicted and ground truth values, evaluating how long compensation remains effective under disturbance.
 
 
+\subsection{Reduction in Implementation Complexity}\label{sec:eval-complexity}
+Demonstrates that executable statecharts reduce the complexity of implementing adaptive reliability behaviour while preserving correctness of lifecycle enforcement.
 
-% \subsection{Statechart-Driven Behaviour Enforcement}\label{sec:eval-statechart-enforcement}
-% Demonstrates that behaviour is enforced directly by lifecycle statecharts without manual coordination logic.
+The evaluation will show:
+\begin{itemize}
+    \item Size of generated code
+    \item Number of states and transitions handled automatically
+    \item Estimated complexity of a manual implementation
+\end{itemize}
 
-% The evaluation will show:
-% \begin{itemize}
-%     \item Mapping between lifecycle states and system behaviour
-%     \item Automatic triggering of behaviour changes through transitions
-% \end{itemize}
-
-% \subsubsection{State-Behaviour Trace Validation}\label{sec:eval-trace-validation}
-% Verifies that observed behaviour aligns with lifecycle definitions using execution traces of state transitions and corresponding system actions.
-
-
-
-% \subsection{Graceful Degradation through Compensation}\label{sec:eval-graceful-degradation}
-% This section demonstrates that the system degrades gracefully under missing observations, enabled by compensation mechanisms that sustain participation during disturbance.
-
-% The evaluation will show:
-% \begin{itemize}
-%     \item Sustained availability of events under increasing data loss
-%     \item Proportion of observed versus reconstructed events over time
-%     \item Reconstruction accuracy during periods of missing data
-% \end{itemize}
-
-% \subsubsection{Event Availability and Lifecycle State Duration Analysis}\label{sec:eval-availability-duration}
-% Measures event availability and the duration of constituents in each lifecycle state to assess whether degradation occurs progressively. 
-
-% \subsubsection{Reconstruction Error Analysis (MAE/RMSE)}\label{sec:eval-reconstruction-error}
-% Quantifies reconstruction accuracy using MAE and RMSE by comparing predicted and ground truth values, evaluating how long compensation remains effective under disturbance.
-
-% % \subsubsection{Uncertainty-Error Correlation Analysis}\label{sec:eval-uncertainty-correlation}
-% % Evaluates whether estimator uncertainty correlates with reconstruction error, validating it as a control signal.
+\subsubsection{Cyclomatic Complexity Analysis}\label{sec:eval-cyclomatic}
+Estimates reduction in control logic complexity by comparing the statechart-based implementation to a hypothetical manual approach.
 
 
-% \subsection{Uncertainty-Driven Lifecycle Control}
+% \subsection{Uncertainty-Driven Lifecycle Control}\label{sec:eval-uncertainty-control}
 % Demonstrates that lifecycle behaviour is updated based on quantified uncertainty, enabling the compensation mechanism to assess its reliability and appropriately influence constituent participation.
 
 % The evaluation will show:
@@ -206,90 +188,8 @@ implemntation complexity won't need anything else added to it, other than analyz
 %     \item Resulting lifecycle transitions
 % \end{itemize}
 
-% \subsubsection{Uncertainty-Error Correlation Analysis}
+% \subsubsection{Threshold Sensitivity Analysis}\label{sec:eval-threshold-sensitivity}
+% Evaluates how different uncertainty thresholds affect lifecycle transitions, assessing whether thresholds trigger withdrawal at appropriate levels of degradation.
+
+% \subsubsection{Uncertainty-Error Correlation Analysis}\label{sec:eval-uncertainty-correlation}
 % Evaluates whether estimator uncertainty correlates with reconstruction error, validating it as a control signal.
-
-
-% \subsection{Reduction in Implementation Complexity}\label{sec:eval-complexity}
-% Demonstrates that executable statecharts reduce the complexity of implementing adaptive reliability behaviour while preserving correctness of lifecycle enforcement.
-
-% The evaluation will show:
-% \begin{itemize}
-%     \item Size of generated code
-%     \item Number of states and transitions handled automatically
-%     \item Estimated complexity of a manual implementation
-% \end{itemize}
-
-% \subsubsection{Cyclomatic Complexity Analysis}\label{sec:eval-cyclomatic}
-% Estimates reduction in logic complexity
-
-
-
-
-
-\subsection{Scenario Design}\label{sec:eval-scenarios}
-
-The evaluation is structured around a set of controlled scenarios designed to trigger specific lifecycle behaviours. Each scenario isolates a key aspect of the proposed approach, enabling direct observation of how lifecycle statecharts enforce behaviour, how compensation mechanisms respond to disturbance, and how uncertainty influences participation decisions. This allows the evaluation to demonstrate causal relationships between system conditions and observed behaviour.
-
-All scenarios are executed within a unified simulation environment, where multiple constituents generate and process event streams over time. Disturbances are introduced in a controlled manner by manipulating observation availability and signal quality. For each scenario, three parallel evaluation lanes are maintained to provide reference bounds:
-\begin{itemize}
-    \item \textbf{Lower bound:} Only validated observations (\texttt{observed.validated}) are used, representing system behaviour without compensation.
-    \item \textbf{Mid bound:} Both validated and reconstructed observations are used, representing the proposed approach.
-    \item \textbf{Upper bound:} Ground truth signals are used, representing ideal behaviour without observation loss.
-\end{itemize}
-
-\paragraph{Scenario 1: Stable Operation}
-In this baseline scenario, no disturbances are introduced and all observations are available. Constituents operate in their nominal lifecycle states, contributing validated observations to the event stream without requiring compensation. This scenario establishes expected system behaviour under ideal conditions and provides a reference for subsequent scenarios.
-
-\begin{itemize}
-    \item Mapping between lifecycle states and enabled behaviour (e.g., emission of validated events)
-    \item Number of events produced per constituent and per stream
-    \item Absence of reconstruction activity and consistently high confidence values
-    \item Alignment between detected patterns and ground truth events
-\end{itemize}
-
-\paragraph{Scenario 2: Progressive Degradation}
-This scenario introduces a gradual reduction in observation availability over time. Rather than abrupt or random loss, the level of missing data is increased in a controlled manner, allowing the evolution of lifecycle states to be observed.
-
-\begin{itemize}
-    \item Transition of constituents across lifecycle states (Full $\rightarrow$ Restricted $\rightarrow$ Passive)
-    \item Duration of time spent in each lifecycle state
-    \item Proportion of observed versus reconstructed events over time
-    \item Event availability across the three evaluation lanes (lower, mid, upper bounds)
-    \item Changes in pattern detection rates under increasing disturbance
-\end{itemize}
-
-\paragraph{Scenario 3: Threshold-Driven Transition}
-In this scenario, signal conditions are designed such that reconstruction uncertainty increases and crosses predefined thresholds. This allows precise observation of the relationship between estimator confidence and lifecycle transitions.
-
-\begin{itemize}
-    \item Evolution of confidence (uncertainty) over time
-    \item Correlation between confidence and reconstruction error (e.g., MAE/RMSE)
-    \item Exact points at which thresholds are crossed
-    \item Resulting lifecycle transitions triggered by threshold violations
-    \item Behavioural changes following transitions (e.g., disabling event emission or reconstruction)
-\end{itemize}
-
-\paragraph{Scenario 4: Recovery and Re-entry}
-Following a period of degradation, observation availability is restored in a controlled manner. This enables evaluation of recovery dynamics, where constituents regain confidence and transition back into active participation.
-
-\begin{itemize}
-    \item Recovery of confidence and reduction in reconstruction error over time
-    \item Transition of constituents from restricted or passive states back to active participation
-    \item Re-enablement of behaviours such as validated event emission
-    \item Restoration of pattern detection rates toward baseline levels
-\end{itemize}
-
-\paragraph{Scenario 5: Denied Participation}
-This scenario introduces conditions under which constituents attempt to transition into active participation but fail to meet required criteria, such as minimum confidence thresholds. These denied transitions are explicitly logged and analyzed.
-
-\begin{itemize}
-    \item Number and frequency of denied state transitions
-    \item Conditions leading to denial (e.g., low confidence, high uncertainty)
-    \item Comparison between attempted and successful transitions
-    \item Impact of denied participation on event contribution and system-level behaviour
-\end{itemize}
-
-
-
-“All metrics are recorded with respect to a global simulation clock, enabling temporal alignment between lifecycle transitions, event availability, and reconstruction behaviour.”

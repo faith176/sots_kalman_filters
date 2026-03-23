@@ -23,6 +23,7 @@ class SimulatedEventSource(EventSource):
         id: str,
         type: str,
         stream: EventStream,
+        lifecycle, 
 
         value_unit: Optional[str] = None,
         value_datatype: str = "scalar",
@@ -37,7 +38,7 @@ class SimulatedEventSource(EventSource):
         start_value: Optional[float] = None,
     ):
         # lifecycle injected later by orchestrator
-        super().__init__(id=id, type=type, stream=stream, lifecycle=None)
+        super().__init__(id=id, type=type, stream=stream, lifecycle=lifecycle)
 
         self.interval = interval
         self.min_value = min_value

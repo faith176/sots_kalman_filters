@@ -5,7 +5,6 @@ __author__ = "Feyi Adesanya"
 
 """
 General utility functions.
-Includes helpers for event serialization, deserialization, and config loading.
 """
 
 def _load_json(path: str) -> dict:
@@ -17,3 +16,13 @@ def _serialize_event(event: Event) -> bytes:
 
 def _deserialize_event(data: bytes) -> Event:
     return json.loads(data.decode("utf-8"))
+
+# for the statecharts
+def _as_observer(fn):
+        class _Observer:
+            def next(self, value=None):
+                if value is not None:
+                    fn(value)
+                else:
+                    fn()
+        return _Observer()

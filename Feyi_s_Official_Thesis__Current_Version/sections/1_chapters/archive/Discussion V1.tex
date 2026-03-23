@@ -1,9 +1,14 @@
 \chapter{Discussion}\label{ch:discussion}
 This chapter reflects on the reliability model introduced in \chref{ch:reliable-sots} and the demonstrative evaluation presented in \chref{ch:demonstration}. It first analyzes the utility of the approach (\secref{sec:discussion-utility}), then discusses implications for SoTS engineering practice (\secref{sec:discussion-implications}), and finally outlines future directions for extending the approach (\secref{sec:discussion-future}).
 
+
+% \subsection{Non-Intrusive Integration with Existing Components}
+% Statechart-based coordination can be introduced without requiring substantial modification to existing components. By acting as an external control layer, statecharts regulate participation and interaction without embedding coordination logic within services. This supports non-intrusive integration, allowing existing systems to be incorporated into a SoTS through lifecycle-aware wrappers. The approach aligns with ISO 23247, which emphasises interoperability and integration of heterogeneous systems without prescribing implementation details \cite{iso23247_2_2021}. It also supports multiple architectural viewpoints, enabling coordination to evolve independently of service implementation.
+
+
 \section{Utility of Statechart-Based Coordination in SoTS}\label{sec:discussion-utility}
 \subsection{Model-Driven Coordination and Behaviour Enforcement}
-TODO - ONCE EVALUATION IS DONE
+
 Results from \secref{sec:eval-statechart-enforcement} demonstrate that system behaviour is enforced directly through lifecycle statecharts, without requiring manual coordination logic. Lifecycle constraints define permissible configurations and transitions, ensuring that constituent behaviour remains consistent with system-level coordination policies at runtime.
 
 This externalises coordination from an implicit, distributed responsibility within individual services to an explicit, shared model. As observed in the alignment between lifecycle states and system behaviour, constituents operate without embedding global coordination logic, yet system-level behaviour remains controlled and predictable. This establishes a clear separation of concerns between SoTS-level coordination and service-level functionality, which is particularly important in SoS contexts where operational and managerial independence limit tight integration \cite{maier1998architecting}.
@@ -12,7 +17,7 @@ By centralising coordination logic within executable models, the approach reduce
 
 
 \subsection{Graceful Degradation and Adaptive Reliability}
-TODO - ONCE EVALUATION IS DONE
+
 As shown in \secref{sec:eval-graceful-degradation}, disturbances do not result in immediate system failure, but instead lead to progressive degradation of behaviour. As observation availability decreases, constituents transition between lifecycle states while maintaining partial functionality.
 
 This behaviour corresponds to partial failure in dependability theory, where a system continues to deliver a subset of its intended service \cite{avizienis2004basic}. Lifecycle-driven transitions between participation modes (e.g., full, restricted, and passive roles) provide a structured mechanism for sustaining operation under degraded conditions.
@@ -20,14 +25,21 @@ This behaviour corresponds to partial failure in dependability theory, where a s
 Rather than reacting only after failure, the system adapts participation in response to changing conditions. Compensation mechanisms sustain event availability and maintain continuity of service without manual intervention, reflecting established resilience strategies in which degraded modes preserve essential functionality \cite{laprie1985dependable}. This shifts system behaviour from binary success/failure semantics toward controlled degradation, supporting key dependability attributes such as reliability and availability \cite{avizienis2004basic}.
 
 
+\subsection{Statecharts as Executable Contracts for SoTS Coordination}
 
-\subsection{Reduced Implementation Complexity through Model-to-Code Integration}
+% Evidence from \secref{sec:eval-statechart-enforcement} and \secref{sec:eval-uncertainty-control} indicates that lifecycle constraints actively regulate behaviour at runtime. 
+The use of statecharts to control constituent participation can be understood as establishing an explicit contract between the SoTS and each constituent. This contract defines how a constituent may contribute and how it is expected to behave under different conditions, making participation explicit rather than implicit or locally defined. Lifecycle states encode the assumptions under which participation is valid, while transitions define the guarantees regarding permissible actions and interactions. Constituents effectively adhere to these conditions through the externally defined lifecycle model, which regulates when and how they may contribute to system behaviour.
 
-TODO - ONCE EVALUATION IS DONE
-Results from \secref{sec:eval-complexity} show that representing coordination logic through executable statecharts reduces implementation complexity while preserving correctness. Lifecycle-dependent behaviour is defined once within the model and automatically translated into executable controllers using Itemis CREATE, eliminating the need to manually implement coordination logic across components. This replaces dispersed conditional logic with structured state transitions, reducing control flow complexity and improving clarity.
+This interpretation aligns with contract-based design, where system composition is governed through assumptions and guarantees \cite{benveniste2012contracts}. However, unlike static interface specifications, these contracts are executable and enforced at runtime through state transitions that enable or restrict participation. As a result, lifecycle models provide both design-time and runtime assurances: they support analysis of properties such as reachability and consistency, while enforcing constraints during operation. System interaction therefore becomes explicit, enforceable, and amenable to compositional reasoning, with participation governed through operationalised contracts.
 
-Centralising coordination within the statechart avoids duplication across services and allows changes to be applied consistently at the model level. The model-to-code workflow supported by Itemis CREATE maintains alignment between design and execution, reducing inconsistencies and simplifying system evolution. As systems scale, automatic code generation reduces implementation effort and supports more maintainable and extensible SoTS development.
 
+
+
+% \subsection{Statechart-Based Coordination as Executable Contracts}
+
+% An important implication of the proposed approach is that lifecycle-based coordination establishes explicit contracts between the SoTS and its constituents. Rather than relying on implicit assumptions or locally implemented coordination logic, participation is controlled through a shared lifecycle model that defines how constituents may contribute under different conditions. Lifecycle states encode the assumptions under which participation is valid, while transitions define the guarantees regarding permissible actions and interactions, making coordination policies explicit and enforceable through externally defined behaviour.
+
+% This perspective aligns with contract-based design, where system composition is governed through assumptions and guarantees \cite{benveniste2012contracts}. However, unlike traditional interface specifications, these contracts are executable and enforced at runtime through state transitions that enable or restrict participation. From an engineering perspective, this shifts coordination from informal agreements into a formally defined and enforceable mechanism, supporting both design-time analysis (e.g., reachability and consistency) and runtime assurance. As a result, coordination becomes explicit, verifiable, and amenable to compositional reasoning, improving the reliability and governability of SoTS interactions.
 
 
 

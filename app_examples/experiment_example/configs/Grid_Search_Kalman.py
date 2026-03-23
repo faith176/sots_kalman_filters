@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import logging
 from itertools import product
-from app.core.reconstruction.predictor_types.Filters import KalmanFilter
+from app.core.compensator.predictor_types.Filters import KalmanFilter
 
 
 # ================================================================

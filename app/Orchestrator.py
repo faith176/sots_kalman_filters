@@ -14,11 +14,11 @@ from app.core.communication.ServerRegistry import get_server_class
 from app.core.source.source_type import *
 from app.core.communication.comm_types import *
 
-from app.core.reconstruction.Reconstructor import Reconstructor
-from app.core.reconstruction.PredictorRegistry import get_predictor_class
+from app.core.compensator.Reconstructor import Reconstructor
+from app.core.compensator.PredictorRegistry import get_predictor_class
 from app.core.runtime.ExpectedSchedule import ExpectedSchedule
 
-from app.core.runtime.ConstituentRuntime import ConstituentRuntime
+from app.core.runtime.ConstituentController import ConstituentController
 from app.state_charts.lv4 import Statechart
 
 
@@ -139,8 +139,7 @@ class Orchestrator:
     # --------------------------------------------------
 
     def _start_lifecycle(self):
-
-        self.lifecycle = LifecycleManager()
+        self.lifecycle = LifecycleManager(self.run_dir)
 
     # --------------------------------------------------
     # CEP Engine
@@ -183,6 +182,7 @@ class Orchestrator:
             id=source_id,
             type=cfg["datatype"],
             stream=self.stream,
+            lifecycle=self.lifecycle,
             interval=cfg.get("interval"),
             value_unit=cfg.get("unit"),
             **cfg.get("params", {})
@@ -200,16 +200,10 @@ class Orchestrator:
             predictors_cfg = json.load(f)
 
         for source_id, cfg in sources_cfg.items():
-
-            # ----------------------------
-            # Runtime (statechart)
-            # ----------------------------
-
-            runtime = ConstituentRuntime(Statechart, source_id)
+            runtime = ConstituentController(Statechart, source_id, self.lifecycle.lifecycle_logger)
 
             # ----------------------------
             # Schedule
-            # ----------------------------
 
             schedule = ExpectedSchedule(
                 interval=cfg.get("interval", 1.0),
@@ -218,20 +212,14 @@ class Orchestrator:
 
             # ----------------------------
             # Predictor
-            # ----------------------------
 
             predictor_template = cfg["predictor_template"]
-
             predictor_cfg = predictors_cfg[predictor_template]
-
             predictor_cls = get_predictor_class(predictor_cfg["type"])
-
             predictor = predictor_cls(**predictor_cfg.get("params", {}))
 
             # ----------------------------
             # Reconstructor
-            # ----------------------------
-
             reconstructor = Reconstructor(
                 source_id=source_id,
                 predictor=predictor,
@@ -242,16 +230,10 @@ class Orchestrator:
 
             # ----------------------------
             # Event Source
-            # ----------------------------
-
             src = self._build_source(source_id, cfg)
-
-            src.lifecycle = self.lifecycle
 
             # ----------------------------
             # Register constituent
-            # ----------------------------
-
             self.lifecycle.register_constituent(
                 source_id=source_id,
                 runtime=runtime,
@@ -260,10 +242,12 @@ class Orchestrator:
                 schedule=schedule,
             )
 
+            # Connect components to lifecycle statecharts
+            src.connect()
+            reconstructor.connect()
+
             # ----------------------------
             # Start components
-            # ----------------------------
-
             reconstructor.start()
             src.start()
 

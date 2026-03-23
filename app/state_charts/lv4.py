@@ -42,6 +42,9 @@ class Statechart:
 		""" Declares all necessary variables including list of states, histories etc. 
 		"""
 		
+		self.allow_observed = None
+		self.allow_validated = None
+		self.allow_compensation = None
 		self.prepare_for_so_s = None
 		self.disengage_from_so_s = None
 		self.join_so_s = None
@@ -62,14 +65,19 @@ class Statechart:
 		self.announce_value = None
 		self.announce_observable = Observable()
 		self.emit_observed = None
+		self.emit_observed_value = None
 		self.emit_observed_observable = Observable()
 		self.emit_validated = None
+		self.emit_validated_value = None
 		self.emit_validated_observable = Observable()
-		self.enable_reconstruction = None
-		self.enable_reconstruction_observable = Observable()
+		self.compensation_enabled = None
+		self.compensation_enabled_value = None
+		self.compensation_enabled_observable = Observable()
 		self.belonging_changed = None
+		self.belonging_changed_value = None
 		self.belonging_changed_observable = Observable()
 		self.health_changed = None
+		self.health_changed_value = None
 		self.health_changed_observable = Observable()
 		
 		self.in_event_queue = queue.Queue()
@@ -78,6 +86,21 @@ class Statechart:
 		self.JC = "join_constellation"
 		self.LC = "leave_constellation"
 		self.LI = "leave_initated"
+		self.DISENGAGED = "disengaged"
+		self.PREPARED = "prepared"
+		self.AVAILABLE = "available"
+		self.NEGOTIATING = "negotiating"
+		self.PENDING_ENTRY = "pending_entry"
+		self.FULL_ROLE = "full_role"
+		self.RESTRICTED_ROLE = "restricted_role"
+		self.PENDING_EXIT = "pending_exit"
+		self.IDEAL = "ideal"
+		self.DEFECTIVE = "defective"
+		self.FAULTY = "faulty"
+		self.ERRONEOUS = "erroneous"
+		self.MALFUNCTIONING = "malfunctioning"
+		self.DEGRADED = "degraded"
+		self.FAILED = "failed"
 		
 		# enumeration of all states:
 		self.__State = Statechart.State
@@ -87,6 +110,10 @@ class Statechart:
 			self.__state_vector[__state_index] = self.State.null_state
 		
 		# initializations:
+		#Default init sequence for statechart Statechart
+		self.allow_observed = False
+		self.allow_validated = False
+		self.allow_compensation = False
 		self.__is_executing = False
 		self.__state_conf_vector_position = None
 	
@@ -338,109 +365,140 @@ class Statechart:
 		"""Entry action for state 'Disengaged'..
 		"""
 		#Entry action for state 'Disengaged'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.DISENGAGED)
+		self.allow_observed = False
+		self.allow_validated = False
+		self.allow_compensation = False
+		self.emit_observed_observable.next(False)
+		self.emit_validated_observable.next(False)
+		self.compensation_enabled_observable.next(False)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_prepared(self):
 		"""Entry action for state 'Prepared'..
 		"""
 		#Entry action for state 'Prepared'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.PREPARED)
+		self.allow_observed = False
+		self.allow_validated = False
+		self.allow_compensation = False
+		self.emit_observed_observable.next(False)
+		self.emit_validated_observable.next(False)
+		self.compensation_enabled_observable.next(False)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_passive(self):
 		"""Entry action for state 'Passive'..
 		"""
 		#Entry action for state 'Passive'.
 		self.announce_observable.next(self.JS)
+		self.allow_observed = True
+		self.allow_validated = False
+		self.allow_compensation = False
+		self.emit_observed_observable.next(True)
+		self.emit_validated_observable.next(False)
+		self.compensation_enabled_observable.next(False)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_passive__region0_negotiating(self):
 		"""Entry action for state 'Negotiating'..
 		"""
 		#Entry action for state 'Negotiating'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.NEGOTIATING)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_passive__region0_avaliable(self):
 		"""Entry action for state 'Avaliable'..
 		"""
 		#Entry action for state 'Avaliable'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.AVAILABLE)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active(self):
 		"""Entry action for state 'Active'..
 		"""
 		#Entry action for state 'Active'.
 		self.announce_observable.next(self.JC)
+		self.allow_observed = True
+		self.allow_validated = False
+		self.allow_compensation = False
+		self.emit_observed_observable.next(True)
+		self.emit_validated_observable.next(False)
+		self.compensation_enabled_observable.next(False)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active__region0_pending_entry(self):
 		"""Entry action for state 'Pending Entry'..
 		"""
 		#Entry action for state 'Pending Entry'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.PENDING_ENTRY)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active__region0_participating(self):
 		"""Entry action for state 'Participating'..
 		"""
 		#Entry action for state 'Participating'.
-		self.belonging_changed_observable.next()
+		self.allow_validated = True
+		self.emit_validated_observable.next(True)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active__region0_participating__region0_full_role(self):
 		"""Entry action for state 'Full Role'..
 		"""
 		#Entry action for state 'Full Role'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.FULL_ROLE)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active__region0_participating__region0_restricted_role(self):
 		"""Entry action for state 'Restricted Role'..
 		"""
 		#Entry action for state 'Restricted Role'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.RESTRICTED_ROLE)
+		self.allow_compensation = True
+		self.compensation_enabled_observable.next(True)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_belonging_active__region0_pending_exit(self):
 		"""Entry action for state 'Pending Exit'..
 		"""
 		#Entry action for state 'Pending Exit'.
-		self.belonging_changed_observable.next()
+		self.belonging_changed_observable.next(self.PENDING_EXIT)
+		self.allow_validated = False
+		self.allow_compensation = False
+		self.emit_validated_observable.next(False)
+		self.compensation_enabled_observable.next(False)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_ideal(self):
 		"""Entry action for state 'Ideal'..
 		"""
 		#Entry action for state 'Ideal'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.IDEAL)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_defective(self):
 		"""Entry action for state 'Defective'..
 		"""
 		#Entry action for state 'Defective'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.DEFECTIVE)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_faulty(self):
 		"""Entry action for state 'Faulty'..
 		"""
 		#Entry action for state 'Faulty'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.FAULTY)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_erroneous(self):
 		"""Entry action for state 'Erroneous'..
 		"""
 		#Entry action for state 'Erroneous'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.ERRONEOUS)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_malfunctioning(self):
 		"""Entry action for state 'Malfunctioning'..
 		"""
 		#Entry action for state 'Malfunctioning'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.MALFUNCTIONING)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_degraded(self):
 		"""Entry action for state 'Degraded'..
 		"""
 		#Entry action for state 'Degraded'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.DEGRADED)
 		
 	def __entry_action_constituent_lifecycle_orthogonal_states_health_failed(self):
 		"""Entry action for state 'Failed'..
 		"""
 		#Entry action for state 'Failed'.
-		self.health_changed_observable.next()
+		self.health_changed_observable.next(self.FAILED)
 		
 	def __exit_action_constituent_lifecycle_orthogonal_states_belonging_passive(self):
 		"""Exit action for state 'Passive'..
@@ -1026,7 +1084,7 @@ class Statechart:
 		#The reactions of state Pending Entry.
 		transitioned_after = transitioned_before
 		if transitioned_after < 0:
-			if (self.constellation_stable) and ((self.__state_vector[1] == self.State.constituent_lifecycle_orthogonal_states_health_ideal) or (self.__state_vector[1] == self.State.constituent_lifecycle_orthogonal_states_health_defective) or (self.__state_vector[1] == self.State.constituent_lifecycle_orthogonal_states_health_faulty)):
+			if self.constellation_stable:
 				self.__exit_sequence_constituent_lifecycle_orthogonal_states_belonging_active__region0_pending_entry()
 				self.__enter_sequence_constituent_lifecycle_orthogonal_states_belonging_active__region0_participating_default()
 				self.__constituent_lifecycle_orthogonal_states_belonging_active_react(0)

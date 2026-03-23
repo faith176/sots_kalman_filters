@@ -1,8 +1,8 @@
 import pytest
-from app.core.reconstruction.predictor_types.Filters import KalmanFilter
+from app.core.compensator.predictor_types.Filters import KalmanFilter
 
 # Run this file directly with:
-#   pytest -s tests/test_predictors.py
+#   pytest -s tests/test_filters.py
 
 def test_kalman_filter_confidence_progression():
     # Initialize filter with tuned parameters for visible progression

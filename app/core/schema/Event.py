@@ -3,7 +3,7 @@ import uuid
 
 __author__ = "Feyi Adesanya"
 
-EventStatus = Literal["observed", "reconstructed"]
+EventStatus = Literal["observed", "validated", "reconstructed"]
 
 
 class Event(TypedDict, total=False):

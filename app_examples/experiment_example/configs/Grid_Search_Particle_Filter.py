@@ -3,7 +3,7 @@ import pandas as pd
 import logging
 from itertools import product
 from tqdm import tqdm
-from app.core.reconstruction.predictor_types.Filters import ParticleFilter
+from app.core.compensator.predictor_types.Filters import ParticleFilter
 
 YEAR = 2016
 BEACH = "Montrose Beach"
