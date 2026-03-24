@@ -21,6 +21,7 @@ class EventProcessor:
         self.rebuild = rebuild
         self.log_matches = log_matches
         self.proc = None
+        self.pid = None
 
     def start(self):
         """Start the Java CEP engine as a subprocess."""
@@ -32,12 +33,14 @@ class EventProcessor:
             args=[self.pattern_cfg, self.run_dir, self.log_matches],
             rebuild=self.rebuild
         )
+        self.pid = self.proc.pid
+        logging.info(f"[JavaCEPBridge] Started Java PID={self.pid}")
 
     def stop(self):
         """Stop the Java CEP engine subprocess."""
         if self.proc:
             logging.info("[JavaCEPBridge] Stopping Java process")
-            stop_java(self.proc)
+            stop_java(self.proc, self.pid)
             self.proc = None
 
 
@@ -103,7 +106,7 @@ def start_java(
     return subprocess.Popen(cmd)
 
 
-def stop_java(proc):
+def stop_java(proc, pid=None):
     """Terminate the Java subprocess safely on Windows and Unix."""
     if not proc:
         return
@@ -121,8 +124,13 @@ def stop_java(proc):
         logging.error(f"[MAIN] Failed to stop Java process: {e}")
 
     # kill all leftover Java processes
-    for p in psutil.process_iter(attrs=["pid", "name"]):
-        if "java" in p.info["name"].lower():
-            logging.warning(f"[MAIN] Found stray Java process (PID {p.pid}), terminating...")
-            p.kill()
+    # for p in psutil.process_iter(attrs=["pid", "name"]):
+    #     if "java" in p.info["name"].lower():
+    #         logging.warning(f"[MAIN] Found stray Java process (PID {p.pid}), terminating...")
+    #         p.kill()
 
+    subprocess.run(
+    ["taskkill", "/IM", "java.exe", "/F"],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL
+)

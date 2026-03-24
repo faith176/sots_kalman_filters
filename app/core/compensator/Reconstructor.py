@@ -5,7 +5,6 @@ import logging
 from ..schema.EventConsumer import EventConsumer
 from ..schema.EventGenerator import EventGenerator
 from ..schema.Event import make_event
-from .predictor_types import *
 from ..utils.UtilsFuncs import _as_observer
 
 class Reconstructor(EventConsumer, EventGenerator):
@@ -107,9 +106,10 @@ class Reconstructor(EventConsumer, EventGenerator):
             f"value={value} "
             f"observe={self.allow_observe}"
         )
-
+        
         if self.allow_observe:
             self.predictor.update(value)
+            confidence = self.predictor.confidence(observed_value=value)
 
         while ts >= self.schedule.next_ts:
             self.schedule.advance()

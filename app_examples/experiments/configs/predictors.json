@@ -1,0 +1,29 @@
+{
+  "kf_slow": {
+    "type": "KalmanFilter",
+    "params": {
+      "initial_value": 50.0,
+      "dt": 1,
+      "Q": 0.01,
+      "R": 0.1
+    }
+  },
+  "kf_medium": {
+    "type": "KalmanFilter",
+    "params": {
+      "initial_value": 90.0,
+      "dt": 1,
+      "Q": 0.05,
+      "R": 0.15
+    }
+  },
+  "kf_fast": {
+    "type": "KalmanFilter",
+    "params": {
+      "initial_value": 100.0,
+      "dt": 1,
+      "Q": 0.1,
+      "R": 0.2
+    }
+  }
+}

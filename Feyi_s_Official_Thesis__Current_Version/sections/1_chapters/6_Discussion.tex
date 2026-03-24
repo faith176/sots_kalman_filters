@@ -1,8 +1,15 @@
+% key feedback points
+% active voice
+% straightforward, like how it would normally be said out loud
 \chapter{Discussion}\label{ch:discussion}
-This chapter reflects on the reliability model introduced in \chref{ch:reliable-sots} and the demonstrative evaluation presented in \chref{ch:demonstration}. It first analyzes the utility of the approach (\secref{sec:discussion-utility}), then discusses implications for SoTS engineering practice (\secref{sec:discussion-implications}), and finally outlines future directions for extending the approach (\secref{sec:discussion-future}).
+\id{Use active voice everywhere: In this chapter, I discuss the key takeaways of my Master's research and identify future directions for prospective researchers.} 
+\id{no analysis at this point. analysis was in earlier chapters. here, you elaborate on stuff}
+In this chapter, I present the key takeaways of this research and outline directions for future work. I first discuss how orthogonal statechart modelling for SoTS enables controlled and adaptive behaviour under disturbance (\secref{sec:discussion-utility}), then examine its implications for SoTS engineering practice (\secref{sec:discussion-implications}), and finally outline directions for prospective researchers (\secref{sec:discussion-future}).
+
+
 
 \section{Utility of Statechart-Based Coordination in SoTS}\label{sec:discussion-utility}
-\subsection{Model-Driven Coordination and Behaviour Enforcement}
+\subsection{Model-Driven Coordination and Enforcement}
 TODO - ONCE EVALUATION IS DONE
 Results from \secref{sec:eval-statechart-enforcement} demonstrate that system behaviour is enforced directly through lifecycle statecharts, without requiring manual coordination logic. Lifecycle constraints define permissible configurations and transitions, ensuring that constituent behaviour remains consistent with system-level coordination policies at runtime.
 
@@ -21,51 +28,66 @@ Rather than reacting only after failure, the system adapts participation in resp
 
 
 
-\subsection{Reduced Implementation Complexity through Model-to-Code Integration}
+\subsection{Model-to-Code Integration and Complexity Reduction}
 
 TODO - ONCE EVALUATION IS DONE
 Results from \secref{sec:eval-complexity} show that representing coordination logic through executable statecharts reduces implementation complexity while preserving correctness. Lifecycle-dependent behaviour is defined once within the model and automatically translated into executable controllers using Itemis CREATE, eliminating the need to manually implement coordination logic across components. This replaces dispersed conditional logic with structured state transitions, reducing control flow complexity and improving clarity.
 
 Centralising coordination within the statechart avoids duplication across services and allows changes to be applied consistently at the model level. The model-to-code workflow supported by Itemis CREATE maintains alignment between design and execution, reducing inconsistencies and simplifying system evolution. As systems scale, automatic code generation reduces implementation effort and supports more maintainable and extensible SoTS development.
 
+% \begin{itemize}
+%     \item Size of generated code
+%     \item Number of states and transitions handled automatically
+%     \item Estimated complexity of a manual implementation
+% \end{itemize}
+
+% \subsubsection{Cyclomatic Complexity Analysis}\label{sec:eval-cyclomatic}
+% Estimates reduction in logic complexity
+
 
 
 
 \section{Implications for SoTS Engineering Practice}\label{sec:discussion-implications}
-The proposed approach has several implications for SoTS engineering, particularly in how coordination, information exchange, and system-level interaction are structured across independently developed components.
+The proposed approach has several implications for how SoTS are engineered and managed.
 
-\subsection{Privacy-Preserving Coordination through Minimal Information Exposure}
-A key implication is the separation of concerns between component internals and system-level interaction. Constituents participate through constrained lifecycle states without exposing internal logic, enabling privacy-preserving coordination aligned with GDPR principles such as data minimisation and purpose limitation \cite{voigt2017eu}. Because participation is governed by lifecycle constraints, only information required to determine eligibility and progression is exposed, limiting interaction to minimal, purpose-specific exchange and reducing unnecessary disclosure by design. This perspective is reflected in SoTS research such as \citet{heininger2021capturing}, which embeds privacy management in digital twin models through controlled data sharing and selective disclosure.
+\subsection{Lifecycle Modelling Improves SoTS Engineering Maturity}
 
-An additional consequence is reduced cognitive burden for developers. For example, a CEP engineer interacts only with a defined set of lifecycle states and events, without reasoning about the full SoTS lifecycle or internal behaviour of other constituents. This allows domain specialists to focus on local functionality while the coordination model mediates both interaction and information exposure, becoming the primary mechanism governing system behaviour and data visibility.
+State-based lifecycle modelling can be used throughout SoTS engineering, from early design to runtime operation. Frameworks such as Capability Maturity Model Integration (CMMI) describe how processes evolve from informal practices to defined and controlled approaches \cite{paulk1991capability}. At early stages, lifecycle models provide a shared representation of participation in SoTS, improving consistency across teams. As maturity increases, they can be treated as engineering artefacts, similar to requirements or architectural models, supporting versioning, review, and validation. This enables formal specification and validation of behaviour, followed by automated code generation from validated models.
 
-\subsection{Lifecycle-Based Control as an Enabler of Engineering Maturity}
-
-Lifecycle-based control enables more mature and systematic engineering practices by making system-level interaction explicit and structured. Coordination concerns that are often implicit or ad hoc are externalised into lifecycle models, allowing analysis, validation, and governance. This supports different maturity levels: in less mature contexts, lifecycle models introduce standardisation through a shared representation of participation and interaction, while in more advanced settings they integrate into toolchains for code generation, validation, and runtime monitoring, enabling more automated and controlled system evolution. This progression aligns with maturity models such as CMM \cite{paulk1991capability} and reflects the importance of organisational capability in SoS engineering \cite{carlock2001system}.
-
-Adopting this approach requires organisational capabilities in modelling, state-based reasoning, and system-level design, along with governance structures to manage evolving lifecycle definitions and coordination policies. It may also introduce new roles, such as SoTS architects or model engineers. Beyond their technical role, executable lifecycle models act as shared reference points that support communication across stakeholders and enable more systematic and controlled engineering processes.
-
-\section{Future Directions for State-Based SoTS Coordination}\label{sec:discussion-future}
-
-The proposed approach provides a foundation for state-based coordination in SoTS, but several extensions can further improve its expressiveness, adaptability, and analytical capabilities.
-
-\subsection{Extending Lifecycle-Based Coordination}
-
-Future work could extend the lifecycle-based model by incorporating additional orthogonal dimensions that influence participation. Trust relationships may determine whether a constituent is eligible to participate within certain states, particularly in dynamic or federated environments. Operational readiness can capture whether a system is prepared to contribute based on configuration or resource availability, while data integrity ensures that only systems providing valid and consistent information are involved in ongoing activities. Additional dimensions such as security and quality-of-service (QoS) \cite{o2007quality} can further refine participation semantics by restricting involvement based on authorization and performance requirements.
-
-These extensions point toward multi-dimensional state models, where orthogonal concerns refine lifecycle semantics and constrain participation in a structured manner. Embedding these dimensions directly into the state representation strengthens the abstraction of SoTS structure and behaviour, supporting more precise and context-aware control over which constituents are active, trusted, and effective in each lifecycle phase.
-
-\subsection{Dynamic Selection of Fault Tolerance Strategies}
-
-The current approach assumes a fixed fault tolerance or compensation strategy, which may not be optimal under varying runtime conditions. Future systems could instead support dynamic selection of fault tolerance mechanisms based on system context, including resource availability, failure severity, and performance requirements. This would allow coordination to adapt more effectively to changing environments. A coordination framework could maintain a portfolio of strategies---such as retry mechanisms, compensation actions, or redundancy---and select among them at runtime. This selection could be guided by policies or utility functions that balance dependability attributes \cite{avizienis2004basic}, resulting in more flexible fault handling. Learning-based approaches, including reinforcement learning, could further improve decision-making over time, enabling fault tolerance to evolve based on observed system behaviour \cite{dong2023deep, zhang2020fault}.
-
-\subsection{Resource-Aware Coordination through Petri Nets}
-
-An important extension of the proposed approach is the integration of resource-aware modelling into lifecycle-based representations. While statecharts can encode resource availability and capacity constraints through variables and guards, these aspects are often implicit and embedded within control logic, making explicit reasoning about resource usage and contention more difficult in complex SoTS environments. Petri nets provide a complementary formalism for modelling resources, concurrency, and synchronization \cite{peterson1981petri}. By representing resources as tokens, they enable direct reasoning about availability and consumption while naturally capturing parallelism and shared resource access. This improves transparency and analyzability, and has been applied in SoTS contexts to model process flows and interactions \cite{zhang2022multi-scale}.
-
-Petri nets have also been used to provide formal semantics for state-based models, supporting enhanced simulation and analysis of dynamic behaviour \cite{baresi2001improving}. Combining statecharts with Petri net models enables coordination decisions to be grounded in both lifecycle state and resource conditions. Transitions can be guarded by resource constraints derived from the Petri net model, allowing participation and progression to depend on both resource availability and behavioural state. This hybrid approach results in a more expressive and analyzable model of SoTS coordination.
+Adopting this approach requires modelling capabilities, system-level design expertise, and governance to manage evolving lifecycle definitions. It may introduce roles such as SoTS architects or model engineers responsible for maintaining these models. As shared reference points, executable lifecycle models reduce ambiguity, improve communication, and support more controlled engineering processes.
 
 
-\subsection{Verification of Statechart-Based SoTS Coordination}
+\subsection{Lifecycle Models Enforce System-Level Contracts in SoTS}
+Enforcing lifecycle constraints through the proposed model can be viewed as enforcing contracts between DT constituents and the SoTS. States capture the conditions for valid participation and contributions, while transitions define permitted behavioural changes. This aligns with contract-based design \cite{benveniste2012contracts}, where behaviour is defined through assumptions and guarantees, and is realized here through state-based models that both describe and enforce valid interaction across independently evolving constituents. Work on contract specifications shows that they can be transformed into state-based models \cite{bae2016systematic}, supporting runtime enforcement through states and transitions.
 
-As SoTS are increasingly deployed in complex and dynamic environments, ensuring the correctness of coordination mechanisms becomes essential. State-based models provide a strong foundation for this, as they explicitly define permissible system behaviour through states and transitions. This enables verification of key properties, such as preventing unreliable contributions and avoiding unsafe participation states. These properties can be systematically analyzed using automated safety analysis techniques \cite{pap2005methods} and formal verification methods such as reachability analysis \cite{kang1996formalization}. The model also supports traceability between coordination rules and observed behaviour, allowing verification results to be mapped to lifecycle states and their associated coordination rules. Future work could extend this by applying formal verification to prove safety and liveness properties, as well as integrating runtime monitoring to ensure coordination constraints remain enforced during execution in dynamic SoTS environments.
+This has direct implications for how SoTS are engineered. Lifecycle models can be treated as executable contract specifications that can be shared across stakeholders, reviewed, and versioned as part of the engineering process, providing a consistent reference for expected behaviour. Because they are executable, they enable automatic enforcement at runtime, reducing the need for manual coordination logic within individual systems \cite{sangiovanni2012taming}. This simplifies integration, as new constituents only need to satisfy the lifecycle contract to participate, and reduces ambiguity during development and evolution by making assumptions and guarantees explicit and enforceable \cite{waschle2021contract}.
+
+
+
+\subsection{Lifecycle Models Decouple SoTS Coordination from Service Logi}
+The proposed approach separates constituent internals from system-level coordination by externalising SoTS concerns into lifecycle models. DT constituents participate through well-defined states and transitions without exposing internal behaviour or implementation details. Behaviour is controlled by a shared model rather than embedded within individual components. This keeps coordination at the SoTS level and allows constituents to focus on local functionality. As a result, constituents can evolve independently---being modified, replaced, or reconfigured---without global redesign. This aligns with operational and managerial independence in SoS \cite{maier1998architecting} and architectural principles that limit exposure to stakeholder-relevant concerns \cite{iso42010}. It supports scalable integration of heterogeneous DTs while maintaining system-level consistency.
+
+This separation also reduces information exposure and integration complexity. Interaction is mediated through lifecycle states, ensuring that internal models do not need to account for external system dynamics. This aligns with privacy perspectives such as the NIST Privacy Framework \cite{enterprise2020nist}, where risks are addressed through system design across the data lifecycle. By constraining participation based on the state of constituents, the model limits unnecessary data flows and unintended exposure. This is especially important in SoS settings, where interactions between independent systems introduce additional security, privacy, and trust risks \cite{olivero2024systematic}. It also clarifies engineering responsibilities: SoTS-level developers focus on coordination and guarantees, while service-level developers focus on local behaviour. This reduces cognitive load and supports more manageable SoTS development.
+
+
+\section{Future Directions}\label{sec:discussion-future}
+The proposed approach uses lifecycle state modeling to reason about and enforce reliability in SoTS. Several directions remain for extending the model to account for additional concerns and more complex system behaviour.
+
+
+\subsection{Representing Additional Concerns as Orthogonal Regions}
+\secref{sec:two-dimensional-disturbances} introduced a two-dimensional model of SoTS disturbances based on belonging and health. While these dimensions support reasoning about reliability, they do not capture all factors that influence participation in the SoTS. In practice, additional concerns such as trust, authorization level, confidentiality, and data integrity also affect whether and how DTs interact \cite{li2023trust, kuruppuarachchi2023trusted}. These concerns are well recognized in distributed DT settings, where challenges related to data sharing, access control, and inconsistent interpretation of information directly affect which DTs are suitable for collaboration \cite{tripathi2024stakeholders}. These concerns can be incorporated into the SoTS model as orthogonal regions, where each region captures a distinct aspect influencing participation. This allows participation to be determined based on multiple system-level factors rather than belonging and health alone.
+
+However, expanding the model introduces additional complexity. In settings involving multiple organizations, stakeholders must agree on how these concerns are defined, what their states represent, and how they influence eligibility to contribute \cite{carney2005topics}. Incorporating them allows for more precise control over contributions, but requires clear reasoning about how the regions interact. This extends beyond reliability and highlights the need to account for additional dependability attributes \cite{avizienis2004basic}.
+
+
+\subsection{Dynamic Fault Tolerance in SoTS}
+At the highest reliability level (\secref{sec:lv4}), the model allows constituents to continue participating in the SoTS under a restricted role when their condition degrades. This is realized in \secref{sec:demo-compensation} through a compensation component that estimates missing data. Different fault tolerance strategies can be applied in these situations \cite{hanmer2013patterns}. Each introduces trade-offs, particularly in terms of resource usage and predictability \cite{narasimhan2002trade}. In dynamic systems, fault tolerance must adapt to changing conditions, and selecting strategies at runtime allows the system to respond more effectively than fixed approaches \cite{de2022systematic, ballesteros2022infrastructure}.
+
+The proposed SoTS model supports runtime strategy selection based on the current system state by adding an additional orthogonal region to the statechart, where each state represents a strategy and substates capture variations. Transitions and guards are influenced by changes in other regions, enabling adaptive behaviour. For example, state estimation can handle intermittent missing data, while more severe degradation can trigger a switch to data fusion using observations from nearby DTs. Because statecharts are executable, learning-based methods such as reinforcement learning can update transitions and guards based on observed outcomes \cite{zhang2020fault, dong2023deep}. This extends the model from enforcing allowable configurations to selecting appropriate response strategies.
+
+
+\subsection{Formal Verification of SoTS}
+Through adopting a state based modelling approach to controlling SoTS (\secref{sec:statecharts-reliability}), we gain the ability to formally verify system behaviour. Models allow system behaviour to be represented explicitly, enabling formal verification through systematic analysis of all possible system executions. It becomes possible to reason about how the system can evolve under all different conditions. This allows properties such as safety (forbidden configurations are never reached), liveness (desired progression occurs), and invariants over belonging and health to be checked with guarantees \cite{henzinger2023quantitative}. This can be supported through the integration of formal analysis tools into the modelling workflow, enabling automated verification as the system evolves \cite{drusinsky2011modeling}.
+
+Further analysis can be supported through model-driven engineering (MDE) techniques. Behaviour is defined once in the statechart and systematically transformed into other models for analysis \cite{biehl2010literature}. These transformations provide alternative views of the same behaviour, making properties visible that are not explicit in the original model \cite{bezivin2006model}. For example, while statecharts capture the lifecycle of constituents, they do not directly expose resource usage, synchronization structure, or global system conditions. By transforming the model into representations such as Petri nets \cite{cortadella1995synthesizing, hei2011automatic}, these aspects can be analysed explicitly, enabling detection of deadlocks, unreachable states, and resource contention. Insights from this analysis can be fed back into the statechart through additional constraints or guarded transitions. This strengthens the link between execution and verification supporting more reliable SoTS behaviour.
+

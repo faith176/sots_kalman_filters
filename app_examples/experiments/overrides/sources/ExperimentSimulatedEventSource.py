@@ -1,0 +1,91 @@
+import logging
+import random
+
+from app.core.source.EventSourceRegistry import register_source_type
+from app_examples.experiments.overrides.ExperimentEventSource import ExperimentEventSource
+
+
+@register_source_type("simulated_experiment")
+class SimulatedEventSource(ExperimentEventSource):
+
+    def __init__(
+        self,
+        *,
+        id,
+        type,
+        stream,
+        lifecycle,
+        value_unit=None,
+        value_datatype="scalar",
+        interval=1.0,
+        min_value=0.0,
+        max_value=100.0,
+        drift=0.2,
+        noise=0.5,
+        start_value=None,
+    ):
+        super().__init__(id=id, type=type, stream=stream, lifecycle=lifecycle)
+
+        self.interval = interval
+        self.min_value = min_value
+        self.max_value = max_value
+        self.drift = drift
+        self.noise = noise
+
+        self.value_unit = value_unit
+        self.value_datatype = value_datatype
+
+        self.current_value = (
+            start_value if start_value is not None
+            else random.uniform(min_value, max_value)
+        )
+
+        # ✅ scenario + clock will be injected via override_observation
+        self.scenario = None
+        self.clock = None
+
+    # --------------------------------------------------
+
+    def override_observation(self, scenario, clock):
+        self.scenario = scenario
+        self.clock = clock
+
+    # --------------------------------------------------
+
+    def step(self, now):
+
+        if now % self.interval != 0:
+            return None
+
+        logging.debug(f"[SOURCE {self.id}] Emitting at t={now}")
+
+        drift = random.uniform(-self.drift, self.drift)
+        noise = random.gauss(0, self.noise)
+
+        self.current_value += drift + noise
+
+        self.current_value = max(
+            self.min_value,
+            min(self.current_value, self.max_value)
+        )
+
+        value = self.current_value
+
+        if self.scenario:
+            value = self.scenario.get_observation(now, value, self.id)
+
+        if value is None:
+            logging.debug(f"[SOURCE {self.id}] DROPPED at t={now}")
+            return None
+        
+        return self.emit_event({
+            "value": value,
+            "event_ts": now,
+            "confidence": 1.0,
+            "value_unit": self.value_unit,
+            "value_datatype": self.value_datatype,
+            "extras": {
+                "drift": drift,
+                "noise": noise
+            }
+        })

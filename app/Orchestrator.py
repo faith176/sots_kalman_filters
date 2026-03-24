@@ -13,14 +13,19 @@ from app.core.communication.ServerRegistry import get_server_class
 
 from app.core.source.source_type import *
 from app.core.communication.comm_types import *
+from app.core.compensator.predictor_types import *
 
 from app.core.compensator.Reconstructor import Reconstructor
 from app.core.compensator.PredictorRegistry import get_predictor_class
 from app.core.runtime.ExpectedSchedule import ExpectedSchedule
 
 from app.core.runtime.ConstituentController import ConstituentController
+from app.core.utils.UtilsFuncs import load_plugins_from_package
 from app.state_charts.lv4 import Statechart
 
+load_plugins_from_package("app.core.source.source_type")
+load_plugins_from_package("app.core.compensator.predictor_types")
+load_plugins_from_package("app.core.communication.comm_types")
 
 __author__ = "Feyi Adesanya"
 

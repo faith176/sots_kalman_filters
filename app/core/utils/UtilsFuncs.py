@@ -1,5 +1,10 @@
 import json
+
+import importlib
+import pkgutil
+
 from ..schema.Event import Event
+
 
 __author__ = "Feyi Adesanya"
 
@@ -26,3 +31,12 @@ def _as_observer(fn):
                 else:
                     fn()
         return _Observer()
+
+def load_plugins_from_package(package_name: str):
+    package = importlib.import_module(package_name)
+
+    if not hasattr(package, "__path__"):
+        raise ValueError(f"{package_name} is not a package")
+
+    for _, module_name, _ in pkgutil.walk_packages(package.__path__):
+        importlib.import_module(f"{package_name}.{module_name}")

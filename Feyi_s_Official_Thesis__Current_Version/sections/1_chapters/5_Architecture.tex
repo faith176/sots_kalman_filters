@@ -100,7 +100,7 @@ When health degrades and a constituent transitions to the \textit{Restricted Rol
 The state estimator updates whenever observations are available. Updates therefore occur across \textit{Passive} and \textit{Active} states, maintaining an internal estimate of system behaviour even when participation not actively participating.
 
 
-\subsection{Compensation under Restricted Roles}
+\subsection{Compensation under Restricted Roles}\label{sec:demo-compensation}
 The \textit{Restricted Role} introduced in Level~4 allows degraded constituents to continue participating while limiting their influence on system-level reasoning. Within this role, compensation is tightly integrated with lifecycle statecharts: reconstructed observations are accompanied by a confidence measure that directly controls behavioural transitions. As long as confidence remains within acceptable bounds, the constituent may continue operating in a restricted capacity; otherwise, the statecharts enforce withdrawal to prevent unreliable contributions from affecting the system.
 
 \paragraph{State Estimation for Compensation}
@@ -126,7 +126,7 @@ System-level behaviour is derived from the event stream using the Esper CEP engi
 
 \section{Evaluation}\label{sec:evaluation}
 
-This evaluation is structured as a demonstration of utility. It shows that the Level~4 lifecycle model produces controlled and adaptive system behaviour under disturbance, without requiring manual reasoning about constituent states. The evaluation considers disturbances caused by missing observations, as outlined in \secref{sec:limitations}. A controlled scenario is used in which observation availability is progressively reduced, allowing the behaviour of the system to be observed as constituents transition between lifecycle states.
+This evaluation is structured as a demonstration of utility. It shows that the Level~4 lifecycle model produces controlled and adaptive system behaviour under disturbance, without requiring manual reasoning about constituent states. The evaluation considers disturbances caused by missing observations. A controlled scenario is used in which observation availability is progressively reduced, allowing the behaviour of the system to be observed as constituents transition between lifecycle states.
 
 The evaluation is organized around a few key claims, each demonstrating a different aspect of the proposed approach.
 
@@ -214,14 +214,6 @@ implemntation complexity won't need anything else added to it, other than analyz
 % Demonstrates that executable statecharts reduce the complexity of implementing adaptive reliability behaviour while preserving correctness of lifecycle enforcement.
 
 % The evaluation will show:
-% \begin{itemize}
-%     \item Size of generated code
-%     \item Number of states and transitions handled automatically
-%     \item Estimated complexity of a manual implementation
-% \end{itemize}
-
-% \subsubsection{Cyclomatic Complexity Analysis}\label{sec:eval-cyclomatic}
-% Estimates reduction in logic complexity
 
 
 
@@ -229,67 +221,43 @@ implemntation complexity won't need anything else added to it, other than analyz
 
 \subsection{Scenario Design}\label{sec:eval-scenarios}
 
-The evaluation is structured around a set of controlled scenarios designed to trigger specific lifecycle behaviours. Each scenario isolates a key aspect of the proposed approach, enabling direct observation of how lifecycle statecharts enforce behaviour, how compensation mechanisms respond to disturbance, and how uncertainty influences participation decisions. This allows the evaluation to demonstrate causal relationships between system conditions and observed behaviour.
+The evaluation is structured around controlled scenarios designed to expose key behaviours of the proposed approach. All scenarios are executed within a unified simulation environment where multiple constituents generate and process event streams over time. Disturbances are introduced by reducing observation availability.
 
-All scenarios are executed within a unified simulation environment, where multiple constituents generate and process event streams over time. Disturbances are introduced in a controlled manner by manipulating observation availability and signal quality. For each scenario, three parallel evaluation lanes are maintained to provide reference bounds:
+For each scenario, three reference bounds are used for comparison:
 \begin{itemize}
-    \item \textbf{Lower bound:} Only validated observations (\texttt{observed.validated}) are used, representing system behaviour without compensation.
-    \item \textbf{Mid bound:} Both validated and reconstructed observations are used, representing the proposed approach.
+    \item \textbf{Lower bound:} Only observations are used, representing system behaviour without compensation.
+    \item \textbf{proposed system:} Both observations and reconstructed observations are used, representing the proposed approach.
     \item \textbf{Upper bound:} Ground truth signals are used, representing ideal behaviour without observation loss.
 \end{itemize}
 
+
 \paragraph{Scenario 1: Stable Operation}
-In this baseline scenario, no disturbances are introduced and all observations are available. Constituents operate in their nominal lifecycle states, contributing validated observations to the event stream without requiring compensation. This scenario establishes expected system behaviour under ideal conditions and provides a reference for subsequent scenarios.
+No disturbance is introduced and all observations are present. Constituents operate in their normal lifecycle states, providing a baseline for expected behaviour.
 
 \begin{itemize}
     \item Mapping between lifecycle states and enabled behaviour (e.g., emission of validated events)
     \item Number of events produced per constituent and per stream
-    \item Absence of reconstruction activity and consistently high confidence values
     \item Alignment between detected patterns and ground truth events
 \end{itemize}
 
 \paragraph{Scenario 2: Progressive Degradation}
-This scenario introduces a gradual reduction in observation availability over time. Rather than abrupt or random loss, the level of missing data is increased in a controlled manner, allowing the evolution of lifecycle states to be observed.
+Observations are progressively removed over time, allowing the system's response to increasing uncertainty to be observed.
 
 \begin{itemize}
-    \item Transition of constituents across lifecycle states (Full $\rightarrow$ Restricted $\rightarrow$ Passive)
-    \item Duration of time spent in each lifecycle state
-    \item Proportion of observed versus reconstructed events over time
-    \item Event availability across the three evaluation lanes (lower, mid, upper bounds)
-    \item Changes in pattern detection rates under increasing disturbance
+    \item Transitions of constituents across lifecycle states
+    \item Time spent in each lifecycle state
+    \item Proportion of observed versus reconstructed events
+    \item Evolution of confidence over time
+    \item Event coverage across evaluation lanes
+    \item Changes in pattern detection under disturbance
+    \item Occurrence of denied transitions due to insufficient health
 \end{itemize}
 
-\paragraph{Scenario 3: Threshold-Driven Transition}
-In this scenario, signal conditions are designed such that reconstruction uncertainty increases and crosses predefined thresholds. This allows precise observation of the relationship between estimator confidence and lifecycle transitions.
+\paragraph{Scenario 3: Recovery and Re-entry}
+Observations are restored after a period of degradation, allowing evaluation of recovery behaviour.
 
 \begin{itemize}
-    \item Evolution of confidence (uncertainty) over time
-    \item Correlation between confidence and reconstruction error (e.g., MAE/RMSE)
-    \item Exact points at which thresholds are crossed
-    \item Resulting lifecycle transitions triggered by threshold violations
-    \item Behavioural changes following transitions (e.g., disabling event emission or reconstruction)
+    \item Transition of constituents back to active participation
+    \item Re-enablement of validated event emission
+    \item Restoration of pattern detection rates
 \end{itemize}
-
-\paragraph{Scenario 4: Recovery and Re-entry}
-Following a period of degradation, observation availability is restored in a controlled manner. This enables evaluation of recovery dynamics, where constituents regain confidence and transition back into active participation.
-
-\begin{itemize}
-    \item Recovery of confidence and reduction in reconstruction error over time
-    \item Transition of constituents from restricted or passive states back to active participation
-    \item Re-enablement of behaviours such as validated event emission
-    \item Restoration of pattern detection rates toward baseline levels
-\end{itemize}
-
-\paragraph{Scenario 5: Denied Participation}
-This scenario introduces conditions under which constituents attempt to transition into active participation but fail to meet required criteria, such as minimum confidence thresholds. These denied transitions are explicitly logged and analyzed.
-
-\begin{itemize}
-    \item Number and frequency of denied state transitions
-    \item Conditions leading to denial (e.g., low confidence, high uncertainty)
-    \item Comparison between attempted and successful transitions
-    \item Impact of denied participation on event contribution and system-level behaviour
-\end{itemize}
-
-
-
-“All metrics are recorded with respect to a global simulation clock, enabling temporal alignment between lifecycle transitions, event availability, and reconstruction behaviour.”

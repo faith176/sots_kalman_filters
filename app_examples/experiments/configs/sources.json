@@ -1,0 +1,46 @@
+{
+  "speed-1": {
+    "type": "simulated_experiment",
+    "unit": "km/h",
+    "datatype": "float",
+    "interval": 2.0,
+    "params": {
+      "min_value": 0.0,
+      "max_value": 160.0,
+      "start_value": 20.0,
+      "drift": 2.0,
+      "noise": 4.0
+    },
+    "predictor_template": "kf_fast"
+  },
+
+  "engine-temp-1": {
+    "type": "simulated_experiment",
+    "unit": "C",
+    "datatype": "float",
+    "interval": 1.0,
+    "params": {
+      "min_value": 70.0,
+      "max_value": 120.0,
+      "start_value": 80.0,
+      "drift": 0.3,
+      "noise": 1.5
+    },
+    "predictor_template": "kf_medium"
+  },
+
+  "fuel-1": {
+    "type": "simulated_experiment",
+    "unit": "%",
+    "datatype": "float",
+    "interval": 3.0,
+    "params": {
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "start_value": 50.0,
+      "drift": -0.5,
+      "noise": 0.1
+    },
+    "predictor_template": "kf_slow"
+  }
+}

@@ -11,18 +11,7 @@ __author__ = "Feyi Adesanya"
 
 class EventStream:
     """
-    Core event bus for the system.
-
     Handles publish/subscribe of events across partitions and streams.
-    Supports hierarchical partitions such as:
-
-        observed
-        observed.validated
-        reconstructed
-
-    Also supports wildcard subscriptions:
-
-        observed.*
     """
 
     def __init__(self, client_type: Type[Client]):

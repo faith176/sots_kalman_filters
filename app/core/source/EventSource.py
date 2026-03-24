@@ -4,7 +4,6 @@ from typing import Any
 
 from ..schema.Event import Event, make_event
 from ..schema.EventGenerator import EventGenerator
-from .source_type import *
 from ..utils.UtilsFuncs import _as_observer
 
 

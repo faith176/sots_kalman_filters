@@ -130,6 +130,7 @@ class LifecycleManager:
 
             try:
                 runtime.ensure_participating()
+                runtime.ensure_malfunctioning()
 
             except Exception as e:
 

@@ -66,43 +66,46 @@ class ConstituentController:
     # ---------------------------------------
     # INTERNAL EVENT RAISING
     # ---------------------------------------
-
-    def _raise(self, event):
-
+    def _raise(self, event, goal=None):
         before = self.state_snapshot()
+        from_state = f"{before['belonging_main']}/{before['belonging_sub']}"
 
-        getattr(self.sm, event)()
+        transition = event
+        getattr(self.sm, transition)()
         self.sm.run_cycle()
 
         self.update_snapshot()
-
         after = self.state_snapshot()
+
+        final_state = f"{after['belonging_main']}/{after['belonging_sub']}"
+        after_health = after["health_main"]
+
+        result = "made" if from_state != final_state else "no_change"
+        goal_match = (goal == final_state)
+
+        ts = time.time()
 
         logging.info(
             f"[LIFECYCLE] {self.id} "
-            f"{before['health_main']}/{before['belonging_sub']} "
-            f"→ "
-            f"{after['health_main']}/{after['belonging_sub']} "
-            f"(event={event})"
+            f"{from_state} --({transition})--> {final_state} "
+            f"[goal={goal}, result={result}, goal_match={goal_match}]"
         )
-        
+
         if self.lifecycle_logger:
             self.lifecycle_logger.consume_event({
-                "type": "lifecycle_transition",
-                "src": self.id,
-                "trigger_event": event,
-
-                "from_health": before["health_main"],
-                "to_health": after["health_main"],
-
-                "from_belonging_main": before["belonging_main"],
-                "to_belonging_main": after["belonging_main"],
-
-                "from_belonging_sub": before["belonging_sub"],
-                "to_belonging_sub": after["belonging_sub"],
-
-                "ts": time.time()
+                "type": "lifecycle_decision",
+                "ts": ts,
+                "constituent_id": self.id,
+                "from_state": from_state,
+                "target_state": goal,
+                "transition": transition,
+                "result": result,
+                "final_state": final_state,
+                "health": after_health,
+                "goal_match": goal_match,
+                "trigger_event": transition,
             })
+        
 
     # ---------------------------------------
     # HEALTH NAME
@@ -174,18 +177,19 @@ class ConstituentController:
     # BELONGING EVENTS
     # ---------------------------------------
 
-    def prepare(self): self._raise("raise_prepare_for_so_s")
-    def disengage(self): self._raise("raise_disengage_from_so_s")
-    def join_sos(self): self._raise("raise_join_so_s")
-    def leave_sos(self): self._raise("raise_leave_so_s")
-    def join_invitation(self): self._raise("raise_join_invitation")
-    def join_request(self): self._raise("raise_join_request")
-    def admission_rejected(self): self._raise("raise_admission_rejected")
-    def exit_denied(self): self._raise("raise_exit_denied")
-    def join_constellation(self): self._raise("raise_join_constellation")
-    def constellation_stable(self): self._raise("raise_constellation_stable")
-    def leave_request(self): self._raise("raise_leave_request")
-    def leave_constellation(self): self._raise("raise_leave_constellation")
+    def prepare(self, goal=None): self._raise("raise_prepare_for_so_s", goal=goal)
+    def disengage(self, goal=None): self._raise("raise_disengage_from_so_s", goal=goal)
+    def join_sos(self, goal=None): self._raise("raise_join_so_s", goal=goal)
+    def leave_sos(self, goal=None): self._raise("raise_leave_so_s", goal=goal)
+
+    def join_invitation(self, goal=None): self._raise("raise_join_invitation", goal=goal)
+    def join_request(self, goal=None): self._raise("raise_join_request", goal=goal)
+    def admission_rejected(self, goal=None): self._raise("raise_admission_rejected", goal=goal)
+    def exit_denied(self, goal=None): self._raise("raise_exit_denied", goal=goal)
+    def join_constellation(self, goal=None): self._raise("raise_join_constellation", goal=goal)
+    def constellation_stable(self, goal=None): self._raise("raise_constellation_stable", goal=goal)
+    def leave_request(self, goal=None): self._raise("raise_leave_request", goal=goal)
+    def leave_constellation(self, goal=None): self._raise("raise_leave_constellation", goal=goal)
 
     def uncertainty_threshold_exceeded(self):
         self._raise("raise_uncertainty_threshold_exceeded")
@@ -194,15 +198,14 @@ class ConstituentController:
     # HEALTH EVENTS
     # ---------------------------------------
 
-    def degrade(self):
-        self._raise("raise_degrade")
+    def degrade(self, goal=None):
+        self._raise("raise_degrade", goal=goal)
 
-    def improve(self):
-        self._raise("raise_improve")
+    def improve(self, goal=None):
+        self._raise("raise_improve", goal=goal)
 
-    def full_recovery(self):
-        self._raise("raise_full_recovery")
-
+    def full_recovery(self, goal=None):
+        self._raise("raise_full_recovery", goal=goal)
     # ---------------------------------------
     # HEALTH NAVIGATION
     # ---------------------------------------
@@ -220,16 +223,16 @@ class ConstituentController:
 
             # shortcut for full recovery
             if goal == "ideal":
-                self.full_recovery()
+                self.full_recovery(goal=goal)
                 continue
 
             current_idx = self.HEALTH_ORDER.index(current)
             goal_idx = self.HEALTH_ORDER.index(goal)
 
             if goal_idx > current_idx:
-                self.degrade()
+                self.degrade(goal=goal)
             else:
-                self.improve()
+                self.improve(goal=goal)
 
         raise RuntimeError(f"Failed to reach health state '{goal}'")
 
@@ -403,7 +406,7 @@ class ConstituentController:
 
             before = current
 
-            getattr(self, action)()
+            getattr(self, action)(goal=goal)
 
             after = self.belonging_substate()
 

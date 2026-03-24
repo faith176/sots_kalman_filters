@@ -1,0 +1,12 @@
+# Logger: PatternLogger | Started: Mon Mar 23 10:55:01 EDT 2026
+fired_at,fired_offset_sec,pattern_name,pattern_type,subpatterns,subpattern_confidences,num_subpatterns,num_events,confidence,contributing_streams,nested_event_ids
+2026-03-23 10:55:02.086,1.047,Overspeeding,atomic,[Overspeeding],[1.0000],1,1,1.0000,[speed-1],[[462df73e-87c5-4270-885d-2c9a6c2aa279]]
+2026-03-23 10:55:02.107,1.068,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[9d9a6ad1-bc30-48ba-9cdf-468d6e1798bb]]
+2026-03-23 10:55:02.110,1.071,HighSpeedOverheat,complex,[Overspeeding;EngineOverheat],[1.0000;1.0000],2,2,1.0000,[engine-temp-1;speed-1],[[462df73e-87c5-4270-885d-2c9a6c2aa279];[9d9a6ad1-bc30-48ba-9cdf-468d6e1798bb]]
+2026-03-23 10:55:02.124,1.085,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[02ea31c6-6dcd-446b-a027-4d64d7c5c7c1]]
+2026-03-23 10:55:02.126,1.087,CrazyEvent,complex,[HighSpeedOverheat;EngineOverheat],[1.0000;1.0000],3,3,1.0000,[engine-temp-1;speed-1],[[462df73e-87c5-4270-885d-2c9a6c2aa279];[9d9a6ad1-bc30-48ba-9cdf-468d6e1798bb];[02ea31c6-6dcd-446b-a027-4d64d7c5c7c1]]
+2026-03-23 10:55:02.159,1.120,Overspeeding,atomic,[Overspeeding],[1.0000],1,1,1.0000,[speed-1],[[1b4e9873-e496-4d09-81c5-3f67fac3725e]]
+2026-03-23 10:55:02.173,1.134,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[56547dc9-f818-4e9c-b0b9-8f9ddab21d94]]
+2026-03-23 10:55:02.174,1.135,HighSpeedOverheat,complex,[Overspeeding;EngineOverheat],[1.0000;1.0000],2,2,1.0000,[engine-temp-1;speed-1],[[1b4e9873-e496-4d09-81c5-3f67fac3725e];[56547dc9-f818-4e9c-b0b9-8f9ddab21d94]]
+2026-03-23 10:55:02.214,1.175,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[c2970f55-15db-4a81-9759-abe8b12ca8e9]]
+2026-03-23 10:55:02.215,1.176,CrazyEvent,complex,[HighSpeedOverheat;EngineOverheat],[1.0000;1.0000],3,3,1.0000,[engine-temp-1;speed-1],[[1b4e9873-e496-4d09-81c5-3f67fac3725e];[56547dc9-f818-4e9c-b0b9-8f9ddab21d94];[c2970f55-15db-4a81-9759-abe8b12ca8e9]]

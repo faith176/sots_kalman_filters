@@ -1,40 +1,37 @@
-import logging
-import time
-from typing import Dict
-from dataclasses import dataclass, field
+from app.core.runtime.LifecycleManager import ConstituentContext, LifecycleManager
+from app_examples.experiments.overrides.ExperimentConstituentController import ExperimentConstituentController
 
-from . import LifecycleLogger
+class ExperimentLifecycleManager(LifecycleManager):
 
-# Helpers
-class ExperimentClock:
-    start_time = time.time()
+    def __init__(self, run_dir, clock, scenario):
+        super().__init__(run_dir)
 
-    @staticmethod
-    def now():
-        return time.time() - ExperimentClock.start_time
+        self.clock = clock
+        self.scenario = scenario
 
-# ==================================================
-# CONTEXT
-# ==================================================
+    def register_constituent(
+        self,
+        source_id,
+        statechart_cls,
+        event_source,
+        reconstructor,
+        schedule
+    ):
 
-@dataclass
-class ConstituentContext:
+        runtime = ExperimentConstituentController(
+            statechart_cls=statechart_cls,
+            constituent_id=source_id,
+            lifecycle_logger=self.lifecycle_logger,
+            clock=self.clock,
+            scenario=self.scenario.name()
+        )
 
-    source_id: str
-    runtime: object
-    event_source: object
-    reconstructor: object
-    schedule: object
+        ctx = ConstituentContext(
+            source_id=source_id,
+            runtime=runtime,
+            event_source=event_source,
+            reconstructor=reconstructor,
+            schedule=schedule
+        )
 
-    last_event_ts: float = field(default_factory=time.time)
-
-
-# ==================================================
-# LIFECYCLE MANAGER
-# ==================================================
-
-class LifecycleManager:
-
-    def __init__(self, run_dir: str):
-        self.constituents: Dict[str, ConstituentContext] = {}
-        self.lifecycle_logger = LifecycleLogger(run_dir)
+        self.constituents[source_id] = ctx
