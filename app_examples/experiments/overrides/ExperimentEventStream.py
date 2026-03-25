@@ -13,16 +13,8 @@ class ExperimentEventStream(EventStream):
             "ground_truth": self.client_type(partition="ground_truth"),
         }
 
-
-    def dispatch(self, timeout: int = 0, once: bool = True):
-        """
-        Non-blocking dispatch for experiments.
-        Processes events once and returns.
-        """
-
+    def dispatch(self, timeout: int = 0.5, once: bool = True):
         for client in list(self.partitions.values()):
-
-            # keep polling until queue is empty
             while True:
                 had_event = client.poll_once(timeout=timeout)
 

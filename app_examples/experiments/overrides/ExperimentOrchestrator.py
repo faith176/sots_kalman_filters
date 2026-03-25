@@ -33,7 +33,6 @@ from app_examples.experiments.overrides.ExperimentLifecycleManager import Experi
 
 LOG = logging.getLogger(__name__)
 
-
 class ExperimentOrchestrator:
 
     def __init__(self, config_path: str, scenario, clock):
@@ -57,10 +56,6 @@ class ExperimentOrchestrator:
         self.run_dir = os.path.join(base_dir, f"experiment_{scenario.name()}")
         os.makedirs(self.run_dir, exist_ok=True)
 
-    # --------------------------------------------------
-    # STARTUP COMPONENTS
-    # --------------------------------------------------
-
     def _start_server(self):
 
         cfg = self.cfg["messaging"]
@@ -81,7 +76,6 @@ class ExperimentOrchestrator:
         client_cls = get_client_class(cfg["client_type"])
 
         self.stream = ExperimentEventStream(client_cls)
-        # ❌ DO NOT call self.stream.start()
 
     def _start_logger(self):
 
@@ -117,10 +111,6 @@ class ExperimentOrchestrator:
             scenario=self.scenario
         )
 
-    # --------------------------------------------------
-    # SOURCE LOADING
-    # --------------------------------------------------
-
     def _load_sources(self):
 
         with open(self.cfg["sources_config"], "r") as f:
@@ -139,10 +129,6 @@ class ExperimentOrchestrator:
             value_unit=cfg.get("unit"),
             **cfg.get("params", {})
         )
-
-    # --------------------------------------------------
-    # CONSTITUENTS
-    # --------------------------------------------------
 
     def _start_constituents(self):
 
@@ -169,7 +155,7 @@ class ExperimentOrchestrator:
             predictor = predictor_cls(**predictor_cfg.get("params", {}))
 
             # ----------------------------
-            # Reconstructor (NON-THREADED)
+            # Reconstructor
             reconstructor = ExperimentReconstructor(
                 source_id=source_id,
                 predictor=predictor,
@@ -200,16 +186,50 @@ class ExperimentOrchestrator:
             src.connect()
             reconstructor.connect()
 
-            # ❌ DO NOT call reconstructor.start()
-
             self.sources.append(src)
             self.reconstructors.append(reconstructor)
 
             LOG.info(f"[EXPERIMENT] Started constituent '{source_id}'")
 
-    # --------------------------------------------------
-    # RUN
-    # --------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def _apply_scenario_state(self, t):
+        for src in self.sources:
+            source_id = src.id
+
+            # Health
+            current_health = self.lifecycle.get_health(source_id)
+            new_health = self.scenario.get_health(
+                t,
+                current_health,
+                source_id
+            )
+            if new_health != current_health:
+                self.lifecycle.set_health(source_id, new_health)
+
+            # Belonging
+            current_belonging = self.lifecycle.get_belonging(source_id)
+            current_sub = current_belonging["sub"]
+            new_belonging = self.scenario.get_belonging(
+                t,
+                current_sub,
+                source_id
+            )
+            if new_belonging != current_sub:
+                self.lifecycle.set_belonging(source_id, new_belonging)
 
     def run(self, T=5):
 
@@ -225,36 +245,34 @@ class ExperimentOrchestrator:
 
         self.lifecycle.activate_all()
 
-        # ----------------------------------------
-        # Deterministic simulation loop
-        # ----------------------------------------
 
+        # Simulation loop
         for _ in range(T):
 
             self.clock.tick()
             t = self.clock.now()
 
-            # 1. Generate events
+            # Apply state changes
+            self._apply_scenario_state(t)
+
+            # Generate events
             for src in self.sources:
                 src.step(t)
 
-            # 2. Dispatch events
-            self.stream.dispatch(timeout=0)
+            # Dispatch events
+            self.stream.dispatch(timeout=0.5)
 
-            # 3. Reconstruction step
+            # Reconstruction step
             for r in self.reconstructors:
                 r.step()
 
-            time.sleep(0.05)
+            time.sleep(0.1)
 
         self.stop()
 
-    # --------------------------------------------------
-    # SHUTDOWN
-    # --------------------------------------------------
+
 
     def stop(self):
-
         LOG.info("[EXPERIMENT] Stopping")
 
         if self.logger:

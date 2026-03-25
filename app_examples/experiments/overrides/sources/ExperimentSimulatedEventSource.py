@@ -40,25 +40,16 @@ class SimulatedEventSource(ExperimentEventSource):
             else random.uniform(min_value, max_value)
         )
 
-        # ✅ scenario + clock will be injected via override_observation
         self.scenario = None
         self.clock = None
 
-    # --------------------------------------------------
 
     def override_observation(self, scenario, clock):
         self.scenario = scenario
         self.clock = clock
 
-    # --------------------------------------------------
 
     def step(self, now):
-
-        if now % self.interval != 0:
-            return None
-
-        logging.debug(f"[SOURCE {self.id}] Emitting at t={now}")
-
         drift = random.uniform(-self.drift, self.drift)
         noise = random.gauss(0, self.noise)
 
@@ -69,17 +60,39 @@ class SimulatedEventSource(ExperimentEventSource):
             min(self.current_value, self.max_value)
         )
 
-        value = self.current_value
+        true_value = self.current_value
+
+        self.emit_ground_truth({
+            "value": true_value,
+            "event_ts": now,
+            "value_unit": self.value_unit,
+            "confidence": 1.0,
+            "value_datatype": self.value_datatype,
+            "extras": {
+                "drift": drift,
+                "noise": noise,
+                "type": "ground_truth"
+            }
+        })
+
+        if now % self.interval != 0:
+            return None
+
+        observed_value = true_value
 
         if self.scenario:
-            value = self.scenario.get_observation(now, value, self.id)
+            observed_value = self.scenario.get_observation(
+                now, true_value, self.id
+            )
 
-        if value is None:
+        if observed_value is None:
             logging.debug(f"[SOURCE {self.id}] DROPPED at t={now}")
             return None
-        
+
+        logging.debug(f"[SOURCE {self.id}] Observed emit at t={now}")
+
         return self.emit_event({
-            "value": value,
+            "value": observed_value,
             "event_ts": now,
             "confidence": 1.0,
             "value_unit": self.value_unit,

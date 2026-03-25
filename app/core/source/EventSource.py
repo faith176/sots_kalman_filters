@@ -11,7 +11,7 @@ class EventSource(EventGenerator):
     """
     Base class for all event sources.
 
-    Routes emitted events to partitions depending on the
+    Routes events to partitions depending on the
     lifecycle state of the constituent.
     """
     def __init__(
@@ -90,7 +90,6 @@ class EventSource(EventGenerator):
 
         event["partition"] = partition
 
-        # publish
         self.stream.add_event(event, partition, self.id)
 
         logging.debug(

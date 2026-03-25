@@ -5,9 +5,6 @@ from dataclasses import dataclass, field
 
 from ..utils.EventListener.Logger import LifecycleLogger
 
-# ==================================================
-# CONTEXT
-# ==================================================
 
 @dataclass
 class ConstituentContext:
@@ -20,20 +17,11 @@ class ConstituentContext:
 
     last_event_ts: float = field(default_factory=time.time)
 
-
-# ==================================================
-# LIFECYCLE MANAGER
-# ==================================================
-
 class LifecycleManager:
 
     def __init__(self, run_dir: str):
         self.constituents: Dict[str, ConstituentContext] = {}
         self.lifecycle_logger = LifecycleLogger(run_dir)
-
-    # --------------------------------------------------
-    # REGISTRATION
-    # --------------------------------------------------
 
     def register_constituent(
         self,
@@ -43,7 +31,6 @@ class LifecycleManager:
         reconstructor,
         schedule
     ):
-
         ctx = ConstituentContext(
             source_id=source_id,
             runtime=runtime,
@@ -53,37 +40,97 @@ class LifecycleManager:
         )
 
         self.constituents[source_id] = ctx
-
         logging.info(f"[LIFECYCLE] Registered {source_id}")
 
-    # --------------------------------------------------
-    # STATE ACCESS
-    # --------------------------------------------------
 
     def get_state(self, source_id):
-
         ctx = self.constituents.get(source_id)
-
         if not ctx:
             return None
 
         return ctx.runtime.state_snapshot()
 
     def get_runtime(self, source_id):
-
         ctx = self.constituents.get(source_id)
-
         if not ctx:
             return None
 
         return ctx.runtime
 
-    # --------------------------------------------------
-    # SYSTEM SNAPSHOT
-    # --------------------------------------------------
 
+    def activate_all(self):
+        logging.info("[LIFECYCLE] Activating all constituents")
+        for source_id, ctx in self.constituents.items():
+            runtime = ctx.runtime
+            try:
+                runtime.ensure_participating()
+            except Exception as e:
+                logging.warning(
+                    f"[LIFECYCLE] Failed to activate {source_id}: {e}"
+                )
+
+
+    def set_health(self, source_id, new_health):
+        ctx = self.constituents.get(source_id)
+        if not ctx:
+            return
+
+        runtime = ctx.runtime
+        current = runtime.health_name()
+
+        if current == new_health:
+            return
+
+        try:
+            runtime.ensure_health(new_health)
+
+            logging.info(f"[LIFECYCLE] {source_id} health → {new_health}")
+
+        except Exception as e:
+            logging.warning(f"[LIFECYCLE] Failed health update for {source_id}: {e}")
+
+
+    def get_health(self, source_id):
+        ctx = self.constituents.get(source_id)
+        if not ctx:
+            return None
+
+        return ctx.runtime.health_name()
+    
+
+    def set_belonging(self, source_id, new_belonging):
+        ctx = self.constituents.get(source_id)
+        if not ctx:
+            return
+
+        runtime = ctx.runtime
+        current = runtime.belonging_substate()
+
+        if current == new_belonging:
+            return
+
+        try:
+            runtime.ensure_belonging(new_belonging)
+
+            logging.info(f"[LIFECYCLE] {source_id} belonging → {new_belonging}")
+
+        except Exception as e:
+            logging.warning(f"[LIFECYCLE] Failed belonging update for {source_id}: {e}")
+
+
+    def get_belonging(self, source_id):
+        ctx = self.constituents.get(source_id)
+        if not ctx:
+            return None
+
+        runtime = ctx.runtime
+
+        return {
+            "main": runtime.belonging_main(),
+            "sub": runtime.belonging_substate()
+        }
+            
     def snapshot(self):
-
         stats = {
             "full_role": 0,
             "restricted_role": 0,
@@ -93,7 +140,6 @@ class LifecycleManager:
         }
 
         for ctx in self.constituents.values():
-
             state = ctx.runtime.state_snapshot()
 
             role = state["belonging_sub"]
@@ -116,48 +162,14 @@ class LifecycleManager:
 
         return stats
 
-    # --------------------------------------------------
-    # GLOBAL LIFECYCLE CONTROL
-    # --------------------------------------------------
-
-    def activate_all(self):
-
-        logging.info("[LIFECYCLE] Activating all constituents")
-
-        for source_id, ctx in self.constituents.items():
-
-            runtime = ctx.runtime
-
-            try:
-                runtime.ensure_participating()
-                runtime.ensure_malfunctioning()
-
-            except Exception as e:
-
-                logging.warning(
-                    f"[LIFECYCLE] Failed to activate {source_id}: {e}"
-                )
-
-    # --------------------------------------------------
-    # CLEANUP
-    # --------------------------------------------------
-
-    def close(self):
-        """Ensure lifecycle logs are flushed properly."""
-        self.lifecycle_logger.close()
-
-    # --------------------------------------------------
-    # DEBUG
-    # --------------------------------------------------
-
     def print_states(self):
-
         for source_id, ctx in self.constituents.items():
-
             state = ctx.runtime.state_snapshot()
-
             logging.info(
                 f"{source_id} | "
                 f"{state['belonging_main']} / {state['belonging_sub']} | "
                 f"{state['health_main']}"
-            )
+    )
+
+    def close(self):
+        self.lifecycle_logger.close()

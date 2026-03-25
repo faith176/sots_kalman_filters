@@ -21,7 +21,7 @@ class KalmanFilter(BasePredictor):
         F=None,
         H=None,
         P=None,
-        alpha=0.1,
+        alpha=0.25,
     ):
         super().__init__("KalmanFilter")
         self.dt = dt
@@ -37,7 +37,6 @@ class KalmanFilter(BasePredictor):
         else:
             raise ValueError(f"Unknown mode '{mode}'")
 
-        # Initialize filter
         self.kf = FP_KalmanFilter(dim_x=dim_x, dim_z=1)
 
         self.alpha = alpha
@@ -56,7 +55,6 @@ class KalmanFilter(BasePredictor):
         if P is None:
             P = np.eye(dim_x) * 1.0
 
-        # Build x0 directly from initial value
         x0 = self._default_x(mode, initial_value)
 
         self.kf.F = np.array(F)
@@ -69,7 +67,6 @@ class KalmanFilter(BasePredictor):
         # Validate shapes
         self._validate_shapes()
 
-    # ------------------------------------------------------------------
     def _default_F(self, mode, dt):
         dt2 = 0.5 * dt**2
         if mode == "position":
@@ -130,11 +127,9 @@ class KalmanFilter(BasePredictor):
 
             # Normalized Innovation Squared (NIS)
             nis = (v ** 2) / (S + 1e-12)
+            c_meas = max(np.exp(-0.5 * np.sqrt(nis)), 1e-3)
+            c = c_meas
 
-            # Confidence centered at expected NIS = 1
-            c = np.exp(-0.5 * (nis - 1.0))
-
-            # Clamp to [0, 1]
             self.last_confidence = float(np.clip(c, 1e-6, 1.0))
             self.last_trace = float(np.trace(kf.P))
             return self.last_confidence
@@ -146,7 +141,6 @@ class KalmanFilter(BasePredictor):
             # Ratio of current to previous uncertainty (bounded)
             ratio = min(current_trace / (prev_trace + 1e-8), 1.5)
 
-            # Exponential decay proportional to uncertainty growth
             decay = np.exp(-self.alpha * (ratio - 1.0))
 
             prev_conf = getattr(self, "last_confidence", 1.0)

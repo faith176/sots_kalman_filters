@@ -14,7 +14,7 @@
 
   "cep": {
     "enabled": true,
-    "pattern_cfg": "patterns/main_example_patterns.json",
+    "pattern_cfg": "patterns/experiments_patterns.json",
     "jar_name": "sots-uncertainty-aware-cep-0.0.1-SNAPSHOT.jar",
     "java_dir": "app/java",
     "rebuild": true,

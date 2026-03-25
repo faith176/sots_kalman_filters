@@ -13,17 +13,13 @@ __author__ = "Feyi Adesanya"
 
 @register_source_type("simulated")
 class SimulatedEventSource(EventSource):
-    """
-    Simulated sensor producing drifting noisy values with optional drops.
-    """
-
     def __init__(
         self,
         *,
         id: str,
         type: str,
         stream: EventStream,
-        lifecycle, 
+        lifecycle,
 
         value_unit: Optional[str] = None,
         value_datatype: str = "scalar",
@@ -31,19 +27,15 @@ class SimulatedEventSource(EventSource):
         interval: float = 1.0,
         min_value: float = 15.0,
         max_value: float = 30.0,
-        drift: float = 0.2,
         noise: float = 0.5,
         drop_chance: float = 0.1,
-        mandatory_count: int = 3,
-        start_value: Optional[float] = None,
+        mandatory_count: int = 1,
     ):
-        # lifecycle injected later by orchestrator
         super().__init__(id=id, type=type, stream=stream, lifecycle=lifecycle)
 
         self.interval = interval
         self.min_value = min_value
         self.max_value = max_value
-        self.drift = drift
         self.noise = noise
         self.drop_chance = drop_chance
         self.mandatory_count = mandatory_count
@@ -51,23 +43,15 @@ class SimulatedEventSource(EventSource):
         self.value_unit = value_unit
         self.value_datatype = value_datatype
 
-        self.current_value = (
-            max(min_value, min(start_value, max_value))
-            if start_value is not None
-            else random.uniform(min_value, max_value)
-        )
+        self.baseline = (min_value + max_value) / 2
 
         self.generated_count = 0
 
         self._running = False
         self._thread: Optional[threading.Thread] = None
 
-    # --------------------------------------------------
-    # Lifecycle
-    # --------------------------------------------------
 
     def start(self) -> None:
-
         if self._running:
             return
 
@@ -81,7 +65,6 @@ class SimulatedEventSource(EventSource):
         self._thread.start()
 
     def stop(self) -> None:
-
         self._running = False
 
         if self._thread:
@@ -90,16 +73,10 @@ class SimulatedEventSource(EventSource):
 
         logging.info(f"[EVENT SOURCE-{self.id}] stopped")
 
-    # --------------------------------------------------
-    # Simulation Loop
-    # --------------------------------------------------
-
     def _run_loop(self) -> None:
-
         next_ts = time.time()
 
         while self._running:
-
             now = time.time()
 
             if now < next_ts:
@@ -107,47 +84,29 @@ class SimulatedEventSource(EventSource):
                 continue
 
             next_ts += self.interval
-
             self._step(now)
 
-    # --------------------------------------------------
-    # Simulation Step
-    # --------------------------------------------------
-
     def _step(self, now: float) -> Optional[Any]:
+        value = random.gauss(self.baseline, self.noise)
 
-        drift_step = random.uniform(-self.drift, self.drift)
-        noise_step = random.gauss(0, self.noise)
-
-        self.current_value += drift_step + noise_step
-
-        self.current_value = max(
-            self.min_value,
-            min(self.current_value, self.max_value)
-        )
+        value = max(self.min_value, min(value, self.max_value))
 
         self.generated_count += 1
 
-        # simulate missing events
         if self.generated_count > self.mandatory_count:
-
             if random.random() < self.drop_chance:
-
                 logging.debug(
                     f"[EVENT SOURCE-{self.id}] skipping event at {now}"
                 )
-
                 return None
 
-
         return self.emit_event({
-            "value": self.current_value,
+            "value": value,
             "event_ts": now,
             "confidence": 1.0,
             "value_unit": self.value_unit,
             "value_datatype": self.value_datatype,
             "extras": {
-                "drift": drift_step,
-                "noise": noise_step,
+                "noise": value - self.baseline,
             },
         })

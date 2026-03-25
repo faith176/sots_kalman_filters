@@ -47,9 +47,6 @@ class ConstituentController:
 
         self.sm.enter()
 
-        # ---------------------------------------
-        # OBSERVABLE STREAMS
-        # ---------------------------------------
 
         self.announce_stream = self.sm.announce_observable
 
@@ -63,9 +60,7 @@ class ConstituentController:
         self.state = None
         self.update_snapshot()
 
-    # ---------------------------------------
-    # INTERNAL EVENT RAISING
-    # ---------------------------------------
+    # change state
     def _raise(self, event, goal=None):
         before = self.state_snapshot()
         from_state = f"{before['belonging_main']}/{before['belonging_sub']}"
@@ -91,6 +86,7 @@ class ConstituentController:
             f"[goal={goal}, result={result}, goal_match={goal_match}]"
         )
 
+        # log state change
         if self.lifecycle_logger:
             self.lifecycle_logger.consume_event({
                 "type": "lifecycle_decision",
@@ -107,10 +103,6 @@ class ConstituentController:
             })
         
 
-    # ---------------------------------------
-    # HEALTH NAME
-    # ---------------------------------------
-
     def health_name(self):
 
         sm = self.sm
@@ -123,10 +115,6 @@ class ConstituentController:
                 return name
 
         return "unknown"
-
-    # ---------------------------------------
-    # BELONGING SUBSTATE
-    # ---------------------------------------
 
     def belonging_substate(self):
 
@@ -141,12 +129,8 @@ class ConstituentController:
 
         return "unknown"
 
-    # ---------------------------------------
-    # BELONGING MAIN
-    # ---------------------------------------
 
     def belonging_main(self):
-
         sub = self.belonging_substate()
 
         if sub in {"negotiating", "available"}:
@@ -157,12 +141,8 @@ class ConstituentController:
 
         return sub
 
-    # ---------------------------------------
-    # SNAPSHOT
-    # ---------------------------------------
 
     def update_snapshot(self):
-
         self.state = {
             "id": self.id,
             "belonging_main": self.belonging_main(),
@@ -173,10 +153,8 @@ class ConstituentController:
     def state_snapshot(self):
         return self.state
 
-    # ---------------------------------------
-    # BELONGING EVENTS
-    # ---------------------------------------
 
+    # Belonging events
     def prepare(self, goal=None): self._raise("raise_prepare_for_so_s", goal=goal)
     def disengage(self, goal=None): self._raise("raise_disengage_from_so_s", goal=goal)
     def join_sos(self, goal=None): self._raise("raise_join_so_s", goal=goal)
@@ -194,10 +172,8 @@ class ConstituentController:
     def uncertainty_threshold_exceeded(self):
         self._raise("raise_uncertainty_threshold_exceeded")
 
-    # ---------------------------------------
-    # HEALTH EVENTS
-    # ---------------------------------------
 
+    # Health events
     def degrade(self, goal=None):
         self._raise("raise_degrade", goal=goal)
 
@@ -206,10 +182,9 @@ class ConstituentController:
 
     def full_recovery(self, goal=None):
         self._raise("raise_full_recovery", goal=goal)
-    # ---------------------------------------
-    # HEALTH NAVIGATION
-    # ---------------------------------------
 
+
+    # Navigation
     def ensure_health(self, goal, max_steps=10):
         if goal not in self.HEALTH_ORDER:
             raise ValueError(f"Unknown health state: {goal}")
@@ -221,7 +196,6 @@ class ConstituentController:
             if current == goal:
                 return True
 
-            # shortcut for full recovery
             if goal == "ideal":
                 self.full_recovery(goal=goal)
                 continue
@@ -236,10 +210,6 @@ class ConstituentController:
 
         raise RuntimeError(f"Failed to reach health state '{goal}'")
 
-    # ---------------------------------------
-    # HEALTH HELPERS
-    # ---------------------------------------
-
     def ensure_ideal(self): return self.ensure_health("ideal")
     def ensure_defective(self): return self.ensure_health("defective")
     def ensure_faulty(self): return self.ensure_health("faulty")
@@ -249,10 +219,6 @@ class ConstituentController:
     def ensure_failed(self): return self.ensure_health("failed")
 
 
-
-    # ---------------------------------------
-    # BELONGING NAVIGATION
-    # ---------------------------------------
     BELONGING_POLICY = {
         "disengaged": {
             "disengaged": None,
@@ -370,11 +336,6 @@ class ConstituentController:
         },
     }
 
-
-
-    # ---------------------------------------
-    # BELONGING HELPERS
-    # ---------------------------------------
 
     def ensure_belonging(self, goal, max_steps=15):
 

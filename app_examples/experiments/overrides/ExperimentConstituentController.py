@@ -32,14 +32,12 @@ class ExperimentConstituentController(ConstituentController):
         transition_made = from_state != final_state
         result = "made" if transition_made else "denied"
 
-        # Infer domain if not provided
         if goal_domain is None:
             if goal in ["ideal", "defective", "faulty", "erroneous", "malfunctioning"]:
                 goal_domain = "health"
             else:
                 goal_domain = "belonging"
 
-        # Domain-aware goal matching
         if goal is None:
             goal_match = False
         elif goal_domain == "belonging":

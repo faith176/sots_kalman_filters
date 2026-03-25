@@ -1,4 +1,0 @@
-# Logger: PatternLogger | Started: Mon Mar 23 11:20:12 EDT 2026
-fired_at,fired_offset_sec,pattern_name,pattern_type,subpatterns,subpattern_confidences,num_subpatterns,num_events,confidence,contributing_streams,nested_event_ids
-2026-03-23 11:20:13.195,1.121,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[e3da2861-e1a7-44fa-9c0a-054667deb797]]
-2026-03-23 11:20:13.230,1.156,EngineOverheat,atomic,[EngineOverheat],[1.0000],1,1,1.0000,[engine-temp-1],[[744a93ff-262e-4f9b-ae6e-8a4076ccfe01]]

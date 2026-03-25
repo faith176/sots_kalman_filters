@@ -11,19 +11,15 @@ class Event(TypedDict, total=False):
     type: str
     src: str
 
-    # observation
     event_ts: Optional[float]
     value: Optional[Any]
 
-    # uncertainty
     confidence: Any
 
-    # metadata
     event_status: EventStatus
     value_datatype: str
     value_unit: Optional[str]
 
-    # extensions
     extras: dict[str, Any]
 
 
@@ -40,11 +36,6 @@ def make_event(
     extras: Optional[dict[str, Any]] = None,
     id: Optional[str] = None,
 ) -> Event:
-    
-    """
-    Create an event that conforms to the event model.
-    """
-
     if event_status == "reconstructed" and confidence is None:
         raise ValueError("Reconstructed events must include confidence")
 

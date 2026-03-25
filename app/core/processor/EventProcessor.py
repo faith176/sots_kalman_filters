@@ -2,10 +2,7 @@ import logging
 import logging
 import os
 import shutil
-import signal
 import subprocess
-
-import psutil
 
 __author__ = "Feyi Adesanya"
 
@@ -44,8 +41,6 @@ class EventProcessor:
             self.proc = None
 
 
-
-
 # Utility functions for starting and stopping a Java process.
 def build_java(
     java_dir: str = os.path.join(os.getcwd(), "app/java"),
@@ -69,7 +64,7 @@ def build_java(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        shell=True, # change to false
+        shell=True,
     )
 
     if result.returncode != 0:
@@ -87,8 +82,6 @@ def start_java(
     args: list[str] = None,
     rebuild: bool = False
 ):
-    """ Launches the Java process. """
-
     jar_path = os.path.join(java_dir, "target", jar_name)
 
     if rebuild or not os.path.exists(jar_path):
@@ -107,28 +100,22 @@ def start_java(
 
 
 def stop_java(proc, pid=None):
-    """Terminate the Java subprocess safely on Windows and Unix."""
     if not proc:
         return
     try:
         logging.info("[MAIN] Attempting to stop Java process...")
-        proc.terminate()  # sends CTRL_BREAK on Windows
+        proc.terminate()
         try:
             proc.wait(timeout=8)
-            logging.info("[MAIN] Java stopped gracefully.")
+            logging.info("[MAIN] Java stopped.")
         except subprocess.TimeoutExpired:
-            logging.warning("[MAIN] Java unresponsive — forcing kill.")
+            logging.warning("[MAIN] unresponsive — forcing kill.")
             proc.kill()
             proc.wait()
     except Exception as e:
         logging.error(f"[MAIN] Failed to stop Java process: {e}")
 
     # kill all leftover Java processes
-    # for p in psutil.process_iter(attrs=["pid", "name"]):
-    #     if "java" in p.info["name"].lower():
-    #         logging.warning(f"[MAIN] Found stray Java process (PID {p.pid}), terminating...")
-    #         p.kill()
-
     subprocess.run(
     ["taskkill", "/IM", "java.exe", "/F"],
     stdout=subprocess.DEVNULL,

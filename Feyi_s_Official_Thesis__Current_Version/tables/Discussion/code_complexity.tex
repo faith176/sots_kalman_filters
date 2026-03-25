@@ -1,0 +1,51 @@
+% \begin{table}[t]
+% \centering
+% \footnotesize
+% \caption{Code complexity across reliability levels}
+% \begin{tabular}{
+% >{\arraybackslash}p{3cm}
+% >{\centering\arraybackslash}p{2cm}
+% >{\centering\arraybackslash}p{2.6cm}
+% >{\centering\arraybackslash}p{2.6cm}
+% >{\centering\arraybackslash}p{2.6cm}
+% }
+% \toprule
+% \textbf{Reliability Level} 
+% & \textbf{Lines of Code} 
+% & \textbf{Avg Cyclomatic Complexity} 
+% & \textbf{Max Cyclomatic Complexity} 
+% & \textbf{Programming Time (s)} \\
+% \midrule
+% Level 1 Reactive   & 942  & 1.86 & 14 & 663 \\
+% Level 2 Proactive  & 1169 & 2.07 & 18 & 1143 \\
+% Level 3 Controlled & 1343 & 2.00 & 21 & 1512 \\
+% Level 4 Adaptive   & 1469 & 2.15 & 23 & 1462 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
+\begin{table}[htp]
+\centering
+\footnotesize
+\caption{Code complexity across reliability levels}
+\label{tab:complexity}
+\begin{tabular}{
+>{\raggedright\arraybackslash}p{3.25cm}
+>{\centering\arraybackslash}p{2cm}
+>{\centering\arraybackslash}p{3cm}
+>{\centering\arraybackslash}p{3cm}
+}
+\toprule
+\textbf{SoTS Reliability Level} 
+& \textbf{Lines of Code} 
+& \textbf{Cyclomatic Complexity} 
+& \textbf{Programming Time (min)} \\
+\midrule
+Level 1 Reactive   & 942  & 14 & 11 \\
+Level 2 Proactive  & 1169 & 18 & 19 \\
+Level 3 Controlled & 1343 & 21 & 25 \\
+Level 4 Adaptive   & 1469 & 23 & 24.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
