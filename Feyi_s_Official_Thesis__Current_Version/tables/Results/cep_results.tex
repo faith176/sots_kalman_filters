@@ -1,0 +1,26 @@
+\begin{table}[htp]
+\centering
+\caption{Complex event detection performance}
+\label{tab:pattern-results}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Observed} & \multicolumn{4}{c}{Observed + Compensated} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+Pattern & Precision & Recall & F1 & F2 & Precision & Recall & F1 & F2 \\
+\midrule
+
+Agreement 
+& 0.989 & 0.820 & 0.897 & 0.849
+& \textbf{0.990} & \textbf{0.874} & \textbf{0.928} & \textbf{0.895} \\
+
+Divergence 
+& 0.981 & 0.366 & 0.533 & 0.418
+& \textbf{0.994} & \textbf{0.593} & \textbf{0.743} & \textbf{0.645} \\
+
+Stability 
+& \textbf{1.000} & 0.481 & 0.650 & 0.537
+& \textbf{1.000} & \textbf{0.688} & \textbf{0.815} & \textbf{0.734} \\
+
+\bottomrule
+\end{tabular}
+\end{table}

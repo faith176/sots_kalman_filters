@@ -7,14 +7,14 @@ def main():
     config_path = "app_examples/experiments/configs/config.json"
 
     clock = SimulationClock()
-    scenario = ProgressiveDegradationScenario()
+    scenario = LifecycleEvaluationScenario()
 
     orchestrator = ExperimentOrchestrator(
         config_path=config_path,
         scenario=scenario,
         clock=clock
     )
-    orchestrator.run(T=101)
+    orchestrator.run(T=500)
     time.sleep(5) # give CEP time to finish logging
 
 if __name__ == "__main__":

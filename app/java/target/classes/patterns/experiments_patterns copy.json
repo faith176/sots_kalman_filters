@@ -1,0 +1,76 @@
+[
+{
+  "name": "IncreasingTrend_GT",
+  "type": "atomic",
+  "description": "Ground truth increasing trend (robust).",
+  "epl": "@Name('IncreasingTrend_GT') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='ground_truth') -> b=Event(src='dt-1', eventStatus='ground_truth') -> c=Event(src='dt-1', eventStatus='ground_truth')] where (c.value - a.value) > 0.3 and (b.value >= a.value - 0.1) and (c.value >= b.value - 0.1) and c.eventTs - a.eventTs <= 3"
+},
+{
+  "name": "IncreasingTrend_OBS",
+  "type": "atomic",
+  "description": "Observed increasing trend (robust).",
+  "epl": "@Name('IncreasingTrend_OBS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='validated') -> b=Event(src='dt-1', eventStatus='validated') -> c=Event(src='dt-1', eventStatus='validated')] where (c.value - a.value) > 0.3 and (b.value >= a.value - 0.1) and (c.value >= b.value - 0.1) and c.eventTs - a.eventTs <= 3"
+},
+{
+  "name": "IncreasingTrend_SYS",
+  "type": "atomic",
+  "description": "System increasing trend (robust).",
+  "epl": "@Name('IncreasingTrend_SYS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='dt-1', eventStatus in ('validated','reconstructed'))] where (c.value - a.value) > 0.3 and (b.value >= a.value - 0.1) and (c.value >= b.value - 0.1) and c.eventTs - a.eventTs <= 3"
+},
+{
+  "name": "DecreasingTrend_GT",
+  "type": "atomic",
+  "description": "Ground truth decreasing trend (robust).",
+  "epl": "@Name('DecreasingTrend_GT') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='ground_truth') -> b=Event(src='dt-1', eventStatus='ground_truth') -> c=Event(src='dt-1', eventStatus='ground_truth')] where (a.value - c.value) > 0.3 and (b.value <= a.value + 0.1) and (c.value <= b.value + 0.1) and c.eventTs - a.eventTs <= 3"
+},
+{
+  "name": "DecreasingTrend_OBS",
+  "type": "atomic",
+  "description": "Observed decreasing trend (robust).",
+  "epl": "@Name('DecreasingTrend_OBS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='validated') -> b=Event(src='dt-1', eventStatus='validated') -> c=Event(src='dt-1', eventStatus='validated')] where (a.value - c.value) > 0.3 and (b.value <= a.value + 0.1) and (c.value <= b.value + 0.1) and c.eventTs - a.eventTs <= 3"
+},
+{
+  "name": "DecreasingTrend_SYS",
+  "type": "atomic",
+  "description": "System decreasing trend (robust).",
+  "epl": "@Name('DecreasingTrend_SYS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='dt-1', eventStatus in ('validated','reconstructed'))] where (a.value - c.value) > 0.3 and (b.value <= a.value + 0.1) and (c.value <= b.value + 0.1) and c.eventTs - a.eventTs <= 3"
+},
+
+  {
+    "name": "StableRegion_GT",
+    "type": "atomic",
+    "description": "Ground truth stable region (mean-based, tighter).",
+    "epl": "@Name('StableRegion_GT') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='ground_truth') -> b=Event(src='dt-1', eventStatus='ground_truth') -> c=Event(src='dt-1', eventStatus='ground_truth')] where (((a.value + b.value + c.value)/3 - a.value) between -0.5 and 0.5) and (((a.value + b.value + c.value)/3 - c.value) between -0.5 and 0.5) and c.eventTs - a.eventTs <= 3"
+  },
+  {
+    "name": "StableRegion_OBS",
+    "type": "atomic",
+    "description": "Observed stable region (mean-based, tighter).",
+    "epl": "@Name('StableRegion_OBS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus='validated') -> b=Event(src='dt-1', eventStatus='validated') -> c=Event(src='dt-1', eventStatus='validated')] where (((a.value + b.value + c.value)/3 - a.value) between -0.5 and 0.5) and (((a.value + b.value + c.value)/3 - c.value) between -0.5 and 0.5) and c.eventTs - a.eventTs <= 3"
+  },
+  {
+    "name": "StableRegion_SYS",
+    "type": "atomic",
+    "description": "System stable region (mean-based, tighter).",
+    "epl": "@Name('StableRegion_SYS') select a, b, c from pattern [every a=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='dt-1', eventStatus in ('validated','reconstructed'))] where (((a.value + b.value + c.value)/3 - a.value) between -0.5 and 0.5) and (((a.value + b.value + c.value)/3 - c.value) between -0.5 and 0.5) and c.eventTs - a.eventTs <= 3"
+  },
+
+{
+  "name": "TrendReversal_GT",
+  "type": "composite",
+  "description": "Ground truth trend reversal (increase followed by decrease).",
+  "epl": "@Name('TrendReversal_GT') select a, b, c, d from pattern [every a=Event(src='dt-1', eventStatus='ground_truth') -> b=Event(src='dt-1', eventStatus='ground_truth') -> c=Event(src='dt-1', eventStatus='ground_truth') -> d=Event(src='dt-1', eventStatus='ground_truth')] where a.value < b.value and b.value < c.value and c.value > d.value and d.eventTs - a.eventTs <= 6"
+},
+{
+  "name": "TrendReversal_OBS",
+  "type": "composite",
+  "description": "Observed trend reversal.",
+  "epl": "@Name('TrendReversal_OBS') select a, b, c, d from pattern [every a=Event(src='dt-1', eventStatus='validated') -> b=Event(src='dt-1', eventStatus='validated') -> c=Event(src='dt-1', eventStatus='validated') -> d=Event(src='dt-1', eventStatus='validated')] where a.value < b.value and b.value < c.value and c.value > d.value and d.eventTs - a.eventTs <= 6"
+},
+{
+  "name": "TrendReversal_SYS",
+  "type": "composite",
+  "description": "System trend reversal.",
+  "epl": "@Name('TrendReversal_SYS') select a, b, c, d from pattern [every a=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='dt-1', eventStatus in ('validated','reconstructed')) -> d=Event(src='dt-1', eventStatus in ('validated','reconstructed'))] where a.value < b.value and b.value < c.value and c.value > d.value and d.eventTs - a.eventTs <= 6"
+}
+]

@@ -1,13 +1,39 @@
 \section{Study Design}\label{sec:literature-review-study-design}
 
+The review is guided by seven research questions that collectively examine the motivations, structure, characteristics, and maturity of SoTS. Specifically, we investigate:
+
+\rquestion{RQ1. \ul{Why} are DT and SoS principles applied jointly?}
+We investigate the purposes, problems, and domains of SoTS.
+
+\rquestion{RQ2. \ul{How} are DT and SoS combined?}
+We identify architectures for organizing DTs within SoS, including the nature of constituent units, and the type of SoTS.
+
+\rquestion{RQ3. What are the \ul{technical characteristics of DTs} in SoTS?}
+We examine DT properties such as autonomy, services, and modeling approaches.
+
+\rquestion{RQ4. What are the \ul{technical characteristics of SoS} in SoTS?}
+We analyze SoS properties, including support for key dimensions, and the types of emergent behaviour considered.
+
+\rquestion{RQ5. How are \ul{non-functional properties} addressed in SoTS?}
+We focus on reliability (continuity of correct service~\cite{avizienis2004basic}) and security, examining whether these are addressed architecturally, explicitly modeled, or empirically evaluated.
+
+\rquestion{RQ6. What is the level of \ul{technical and research maturity} in SoTS?}
+Technical maturity is assessed using Technology Readiness Levels (TRL), ranging from initial concepts to operational systems \cite{mankins2009technology}. Research maturity is evaluated based on study validation approaches \cite{petersen2015guidelines}, including the use of standards.
+
+\rquestion{RQ7. What are the typical \ul{technological choices} to implement SoTS?}
+We analyze the use of programming languages, frameworks, and platforms.
+
+
+\subsection{Database Search and Selection}\label{sec:literature-review-search}
 \begin{figure}[htp]
 \centering
-\fbox{\includegraphics[width=\textwidth]{figures/Literature Review/Study Design Diagram.drawio.pdf}}
+\setlength{\fboxrule}{0pt}
+\fbox{\includegraphics[width=0.9\textwidth]{figures/Literature Review/Study Design Diagram.drawio.pdf}}
 \caption{Overview of study design.}
 \label{fig:literature_review_study_design_overview}
 \end{figure}
 
-This review followed established guidelines for systematic literature reviews~\cite{kitchenham2007guidelines, wohlin2020guidelines} to ensure rigor and reproducibility. A structured search was conducted across Scopus, Web of Science, IEEE Xplore, and the ACM Digital Library using combinations of DT and SoS terminology. Core expressions included \textit{“digital twin*” AND “system* of systems”} alongside common variants identified during preliminary exploration (e.g., \textit{“aggregated digital twin*”}, \textit{“system of digital twins”}, and \textit{“digital twin of systems”}). This initial search yielded 317 publications. After duplicate removal and screening titles and abstracts using predefined inclusion and exclusion criteria, 196 studies remained for full-text review. Quality assessment—evaluating clarity of DT and SoS descriptions, tangibility of contributions, and reporting quality—narrowed this set to 53 high-quality primary studies. The overall workflow is summarized in \figref{fig:literature_review_study_design_overview}.
+This review followed established guidelines for systematic literature reviews~\cite{kitchenham2007guidelines, wohlin2020guidelines} to ensure rigor and reproducibility. A structured search was conducted across Scopus, Web of Science, IEEE Xplore, and the ACM Digital Library using combinations of DT and SoS terminology. Core expressions included \textit{“digital twin*” AND “system* of systems”} alongside common variants identified during preliminary exploration (e.g., \textit{“aggregated digital twin*”}, \textit{“system of digital twins”}, and \textit{“digital twin of systems”}). This initial search yielded 317 publications. After duplicate removal and screening titles and abstracts using predefined inclusion and exclusion criteria, 196 studies remained for full-text review. Quality assessment---evaluating clarity of DT and SoS descriptions, tangibility of contributions, and reporting quality---narrowed this set to 53 high-quality primary studies. The overall workflow is summarized in \figref{fig:literature_review_study_design_overview}.
 
 \input{tables/Literature Review/search_statistics.tex}
 
@@ -15,3 +41,11 @@ To broaden coverage, forward and backward snowballing was performed following \c
 
 Data extraction followed a structured coding process addressing conceptual alignment, architectural and modelling practices, treatment of non-functional properties, research maturity, and implementation choices. Synthesis combined quantitative and qualitative techniques~\cite{franzosi2010quantitative, rodgers2009testing} and was guided by established SoS~\cite{nielsen2015systems}, DT~\cite{kritzinger2018digital, david2024infonomics}, and dependability~\cite{avizienis2004basic} taxonomies. All extraction scripts and aggregated datasets are available in the replication package.% \footnote{\url{https://github.com/ssm-lab/system-of-twinned-systems-replication-package}}
 \footnote{\url{https://zenodo.org/records/18891164}}
+
+
+\subsection{Threats to validity}\label{sec:literature-review-threats}
+Our observations depend on the selected studies and may be affected by selection bias, missed publications, and limitations in search terminology due to the lack of a unified definition of SoTS. To mitigate these threats, we followed established empirical guidelines~\cite{wohlin2020guidelines}, using trusted databases, validated selection procedures, and snowballing to extend the corpus~\cite{greenhalgh2005effectiveness}, along with expanded search terms. Manual quality assessment introduces subjectivity; this was mitigated through regular discussions to align interpretations and ensure consistent application of the criteria.
+
+\subsection{Publication Trends}\label{sec:literature-review-publication-trends}
+\input{figures/Literature Review/pubtrends/pubdata.tex}
+\figref{fig:pubtrends} shows increasing publication activity, with a notable rise in the past four years (2024 is partial). The spike in 2019 appears to be an outlier. Overall, this indicates growing interest in combining DT and SoS principles. Most studies are journal or conference articles (41\% and 45\%), with 47\% classified as journal articles or book chapters, suggesting a relatively mature area. Reporting quality (\figref{fig:qscores}) is high, averaging 83.4\%, with DT components reported more thoroughly (95\%) than SoS principles (83.8\%). Most contributions are tangible (75\%), and reporting clarity is acceptable (80\%).

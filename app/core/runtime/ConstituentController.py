@@ -375,7 +375,31 @@ class ConstituentController:
                 return False   # blocked by guard / constraint
 
         return False  # couldn't reach after max steps
+    
 
+    def step_towards_belonging(self, goal):
+        current = self.belonging_substate()
+
+        if goal == "participating":
+            if current in {"full_role", "restricted_role"}:
+                return True
+        else:
+            if current == goal:
+                return True
+        try:
+            action = self.BELONGING_POLICY[goal][current]
+        except KeyError:
+            return False
+
+        if action is None:
+            return True
+
+        before = current
+        getattr(self, action)(goal=goal)
+        after = self.belonging_substate()
+        if after == before:
+            return False
+        return True
 
     def ensure_disengaged(self): 
         return self.ensure_belonging("disengaged")

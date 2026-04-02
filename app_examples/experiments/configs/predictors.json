@@ -3,8 +3,8 @@
     "type": "KalmanFilter",
     "params": {
       "dt":1,
-      "Q": 0.075,
-      "R": 1.0,
+      "Q": 0.01,
+      "R": 0.25,
       "initial_value": 50.0,
       "mode":"velocity"
     }

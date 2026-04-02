@@ -127,17 +127,16 @@
 % \setcounter{equation}{0}
 % \setcounter{table}{0}
 
-% \include{sections/1_chapters/5_Architecture}
-% \setcounter{figure}{0}
-% \setcounter{equation}{0}
-% \setcounter{table}{0}
-
-
-% \part{Implications}
-\include{sections/1_chapters/6_Discussion}
+\include{sections/1_chapters/5_Architecture}
 \setcounter{figure}{0}
 \setcounter{equation}{0}
 \setcounter{table}{0}
+
+% \part{Implications}
+% \include{sections/1_chapters/6_Discussion}
+% \setcounter{figure}{0}
+% \setcounter{equation}{0}
+% \setcounter{table}{0}
 
 % \include{sections/1_chapters/7_Conclusion}
 % \setcounter{figure}{0}
@@ -156,12 +155,13 @@
 % BIBLIOGRAPHIES
 % ------------------------------------------------
 
-\clearpage
-\printbibliography[keyword=primary, title={Primary Studies}]
-
-\clearpage
-\printbibliography[notkeyword=primary, title={References}]
-
 \label{NumDocumentPages}
+\clearpage
+\printbibliography[keyword=primary, title={Primary Studies}, resetnumbers=true]
+
+\clearpage
+\printbibliography[notkeyword=primary, title={References}, resetnumbers=true]
+
+
 
 \end{document}

@@ -1,14 +1,12 @@
 \section{Key Takeaway for the Future of SoTS}\label{sec:literature-review-key-takeaways}
 This section synthesizes the literature review findings to identify key gaps limiting current SoTS research and practice.
 %------------------------------------------------------------
+
 \subsubsection{Reliability is predominantly addressed through service-level mechanisms}
-
-Reliability is one of the most frequently addressed non-functional properties in SoTS, appearing in over half of the sampled studies (\xofyp{41}{80}, see \tabref{tab:reliability-table}). However, it is primarily handled through service-level mechanisms such as falling back to locally hosted or lightweight DT instances during communication loss~\cite{alam2017c2ps,larsen2024towards}, using asynchronous communication to tolerate intermittent updates~\cite{acharya2023twins,liu2020web-based}, and employing runtime fault recovery strategies~\cite{esterle2021digital,villalonga2021decision-making}. These approaches indicate that reliability is treated as a runtime concern, focusing on keeping the system operational rather than being explicitly defined as a formal system property.
-
-Despite its prevalence, reliability is rarely modeled explicitly (\xofyp{2}{80}) and is only occasionally evaluated (\xofyp{3}{80}), typically through simulation or fault injection~\cite{park2020digital,saraeian2022digital}. This suggests that current approaches lack formal representations of reliability for SoTS, limiting the ability to reason about system behavior or compare reliability across systems. As a result, reliability considerations remain system-specific rather than systematically defined.
+Reliability is one of the most frequently addressed non-functional properties in SoTS, appearing in over half of the sampled studies (\xofyp{41}{80}, see \tabref{tab:reliability-table}). Across the literature, reliability is predominantly addressed through service-level mechanisms, including fallback to locally hosted or lightweight DT instances during communication loss~\cite{alam2017c2ps,larsen2024towards}, asynchronous communication to tolerate intermittent updates~\cite{acharya2023twins,liu2020web-based}, and runtime fault recovery strategies~\cite{esterle2021digital,villalonga2021decision-making}.  These approaches focus on maintaining system operation at runtime but do not treat reliability as an explicitly defined system property. Despite its prevalence, reliability is rarely modeled (\xofyp{2}{80}) and only occasionally evaluated (\xofyp{3}{80}), typically through simulation or fault injection~\cite{park2020digital,saraeian2022digital}.  This indicates that reliability in current SoTS research is addressed in an ad hoc manner, without formal representations or systematic evaluation. Consequently, it is difficult to reason about reliability or compare approaches across systems.
 
 \begin{recoframe}{Recommendation 1}
-Develop formal models and evaluation approaches for reliability in SoTS to enable systematic specification, analysis, and comparison of reliability across systems.
+Develop formal models and evaluation approaches for reliability in SoTS to enable systematic specification, analysis, and comparison across systems.
 \end{recoframe}
 
 %------------------------------------------------------------
@@ -16,7 +14,7 @@ Develop formal models and evaluation approaches for reliability in SoTS to enabl
 \input{tables/Literature Review/RQs/rq1/challenges_table.tex}
 One of the key challenges in DT engineering is the lack of established architectures~\cite{ferko2022architecting}, a limitation that carries over to SoTS. As shown in \tabref{tab:challenges-table}, both the lack of architectures and standards emerge as recurring design challenges. Given that the primary intent of SoTS is the organization of DTs into SoS (\tabref{tab:intents-table}), there is a clear need for architectures that can accommodate SoS dynamics, particularly interoperability, which is highlighted in nearly 40\% of studies (\tabref{tab:challenges-table}).
 
-The dominance of acknowledged and directed SoS types (over 70\% in \tabref{tab:sots-type-table}) suggests that current SoTS struggle to support more dynamic configurations, with collaborative and virtual SoS appearing in less than 30\% of cases. This limitation is likely tied to the absence of architectural specifications and standards. While structural modeling approaches such as SysML and UML class diagrams are frequently used (\tabref{tab:modeling-methods-structured-table}), these efforts remain insufficiently consolidated into architectural frameworks.
+The dominance of acknowledged and directed SoS types (over 70\% in \tabref{tab:sots-type-table}) suggests that current SoTS struggle to support more dynamic configurations, with collaborative and virtual SoS appearing in less than 30\% of cases. This limitation is likely tied to the absence of architectural specifications and standards. While structural modelling approaches such as SysML and UML class diagrams are frequently used (\tabref{tab:modeling-methods-structured-table}), these efforts remain insufficiently consolidated into architectural frameworks.
 
 Developing SoTS architectures should therefore be a priority, as it would improve both system and research maturity (see \tabref{tab:evaluation-structured-table} and \tabref{tab:trl-table}). Promising directions include microservice architectures~\cite{bellavista2023requirements}, co-simulation via FMI/FMU~\cite{bottjer2023review}, and DT interoperability~\cite{david2024interoperability}. Our classification framework (\secref{sec:literature-review-classification}) provides a foundation for these efforts.
 
@@ -36,15 +34,15 @@ Develop standards for DT and SoS, and participate in standardization efforts to 
 \end{recoframe}
 
 
-\subsection{Managing emergent behavior in SoS by DTs}
+\subsection{Managing emergent behaviour in SoS by DTs}
 
-Emergent behavior is a defining characteristic of SoS, yet current SoTS approaches remain largely limited to acknowledged and directed configurations (\tabref{tab:sots-type-table}). We hypothesize that DTs can enable more advanced management of emergence due to their tight cyber-physical coupling. This aligns with the concept of active experimentation~\cite{zeigler2018theory}, recently revitalized through DTs~\cite{mittal2023towards,barat2022digital}, where system behavior is intentionally perturbed to reveal insights. Such approaches have been explored in domains including uncrewed aerial systems~\cite{guo2023intelligent}, autonomous driving~\cite{pun2023neural}, and AI simulation~\cite{liu2024ai}.
+Emergent behaviour is a defining characteristic of SoS, yet current SoTS approaches remain largely limited to acknowledged and directed configurations (\tabref{tab:sots-type-table}). We hypothesize that DTs can enable more advanced management of emergence due to their tight cyber-physical coupling. This aligns with the concept of active experimentation~\cite{zeigler2018theory}, recently revitalized through DTs~\cite{mittal2023towards,barat2022digital}, where system behaviour is intentionally perturbed to reveal insights. Such approaches have been explored in domains including uncrewed aerial systems~\cite{guo2023intelligent}, autonomous driving~\cite{pun2023neural}, and AI simulation~\cite{liu2024ai}.
 
-Even after purposeful experimentation, some uncertainty about the behavior of the SoTS remains. To manage these unknown unknowns~\cite{ramasesh2014conceptual}, we recommend researching computing techniques that have the potential to react to unknown unknowns better, e.g., faster-than-real-time simulations to react to emergence faster or to anticipate it on a short time horizon; and using sound modeling techniques, such as goal modeling (e.g., via I*~\cite{goncalves2018systematic} and KAOS~\cite{goncalves2025systematic}) to codify the expected behavior of SoTS.
+Even after purposeful experimentation, some uncertainty about the behaviour of the SoTS remains. To manage these unknown unknowns~\cite{ramasesh2014conceptual}, we recommend researching computing techniques that have the potential to react to unknown unknowns better, e.g., faster-than-real-time simulations to react to emergence faster or to anticipate it on a short time horizon; and using sound modelling techniques, such as goal modelling (e.g., via I*~\cite{goncalves2018systematic} and KAOS~\cite{goncalves2025systematic}) to codify the expected behaviour of SoTS.
 
 
 \begin{recoframe}{Recommendation 4}
-Leverage DT capabilities to understand and manage emergent behavior in SoS, e.g., by purposeful experimentation with physical systems, or by improving run-time modeling\&simulation capabilities.
+Leverage DT capabilities to understand and manage emergent behaviour in SoS, e.g., by purposeful experimentation with physical systems, or by improving run-time modelling\&simulation capabilities.
 \end{recoframe}
 
 

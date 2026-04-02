@@ -110,12 +110,29 @@ class LifecycleManager:
             return
 
         try:
-            runtime.ensure_belonging(new_belonging)
+            success = runtime.step_towards_belonging(new_belonging)
 
-            logging.info(f"[LIFECYCLE] {source_id} belonging → {new_belonging}")
+            logging.info(
+                f"[LIFECYCLE] {source_id} belonging step → {new_belonging} "
+                f"[success={success}]"
+            )
 
         except Exception as e:
-            logging.warning(f"[LIFECYCLE] Failed belonging update for {source_id}: {e}")
+            logging.warning(
+                f"[LIFECYCLE] Failed belonging update for {source_id}: {e}"
+            )
+
+    def step_all_towards(self, target="participating"):
+        for source_id, ctx in self.constituents.items():
+            runtime = ctx.runtime
+
+            try:
+                runtime.step_towards_belonging(target)
+
+            except Exception as e:
+                logging.warning(
+                    f"[LIFECYCLE] Step failed for {source_id}: {e}"
+                )
 
 
     def get_belonging(self, source_id):

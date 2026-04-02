@@ -1,58 +1,82 @@
 [
   {
-    "name": "SuddenIncrease_OBS",
+    "name": "CrossSignalAgreement_GT",
     "type": "atomic",
-    "description": "Sudden increase using observed data only (lower bound).",
-    "epl": "@Name('SuddenIncrease_OBS') select a, b from pattern [every a=Event(src='signal-1', eventStatus='validated') -> b=Event(src='signal-1', eventStatus='validated')] where b.value - a.value > 3 and b.eventTs - a.eventTs <= 2"
-  },
-  {
-    "name": "SuddenIncrease_SYS",
-    "type": "atomic",
-    "description": "Sudden increase using observed + reconstructed data (system).",
-    "epl": "@Name('SuddenIncrease_SYS') select a, b from pattern [every a=Event(src='signal-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='signal-1', eventStatus in ('validated','reconstructed'))] where b.value - a.value > 3 and b.eventTs - a.eventTs <= 2"
-  },
-  {
-    "name": "SuddenIncrease_GT",
-    "type": "atomic",
-    "description": "Sudden increase using ground truth (upper bound).",
-    "epl": "@Name('SuddenIncrease_GT') select a, b from pattern [every a=Event(src='signal-1', eventStatus='ground_truth') -> b=Event(src='signal-1', eventStatus='ground_truth')] where b.value - a.value > 3 and b.eventTs - a.eventTs <= 2"
+    "description": "Signals remain aligned over time (ground truth).",
+    "epl": "@Name('CrossSignalAgreement_GT') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='ground_truth') and b1=Event(src='dt-2', eventStatus='ground_truth') and c1=Event(src='dt-3', eventStatus='ground_truth')) -> (a2=Event(src='dt-1', eventStatus='ground_truth') and b2=Event(src='dt-2', eventStatus='ground_truth') and c2=Event(src='dt-3', eventStatus='ground_truth'))] where a1.eventTs < a2.eventTs and (a1.value - b1.value < 1.2 and a1.value - b1.value > -1.2) and (a1.value - c1.value < 1.2 and a1.value - c1.value > -1.2) and (b1.value - c1.value < 1.2 and b1.value - c1.value > -1.2) and (a2.value - b2.value < 1.2 and a2.value - b2.value > -1.2) and (a2.value - c2.value < 1.2 and a2.value - c2.value > -1.2) and (b2.value - c2.value < 1.2 and b2.value - c2.value > -1.2)"
   },
 
   {
-    "name": "IncreasingTrend_OBS",
+    "name": "CrossSignalAgreement_OBS",
     "type": "atomic",
-    "description": "Increasing trend using observed data only (lower bound).",
-    "epl": "@Name('IncreasingTrend_OBS') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus='validated') -> b=Event(src='signal-1', eventStatus='validated') -> c=Event(src='signal-1', eventStatus='validated')] where a.value < b.value and b.value < c.value and c.eventTs - a.eventTs <= 5"
-  },
-  {
-    "name": "IncreasingTrend_SYS",
-    "type": "atomic",
-    "description": "Increasing trend using observed + reconstructed data (system).",
-    "epl": "@Name('IncreasingTrend_SYS') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='signal-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='signal-1', eventStatus in ('validated','reconstructed'))] where a.value < b.value and b.value < c.value and c.eventTs - a.eventTs <= 5"
-  },
-  {
-    "name": "IncreasingTrend_GT",
-    "type": "atomic",
-    "description": "Increasing trend using ground truth (upper bound).",
-    "epl": "@Name('IncreasingTrend_GT') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus='ground_truth') -> b=Event(src='signal-1', eventStatus='ground_truth') -> c=Event(src='signal-1', eventStatus='ground_truth')] where a.value < b.value and b.value < c.value and c.eventTs - a.eventTs <= 5"
+    "description": "Observed signals remain aligned over time.",
+    "epl": "@Name('CrossSignalAgreement_OBS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='validated') and b1=Event(src='dt-2', eventStatus='validated') and c1=Event(src='dt-3', eventStatus='validated')) -> (a2=Event(src='dt-1', eventStatus='validated') and b2=Event(src='dt-2', eventStatus='validated') and c2=Event(src='dt-3', eventStatus='validated'))] where a1.eventTs < a2.eventTs and (a1.value - b1.value < 1.2 and a1.value - b1.value > -1.2) and (a1.value - c1.value < 1.2 and a1.value - c1.value > -1.2) and (b1.value - c1.value < 1.2 and b1.value - c1.value > -1.2) and (a2.value - b2.value < 1.2 and a2.value - b2.value > -1.2) and (a2.value - c2.value < 1.2 and a2.value - c2.value > -1.2) and (b2.value - c2.value < 1.2 and b2.value - c2.value > -1.2)"
   },
 
   {
-    "name": "Flatline_OBS",
+    "name": "CrossSignalAgreement_SYS",
     "type": "atomic",
-    "description": "Stable signal (flatline) using observed data only (lower bound).",
-    "epl": "@Name('Flatline_OBS') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus='validated') -> b=Event(src='signal-1', eventStatus='validated') -> c=Event(src='signal-1', eventStatus='validated')] where (a.value - b.value between -0.5 and 0.5) and (b.value - c.value between -0.5 and 0.5)"
+    "description": "System signals remain aligned over time.",
+    "epl": "@Name('CrossSignalAgreement_SYS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b1=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c1=Event(src='dt-3', eventStatus in ('validated','reconstructed'))) -> (a2=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b2=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c2=Event(src='dt-3', eventStatus in ('validated','reconstructed')))] where a1.eventTs < a2.eventTs and (a1.value - b1.value < 1.2 and a1.value - b1.value > -1.2) and (a1.value - c1.value < 1.2 and a1.value - c1.value > -1.2) and (b1.value - c1.value < 1.2 and b1.value - c1.value > -1.2) and (a2.value - b2.value < 1.2 and a2.value - b2.value > -1.2) and (a2.value - c2.value < 1.2 and a2.value - c2.value > -1.2) and (b2.value - c2.value < 1.2 and b2.value - c2.value > -1.2)"
   },
   {
-    "name": "Flatline_SYS",
+    "name": "CrossSignalDivergence_GT",
     "type": "atomic",
-    "description": "Stable signal (flatline) using observed + reconstructed data (system).",
-    "epl": "@Name('Flatline_SYS') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus in ('validated','reconstructed')) -> b=Event(src='signal-1', eventStatus in ('validated','reconstructed')) -> c=Event(src='signal-1', eventStatus in ('validated','reconstructed'))] where (a.value - b.value between -0.5 and 0.5) and (b.value - c.value between -0.5 and 0.5)"
+    "description": "Signals diverge consistently over time (ground truth).",
+    "epl": "@Name('CrossSignalDivergence_GT') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='ground_truth') and b1=Event(src='dt-2', eventStatus='ground_truth') and c1=Event(src='dt-3', eventStatus='ground_truth')) -> (a2=Event(src='dt-1', eventStatus='ground_truth') and b2=Event(src='dt-2', eventStatus='ground_truth') and c2=Event(src='dt-3', eventStatus='ground_truth'))] where a1.eventTs < a2.eventTs and ((a1.value > b1.value + 1.5 or a1.value < b1.value - 1.5) or (a1.value > c1.value + 1.5 or a1.value < c1.value - 1.5) or (b1.value > c1.value + 1.5 or b1.value < c1.value - 1.5)) and ((a2.value > b2.value + 1.5 or a2.value < b2.value - 1.5) or (a2.value > c2.value + 1.5 or a2.value < c2.value - 1.5) or (b2.value > c2.value + 1.5 or b2.value < c2.value - 1.5))"
+  },
+
+  {
+    "name": "CrossSignalDivergence_OBS",
+    "type": "atomic",
+    "description": "Observed signals diverge consistently over time.",
+    "epl": "@Name('CrossSignalDivergence_OBS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='validated') and b1=Event(src='dt-2', eventStatus='validated') and c1=Event(src='dt-3', eventStatus='validated')) -> (a2=Event(src='dt-1', eventStatus='validated') and b2=Event(src='dt-2', eventStatus='validated') and c2=Event(src='dt-3', eventStatus='validated'))] where a1.eventTs < a2.eventTs and ((a1.value > b1.value + 1.5 or a1.value < b1.value - 1.5) or (a1.value > c1.value + 1.5 or a1.value < c1.value - 1.5) or (b1.value > c1.value + 1.5 or b1.value < c1.value - 1.5)) and ((a2.value > b2.value + 1.5 or a2.value < b2.value - 1.5) or (a2.value > c2.value + 1.5 or a2.value < c2.value - 1.5) or (b2.value > c2.value + 1.5 or b2.value < c2.value - 1.5))"
+  },
+
+  {
+    "name": "CrossSignalDivergence_SYS",
+    "type": "atomic",
+    "description": "System signals diverge consistently over time.",
+    "epl": "@Name('CrossSignalDivergence_SYS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b1=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c1=Event(src='dt-3', eventStatus in ('validated','reconstructed'))) -> (a2=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b2=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c2=Event(src='dt-3', eventStatus in ('validated','reconstructed')))] where a1.eventTs < a2.eventTs and ((a1.value > b1.value + 1.5 or a1.value < b1.value - 1.5) or (a1.value > c1.value + 1.5 or a1.value < c1.value - 1.5) or (b1.value > c1.value + 1.5 or b1.value < c1.value - 1.5)) and ((a2.value > b2.value + 1.5 or a2.value < b2.value - 1.5) or (a2.value > c2.value + 1.5 or a2.value < c2.value - 1.5) or (b2.value > c2.value + 1.5 or b2.value < c2.value - 1.5))"
   },
   {
-    "name": "Flatline_GT",
+    "name": "CrossSignalTrendConsistency_GT",
     "type": "atomic",
-    "description": "Stable signal (flatline) using ground truth (upper bound).",
-    "epl": "@Name('Flatline_GT') select a, b, c from pattern [every a=Event(src='signal-1', eventStatus='ground_truth') -> b=Event(src='signal-1', eventStatus='ground_truth') -> c=Event(src='signal-1', eventStatus='ground_truth')] where (a.value - b.value between -0.5 and 0.5) and (b.value - c.value between -0.5 and 0.5)"
+    "description": "Signals move in the same direction over time (ground truth).",
+    "epl": "@Name('CrossSignalTrendConsistency_GT') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='ground_truth') and b1=Event(src='dt-2', eventStatus='ground_truth') and c1=Event(src='dt-3', eventStatus='ground_truth')) -> (a2=Event(src='dt-1', eventStatus='ground_truth') and b2=Event(src='dt-2', eventStatus='ground_truth') and c2=Event(src='dt-3', eventStatus='ground_truth'))] where a1.eventTs < a2.eventTs and ((a2.value > a1.value and b2.value > b1.value and c2.value > c1.value) or (a2.value < a1.value and b2.value < b1.value and c2.value < c1.value))"
+  },
+
+  {
+    "name": "CrossSignalTrendConsistency_OBS",
+    "type": "atomic",
+    "description": "Observed signals move in the same direction over time.",
+    "epl": "@Name('CrossSignalTrendConsistency_OBS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='validated') and b1=Event(src='dt-2', eventStatus='validated') and c1=Event(src='dt-3', eventStatus='validated')) -> (a2=Event(src='dt-1', eventStatus='validated') and b2=Event(src='dt-2', eventStatus='validated') and c2=Event(src='dt-3', eventStatus='validated'))] where a1.eventTs < a2.eventTs and ((a2.value > a1.value and b2.value > b1.value and c2.value > c1.value) or (a2.value < a1.value and b2.value < b1.value and c2.value < c1.value))"
+  },
+
+  {
+    "name": "CrossSignalTrendConsistency_SYS",
+    "type": "atomic",
+    "description": "System signals move in the same direction over time.",
+    "epl": "@Name('CrossSignalTrendConsistency_SYS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b1=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c1=Event(src='dt-3', eventStatus in ('validated','reconstructed'))) -> (a2=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b2=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c2=Event(src='dt-3', eventStatus in ('validated','reconstructed')))] where a1.eventTs < a2.eventTs and ((a2.value > a1.value and b2.value > b1.value and c2.value > c1.value) or (a2.value < a1.value and b2.value < b1.value and c2.value < c1.value))"
+  },
+  {
+    "name": "CrossSignalRelativeStable_GT",
+    "type": "atomic",
+    "description": "Relative differences between signals remain stable over time (ground truth).",
+    "epl": "@Name('CrossSignalRelativeStable_GT') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='ground_truth') and b1=Event(src='dt-2', eventStatus='ground_truth') and c1=Event(src='dt-3', eventStatus='ground_truth')) -> (a2=Event(src='dt-1', eventStatus='ground_truth') and b2=Event(src='dt-2', eventStatus='ground_truth') and c2=Event(src='dt-3', eventStatus='ground_truth'))] where a1.eventTs < a2.eventTs and ((a1.value - b1.value) - (a2.value - b2.value) < 0.3 and (a1.value - b1.value) - (a2.value - b2.value) > -0.3) and ((b1.value - c1.value) - (b2.value - c2.value) < 0.3 and (b1.value - c1.value) - (b2.value - c2.value) > -0.3)"
+  },
+
+  {
+    "name": "CrossSignalRelativeStable_OBS",
+    "type": "atomic",
+    "description": "Relative differences between observed signals remain stable over time.",
+    "epl": "@Name('CrossSignalRelativeStable_OBS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus='validated') and b1=Event(src='dt-2', eventStatus='validated') and c1=Event(src='dt-3', eventStatus='validated')) -> (a2=Event(src='dt-1', eventStatus='validated') and b2=Event(src='dt-2', eventStatus='validated') and c2=Event(src='dt-3', eventStatus='validated'))] where a1.eventTs < a2.eventTs and ((a1.value - b1.value) - (a2.value - b2.value) < 0.3 and (a1.value - b1.value) - (a2.value - b2.value) > -0.3) and ((b1.value - c1.value) - (b2.value - c2.value) < 0.3 and (b1.value - c1.value) - (b2.value - c2.value) > -0.3)"
+  },
+
+  {
+    "name": "CrossSignalRelativeStable_SYS",
+    "type": "atomic",
+    "description": "Relative differences between system signals remain stable over time.",
+    "epl": "@Name('CrossSignalRelativeStable_SYS') select a1, b1, c1, a2, b2, c2 from pattern [every (a1=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b1=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c1=Event(src='dt-3', eventStatus in ('validated','reconstructed'))) -> (a2=Event(src='dt-1', eventStatus in ('validated','reconstructed')) and b2=Event(src='dt-2', eventStatus in ('validated','reconstructed')) and c2=Event(src='dt-3', eventStatus in ('validated','reconstructed')))] where a1.eventTs < a2.eventTs and ((a1.value - b1.value) - (a2.value - b2.value) < 0.3 and (a1.value - b1.value) - (a2.value - b2.value) > -0.3) and ((b1.value - c1.value) - (b2.value - c2.value) < 0.3 and (b1.value - c1.value) - (b2.value - c2.value) > -0.3)"
   }
 ]

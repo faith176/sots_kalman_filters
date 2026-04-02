@@ -192,20 +192,6 @@ class ExperimentOrchestrator:
             LOG.info(f"[EXPERIMENT] Started constituent '{source_id}'")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def _apply_scenario_state(self, t):
         for src in self.sources:
             source_id = src.id
@@ -222,14 +208,24 @@ class ExperimentOrchestrator:
 
             # Belonging
             current_belonging = self.lifecycle.get_belonging(source_id)
-            current_sub = current_belonging["sub"]
-            new_belonging = self.scenario.get_belonging(
+
+            goal = self.scenario.get_belonging(
                 t,
-                current_sub,
+                current_belonging["sub"],
                 source_id
             )
-            if new_belonging != current_sub:
-                self.lifecycle.set_belonging(source_id, new_belonging)
+
+            if goal is None:
+                return
+
+            try:
+                runtime = self.lifecycle.get_runtime(source_id)
+                runtime.step_towards_belonging(goal)
+
+            except Exception as e:
+                logging.debug(
+                    f"[LIFECYCLE] Step blocked for {source_id}: {e}"
+                )
 
     def run(self, T=5):
 

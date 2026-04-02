@@ -38,25 +38,20 @@ class Reconstructor(EventConsumer, EventGenerator):
 
         self.stream.subscribe(self, "observed.*", self.source_id)
 
-        self.confidence_threshold = 0.45
-        self.conf_window = deque(maxlen=5)
+        # self.confidence_threshold = 0.45
+        # self.conf_window = deque(maxlen=10)
 
     
     def connect(self):
-
         runtime = self.lifecycle.get_runtime(self.source_id)
-
         if runtime is None:
             raise ValueError(f"[RECONSTRUCTOR-{self.source_id}] runtime not found")
-
         runtime.emit_observed.subscribe(
             _as_observer(self._on_observe_changed)
         )
-
         runtime.enable_compensation.subscribe(
             _as_observer(self._on_reconstruct_changed)
         )
-
         logging.info(f"[RECONSTRUCTOR-{self.source_id}] connected to signals")
 
     def _on_observe_changed(self, value: bool):
@@ -65,8 +60,8 @@ class Reconstructor(EventConsumer, EventGenerator):
     def _on_reconstruct_changed(self, value: bool):
         self.allow_reconstruct = value
 
-    def get_avg_confidence(self):
-        return sum(self.conf_window) / len(self.conf_window) if self.conf_window else 1.0
+    # def get_avg_confidence(self):
+    #     return sum(self.conf_window) / len(self.conf_window) if self.conf_window else 1.0
 
 
     def generate_event(self, event_params):
@@ -113,6 +108,7 @@ class Reconstructor(EventConsumer, EventGenerator):
         )
         
         if self.allow_observe:
+            prediction = self.predictor.predict()
             confidence = self.predictor.confidence(observed_value=value)
             self.conf_window.append(confidence)
             logging.info(f"{self.source_id} Confidence: {confidence} update with observed value {value} and estimate {self.predictor.kf.x[0, 0]}")
@@ -159,16 +155,16 @@ class Reconstructor(EventConsumer, EventGenerator):
 
 
     def reconstruct(self, expected_ts):
-
-        confidence = self.predictor.confidence()
         prediction = self.predictor.predict()
-        self.conf_window.append(confidence)
+        confidence = self.predictor.confidence()
+        # self.conf_window.append(confidence)
 
-        if self.get_avg_confidence() < self.confidence_threshold:
-            logging.info(f"Running avergae confidence has exceeded limit: {confidence}")
-            runtime = self.lifecycle.get_runtime(self.source_id)
-            runtime.uncertainty_threshold_exceeded()
-            logging.info("[RECONSTRUCTOR]-Uncertainty Threhold exceeded")
+        # if self.get_avg_confidence() < self.confidence_threshold:
+        #     logging.info(f"Running average confidence has exceeded limit: {confidence}")
+        #     runtime = self.lifecycle.get_runtime(self.source_id)
+        #     runtime.uncertainty_threshold_exceeded()
+        #     logging.info("[RECONSTRUCTOR]-Uncertainty Threhold exceeded")
+        #     return
 
         self.emit_event({
             "prediction": prediction,

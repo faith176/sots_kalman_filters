@@ -1,43 +1,26 @@
-% key feedback points
-% active voice
-% straightforward, like how it would normally be said out loud
 \chapter{Discussion}\label{ch:discussion}
-\id{Use active voice everywhere: In this chapter, I discuss the key takeaways of my Master's research and identify future directions for prospective researchers.} 
-\id{no analysis at this point. analysis was in earlier chapters. here, you elaborate on stuff}
-In this chapter, I present the key takeaways of this research and outline directions for future work. I first discuss how orthogonal statechart modelling for SoTS enables controlled and adaptive behaviour under disturbance (\secref{sec:discussion-utility}), then examine its implications for SoTS engineering practice (\secref{sec:discussion-implications}), and finally outline directions for prospective researchers (\secref{sec:discussion-future}).
-
-
+This chapter presents the key takeaways of this research and outlines directions for future work. I first discuss how orthogonal statechart modelling for SoTS enables controlled and adaptive behaviour under disturbance (\secref{sec:discussion-utility}), then examine its implications for SoTS engineering practice (\secref{sec:discussion-implications}), and finally outline directions for prospective researchers (\secref{sec:discussion-future}).
 
 \section{Utility of Statechart-Based Coordination in SoTS}\label{sec:discussion-utility}
+This section discusses the practical utility of the proposed approach, drawing on the results in \secref{sec:evaluation} and connecting them to the model and architecture presented in earlier chapters. The results show that reliability in SoTS can be achieved by controlling how constituents participate in the system, rather than relying solely on service-level fault tolerance mechanisms.
+
 \subsection{Model-Driven Coordination and Enforcement}
-TODO - ONCE EVALUATION IS DONE
-Results from \secref{sec:eval-statechart-enforcement} demonstrate that system behaviour is enforced directly through lifecycle statecharts, without requiring manual coordination logic. Lifecycle constraints define permissible configurations and transitions, ensuring that constituent behaviour remains consistent with system-level coordination policies at runtime.
-
-This externalises coordination from an implicit, distributed responsibility within individual services to an explicit, shared model. As observed in the alignment between lifecycle states and system behaviour, constituents operate without embedding global coordination logic, yet system-level behaviour remains controlled and predictable. This establishes a clear separation of concerns between SoTS-level coordination and service-level functionality, which is particularly important in SoS contexts where operational and managerial independence limit tight integration \cite{maier1998architecting}.
-
-By centralising coordination logic within executable models, the approach reduces implementation complexity and avoids duplication of coordination behaviour across components. Reliability is therefore achieved by construction through the coordination model, rather than through ad hoc safeguards within individual services. This aligns with model-driven engineering principles, where system behaviour is defined, enforced, and validated through models \cite{stahl2006model}. Statecharts further support the composition of multiple interacting lifecycles, enabling coordination to scale as system complexity increases \cite{harel1987statecharts}.
-
+The results in \secref{sec:evaluation} demonstrate that coordination behaviour can be defined and enforced through lifecycle statechart models, rather than implemented within individual system components. This operationalizes the state-based reliability model introduced in \chref{ch:reliable-sots}, where disturbances arise from interactions between belonging and health.  In the demonstrated architecture (\secref{sec:architecture}), executable statecharts act as a coordination layer that controls when and how constituents contribute to system-level behaviour. Participation is determined by constraints encoded in the lifecycle model, ensuring that only constituents in valid states contribute to the event stream and CEP processing. This prevents disturbance-causing configurations by restricting how degraded or unreliable constituents participate. This externalizes coordination to the system level, enabling behaviour to be specified in models and enforced uniformly at runtime. As a result, it reduces implementation complexity and allows reliability to be expressed and maintained as constraints on system behaviour.
 
 \subsection{Graceful Degradation and Adaptive Reliability}
-TODO - ONCE EVALUATION IS DONE
-As shown in \secref{sec:eval-graceful-degradation}, disturbances do not result in immediate system failure, but instead lead to progressive degradation of behaviour. As observation availability decreases, constituents transition between lifecycle states while maintaining partial functionality.
+The evaluation results (\secref{sec:evaluation}) show that the proposed approach enables graceful degradation despite significant observation loss. Rather than failing abruptly, degraded constituents transition into restricted roles, where compensation sustains their contribution to the system (\secref{sec:demo-compensation}, \secref{sec:lv4}). As a result, higher-level behaviours such as complex event detection remain functional. As fewer observations are available due to data loss, lifecycle statecharts control transitions between belonging states, allowing constituents to operate with reduced capability while preventing unreliable contributions from affecting system behaviour. Lifecycle statecharts also provide a unified way to integrate and trigger mechanisms such as compensation, enabling the system to adapt participation under disturbance. This supports more advanced reliability strategies to be enforced at the SoTS level, reducing the impact of degraded or missing observations while maintaining system-level behaviour.
 
-This behaviour corresponds to partial failure in dependability theory, where a system continues to deliver a subset of its intended service \cite{avizienis2004basic}. Lifecycle-driven transitions between participation modes (e.g., full, restricted, and passive roles) provide a structured mechanism for sustaining operation under degraded conditions.
-
-Rather than reacting only after failure, the system adapts participation in response to changing conditions. Compensation mechanisms sustain event availability and maintain continuity of service without manual intervention, reflecting established resilience strategies in which degraded modes preserve essential functionality \cite{laprie1985dependable}. This shifts system behaviour from binary success/failure semantics toward controlled degradation, supporting key dependability attributes such as reliability and availability \cite{avizienis2004basic}.
-
-
+ 
 \subsection{Reducing Complexity with Model-to-Code Generation}
 \input{tables/Discussion/code_complexity.tex}
-In the demonstration (\secref{sec:itemis-create}), Itemis CREATE is used to generate executable code directly from lifecycle statechart models. \tabref{tab:complexity} summarizes code complexity metrics for the generated implementations across each SoTS reliability level (\secref{sec:reliability-levels}). These metrics were obtained using the Radon analysis library\footnote{\url{https://radon.readthedocs.io/en/latest/intro.html}}. They include lines of code (LOC), cyclomatic complexity (number of independent execution paths, indicating control flow complexity \cite{coleman1994using, oman1992metrics}), and \citet{halstead1977elements}'s programming time (estimated implementation effort). From Level~1 to Level~4, LOC increases from 942 to 1469 (56\%). Cyclomatic complexity increases from 14 to 23 (64\%). Programming time increases from 11 to 24.5 minutes (123\%). These increases reflect the additional constraints required for higher reliability.
+In the demonstration (\secref{sec:itemis-create}), Itemis CREATE is used to generate executable code directly from lifecycle statechart models. \tabref{tab:complexity} summarizes code complexity metrics for the generated implementations across each SoTS reliability level (\secref{sec:reliability-levels}). These metrics were obtained using the Radon analysis library\footnote{\url{https://radon.readthedocs.io/en/latest/intro.html}}. They include lines of code (LOC) and cyclomatic complexity (number of independent execution paths, indicating control flow complexity \cite{coleman1994using, oman1992metrics}). From Level~1 to Level~4, LOC increases from 942 to 1469 (56\%). Cyclomatic complexity increases from 14 to 23 (64\%).
+% study allows us to show the tendency of things
 
 Normally, the logic required to handle these behaviours would be distributed across components. This requires manual implementation and increases the risk of inconsistencies. A model-driven approach instead defines constraints directly in statecharts. It enforces them through generated code. This makes the logic easier to reason about, modify, and verify. It also reduces duplication and development effort.
 
 
-
-
 \section{Implications for SoTS Engineering Practice}\label{sec:discussion-implications}
-This section outlines how lifecycle-based modelling affects the engineering and management of SoTS.
+This section outlines how lifecycle-based modelling affects the engineering and management of SoTS. Reliability can be treated as a system-level concern by defining and enforcing participation constraints through executable models, enabling more controlled, consistent, and modular system design.
 
 \subsection{Support Development Throughout the SoTS Lifecycle}
 State-based lifecycle modelling can be used throughout SoTS engineering, from early design to runtime operation. Frameworks such as Capability Maturity Model Integration (CMMI) describe how processes evolve from informal practices to defined and controlled approaches \cite{paulk1991capability}. At early stages, lifecycle models provide a shared representation of participation in SoTS, improving consistency across teams. As maturity increases, they can be treated as engineering artefacts; supporting versioning, review, and validation. This enables formal specification and validation of behaviour, followed by automated code generation from validated models.
@@ -53,8 +36,9 @@ The proposed approach separates constituent internals from system-level concerns
 
 This separation also reduces information exposure and integration complexity. Interaction is mediated through lifecycle states, so internal models do not need to account for external system dynamics. This aligns with privacy perspectives such as the NIST Privacy Framework \cite{enterprise2020nist}, where risks are addressed across the data lifecycle. By constraining elligibility in the SoTS based on lifecycle state, the model limits unnecessary data flows and unintended exposure, which is critical in SoS environments where independently managed systems interact \cite{olivero2024systematic}. It also clarifies engineering responsibilities: SoTS-level developers define system-level constraints and guarantees, while service-level developers focus on local behaviour.
 
+
 \section{Future Directions}\label{sec:discussion-future}
-This section identifies opportunities to extend the model to support additional concerns and more complex system behaviour.
+This section identifies opportunities to extend the proposed approach to support additional concerns and more complex system behaviour. Lifecycle-based coordination provides a flexible foundation that can be expanded to incorporate additional system-level constraints, adaptive strategies, and formal analysis techniques.
 
 \subsection{Modelling Additional Concerns as Orthogonal Regions}
 

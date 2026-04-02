@@ -1,22 +1,26 @@
 \begin{table}[htp]
 \small
 \centering
-\caption{Lifecycle state influence on event emission and compensation behaviour.}
+\caption{Lifecycle state influence on contribution, compensation, and predictor updates.}
 \label{tab:state-behaviour}
-
-\begin{tabular}{p{2cm} p{2.8cm} p{2.5cm} p{3cm} p{2.5cm}}
+\begin{tabular}{l c c c}
 \toprule
-\textbf{Main State} & \textbf{Substate} & \textbf{Event \newline Emission} & \textbf{Event \newline Reconstruction} & \textbf{Estimator Updates} \\
+\textbf{Lifecycle State} & \textbf{Contribution} & \textbf{Compensation} & \textbf{Predictor Updates} \\
 \midrule
-Disengaged & -- & Disabled & Disabled & Disabled \\
-Prepared & -- & Disabled & Disabled & Disabled \\
-Passive & Negotiating & Suppressed & Disabled & Enabled \\
-Passive & Available & Suppressed & Disabled & Enabled \\
-Active & Pending Entry & Suppressed & Disabled & Enabled \\
-Active & Full Role & Enabled & Disabled & Enabled \\
-Active & Restricted Role & Enabled & Enabled & Enabled \\
-Active & Pending Exit & Suppressed & Disabled & Enabled \\
+
+Disengaged &  &  &  \\
+Prepared &  &  &  \\
+
+\midrule
+Passive (Negotiating) &  &  & $\checkmark$ \\
+Passive (Available) &  &  & $\checkmark$ \\
+
+\midrule
+Active (Pending Entry) &  &  & $\checkmark$ \\
+Active (Full Role) & $\checkmark$ &  & $\checkmark$ \\
+Active (Restricted Role) & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Active (Pending Exit) &  &  & $\checkmark$ \\
+
 \bottomrule
 \end{tabular}
-
 \end{table}
