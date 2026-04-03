@@ -9,10 +9,6 @@ from matplotlib.lines import Line2D
 LOG_DIR = "data/logs/experiments/experiment_LifecycleEvaluation"
 EVENT_LOG = os.path.join(LOG_DIR, "events.csv")
 
-
-# -----------------------------
-# Load + clean
-# -----------------------------
 def load_data():
     df = pd.read_csv(EVENT_LOG, comment="#", engine="python")
     df.columns = df.columns.str.strip()
@@ -20,10 +16,6 @@ def load_data():
     df["event_ts"] = pd.to_numeric(df["event_ts"], errors="coerce")
     return df
 
-
-# -----------------------------
-# Expand extras JSON
-# -----------------------------
 def expand_extras(df):
     def safe_parse(x):
         if pd.isna(x):
@@ -40,18 +32,11 @@ def expand_extras(df):
     return df.join(extras_df)
 
 
-# -----------------------------
-# Filters
-# -----------------------------
 def filter_cep_active(df):
     return df[
         df["belonging_sub"].isin(["full_role", "restricted_role"])
     ]
 
-
-# -----------------------------
-# Pivot
-# -----------------------------
 def build_partition_df(df):
     pivot = df.pivot_table(
         index="event_ts",
@@ -61,19 +46,13 @@ def build_partition_df(df):
     )
     return pivot.sort_index()
 
-
-# -----------------------------
-# State (ground truth)
-# -----------------------------
+# ground truth
 def build_state_df(df):
     state_df = df[df["partition"] == "ground_truth"].copy()
     state_df = state_df.set_index("event_ts")
     return state_df[["health", "belonging_main", "belonging_sub"]]
 
 
-# -----------------------------
-# Merge
-# -----------------------------
 def build_full_df(pivot_df, state_df):
     df = pivot_df.join(state_df, how="left")
 
@@ -84,18 +63,11 @@ def build_full_df(pivot_df, state_df):
     return df
 
 
-# -----------------------------
-# System value
-# -----------------------------
 def system_value(df):
     observed = df.get("observed.validated", pd.Series(index=df.index))
     reconstructed = df.get("reconstructed", pd.Series(index=df.index))
     return observed.combine_first(reconstructed)
 
-
-# -----------------------------
-# Errors (CEP ACTIVE ONLY)
-# -----------------------------
 def compute_errors(df):
     system = system_value(df)
     valid = system.notna()
@@ -109,9 +81,6 @@ def compute_errors(df):
     return float(mae), float(rmse)
 
 
-# -----------------------------
-# Availability (CEP ONLY)
-# -----------------------------
 def compute_availability(df):
     observed = df.get("observed.validated", pd.Series(index=df.index)).notna()
     reconstructed = df.get("reconstructed", pd.Series(index=df.index)).notna()
@@ -121,9 +90,6 @@ def compute_availability(df):
     return float(observed.mean()), float(system.mean())
 
 
-# -----------------------------
-# Gap stats
-# -----------------------------
 def compute_gap_stats(df):
     observed = df.get("observed.validated", pd.Series(index=df.index)).notna()
     reconstructed = df.get("reconstructed", pd.Series(index=df.index)).notna()
@@ -139,29 +105,6 @@ def compute_gap_stats(df):
 
     return int(len(gaps)), float(gaps.mean()), int(gaps.max())
 
-
-# -----------------------------
-# MTTR
-# -----------------------------
-def compute_mttr(df):
-    observed = df.get("observed.validated", pd.Series(index=df.index)).notna()
-    reconstructed = df.get("reconstructed", pd.Series(index=df.index)).notna()
-
-    gap = ~(observed | reconstructed)
-
-    groups = (gap != gap.shift()).cumsum()
-    lengths = gap.groupby(groups).sum()
-    gaps = lengths[lengths > 0]
-
-    if gaps.empty:
-        return 0
-
-    return float(gaps.mean())
-
-
-# -----------------------------
-# Confidence stats + correlation (RECONSTRUCTED ONLY)
-# -----------------------------
 def confidence_stats_and_correlation(df):
     recon = df[df["partition"] == "reconstructed"].copy()
 
@@ -190,110 +133,6 @@ def confidence_stats_and_correlation(df):
 
     return conf_mean, conf_min, conf_max, corr
 
-
-# -----------------------------
-# Lifecycle matrix
-# -----------------------------
-def lifecycle_matrix(df):
-    state_df = df[df["partition"] == "ground_truth"].copy()
-
-    return pd.crosstab(
-        state_df["health"],
-        state_df["belonging_sub"]
-    )
-
-
-# -----------------------------
-# Formatting
-# -----------------------------
-HEALTH_ORDER = [
-    "ideal",
-    "defective",
-    "faulty",
-    "erroneous",
-    "malfunctioning",
-    "degraded",
-    "failed"
-]
-
-BELONGING_SUB_ORDER = [
-    "disengaged",
-    "prepared",
-    "available",
-    "negotiating",
-    "pending_entry",
-    "full_role",
-    "restricted_role",
-    "pending_exit"
-]
-
-BELONGING_MAP = {
-    "disengaged": "disengaged",
-    "prepared": "prepared",
-    "available": "passive",
-    "negotiating": "passive",
-    "pending_entry": "active",
-    "full_role": "active",
-    "restricted_role": "active",
-    "pending_exit": "active"
-}
-
-
-def format_labels(matrix):
-    matrix = matrix.reindex(
-        index=HEALTH_ORDER,
-        columns=BELONGING_SUB_ORDER,
-        fill_value=0
-    )
-
-    matrix = matrix.fillna(0)
-    matrix.index = [h.capitalize() for h in matrix.index]
-
-    def format_belonging(label):
-        sub = " ".join(p.capitalize() for p in label.split("_"))
-        main = BELONGING_MAP.get(label)
-
-        if main:
-            return f"{main.capitalize()}:\n{sub}"
-        return sub
-
-    matrix.columns = [format_belonging(c) for c in matrix.columns]
-
-    return matrix
-
-
-# -----------------------------
-# Heatmap
-# -----------------------------
-def plot_lifecycle_heatmap(matrix):
-    fig, ax = plt.subplots(figsize=(12, 6))
-
-    cax = ax.imshow(matrix.values, cmap="YlGnBu")
-    ax.set_aspect("auto")
-
-    ax.set_xticks(range(len(matrix.columns)))
-    ax.set_xticklabels(matrix.columns)
-
-    ax.set_yticks(range(len(matrix.index)))
-    ax.set_yticklabels(matrix.index)
-
-    ax.set_xlabel("Belonging Substate")
-    ax.set_ylabel("Health State")
-    ax.set_title("Time Distribution Across Lifecycle States (Total)")
-
-    for i in range(matrix.shape[0]):
-        for j in range(matrix.shape[1]):
-            val = matrix.values[i, j]
-            display_val = 0 if np.isnan(val) else int(val)
-            color = "white" if val > matrix.values.max() * 0.5 else "black"
-            ax.text(j, i, f"{display_val}", ha="center", va="center", color=color)
-
-    fig.colorbar(cax, label="Timesteps")
-
-    plt.tight_layout()
-    plt.savefig("app_examples/experiments/results/figures/lifecycle_heatmap.png", dpi=300)
-    # plt.show()
-    
 def overlay_participation(ax, df):
     belonging = df["belonging_sub"].fillna("none")
 
@@ -333,18 +172,13 @@ def overlay_participation(ax, df):
 
 def plot_health_transitions(ax, df):
     health = df["health"].fillna("unknown")
-
-    prev = health.iloc[0]
-
-    offset_toggle = 0
+    prev = ""
 
     for t, curr in health.items():
         if curr != prev:
             ax.axvline(t, linestyle="--", alpha=0.25, color="black", linewidth=1)
 
-            y_pos = 1.02 if offset_toggle == 0 else 1.08
-            # offset_toggle = 1 - offset_toggle
-
+            y_pos = 1.02
             ax.text(
                 t,
                 y_pos,
@@ -357,18 +191,7 @@ def plot_health_transitions(ax, df):
                 va="bottom",
                 clip_on=False
             )
-
             prev = curr
-
-    # ax.text(
-    # 0.0, 1.02,
-    # "Health State Transitions:",
-    # transform=ax.transAxes,
-    # ha="left",
-    # va="bottom",
-    # fontsize=8,
-    # alpha=0.9
-    # )
 
 def plot_event_stream_all(df, t_start=None, t_end=None, name=None, fig_size=(12, 6)):
     df = df.copy()
@@ -386,9 +209,7 @@ def plot_event_stream_all(df, t_start=None, t_end=None, name=None, fig_size=(12,
 
     fig, ax = plt.subplots(figsize=fig_size)
 
-    # -------------------------
-    # GLOBAL overlays
-    # -------------------------
+    # Overlays
     if len(signals) > 0:
         ref_signal = signals[0]
         df_ref = df[df["src"] == ref_signal]
@@ -404,9 +225,7 @@ def plot_event_stream_all(df, t_start=None, t_end=None, name=None, fig_size=(12,
             overlay_participation(ax, full_ref)
             plot_health_transitions(ax, full_ref)
 
-    # -------------------------
-    # Plot signals (NO labels here)
-    # -------------------------
+    # lines
     for s in signals:
         df_s = df[df["src"] == s]
 
@@ -432,34 +251,27 @@ def plot_event_stream_all(df, t_start=None, t_end=None, name=None, fig_size=(12,
 
         # ax.scatter(recon_only.index, recon_only, color=color, s=2, alpha=0.9, zorder=4)
 
-    # -------------------------
-    # Labels
-    # -------------------------
+  
     ax.set_xlabel("Time Steps")
-    ax.set_ylabel("Value")
+    ax.set_ylabel("Measured Value")
     ax.grid(True, alpha=0.3)
 
-    # -------------------------
-    # CLEAN LEGEND (STYLE-BASED)
-    # -------------------------
-    legend_elements = [
-        Line2D([0], [0], color='black', lw=1.0, label='Observed'),
-        Line2D([0], [0], color='black', lw=1.6, linestyle=':', label='System (Reconstructed)'),
-        Line2D([0], [0], color='black', lw=0.8, alpha=0.3, label='Ground Truth'),
-        # Line2D([0], [0], marker='o', color='black', linestyle='None', markersize=4, label='Reconstructed (gaps)'),
 
-        # mpatches.Patch(color='green', alpha=0.15, label='Full Participation'),
-        # mpatches.Patch(color='orange', alpha=0.15, label='Restricted Participation'),
-        # mpatches.Patch(color='red', alpha=0.15, label='Non-Participating'),
+    legend_elements = [
+        Line2D([0], [0], color='black', lw=1.0, label='Baseline'),
+        Line2D([0], [0], color='black', lw=1.6, linestyle=':', label='Compensated'),
+        Line2D([0], [0], color='black', lw=0.8, alpha=0.3, label='Ground Truth'),
+        # Line2D([0], [0], marker='o', color='black', linestyle='None', markersize=4, label='Reconstructed'),
+
+        # mpatches.Patch(color='green', alpha=0.15, label='Full Contribution'),
+        # mpatches.Patch(color='orange', alpha=0.15, label='Restricted Contribution (with Compensation)'),
+        # mpatches.Patch(color='red', alpha=0.15, label='No Contribution'),
     ]
 
     ax.legend(handles=legend_elements, fontsize=9, loc="upper left")
 
     plt.tight_layout()
 
-    # -------------------------
-    # Save
-    # -------------------------
     if name:
         plt.savefig(
             f"app_examples/experiments/results/figures/event_stream_all_{name}.png",
@@ -496,9 +308,6 @@ def main():
 
         obs_avail, sys_avail = compute_availability(cep_df)
         num_gaps, avg_gap, max_gap = compute_gap_stats(cep_df)
-        mttr = compute_mttr(cep_df)
-
-        
 
         results.append({
             "signal": s,
@@ -509,21 +318,11 @@ def main():
             "num_gaps": num_gaps,
             "avg_gap": avg_gap,
             "max_gap": max_gap,
-            "mttr": mttr,
             "confidence_mean": conf_mean,
             "confidence_min": conf_min,
             "confidence_max": conf_max,
             "confidence_error_corr": corr
         })
-
-        matrices.append(lifecycle_matrix(df_s))
-
-    aligned = [
-        m.reindex(index=HEALTH_ORDER, columns=BELONGING_SUB_ORDER, fill_value=0)
-        for m in matrices
-    ]
-
-    matrix_total = sum(aligned)
 
     results_df = pd.DataFrame(results)
 
@@ -536,8 +335,7 @@ def main():
     print("\n=== Average Metrics ===")
     print(results_df.mean(numeric_only=True))
 
-    plot_event_stream_all(df, t_start=None, t_end=None, name=None, fig_size=(12, 6))
-    plot_event_stream_all(df, t_start=0, t_end=500, name="full")
+    plot_event_stream_all(df, t_start=0, t_end=500, name="full", fig_size=(12, 6))
     plot_event_stream_all(df, t_start=0, t_end=50, name="step_1_stream", fig_size=(7, 5))
     plot_event_stream_all(df, t_start=75, t_end=125, name="step_2_stream", fig_size=(7, 5))
     plot_event_stream_all(df, t_start=175, t_end=225, name="step_3_stream", fig_size=(7, 5))
@@ -546,11 +344,6 @@ def main():
     plot_event_stream_all(df, t_start=350, t_end=425, name="step_45_stream", fig_size=(7, 5))
 
     plot_event_stream_all(df, t_start=430, t_end=464, name="step_6_stream", fig_size=(7, 5))
-
-    # print("\n=== Lifecycle Matrix (Total) ===")
-    # formatted_matrix = format_labels(matrix_total)
-    # plot_lifecycle_heatmap(formatted_matrix)
-
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,4 @@
 \chapter{Introduction}\label{ch:introduction}
-% \id{One-line title. Not more. Fix.}
 System complexity is increasing as systems engineering increasingly relies on digitally integrated and autonomous systems operating across expanding scopes and organizational boundaries \citep{incose2035}. Many contemporary systems no longer operate in isolation, but instead cooperate with independently managed systems to support shared objectives. In this setting, system of systems (SoS) describe configurations in which autonomous constituent systems coordinate their behaviour while retaining operational and managerial independence \citep{maier1998architecting}. SoS engineering emphasizes loose coupling, flexible coordination, and continuous evolution, allowing constituent systems to join, leave, or reorganize as objectives and operating conditions change, and enabling collective behaviours that cannot be achieved by individual systems alone \citep{nielsen2015systems}.
 
 In parallel, digital twins (DTs) have emerged as a means of achieving tight integration between physical systems and their digital representations. A DT maintains a bidirectional, continuously synchronized relationship with the system it represents, allowing observations from the physical world to update digital models and enabling analyses performed in the digital domain to influence physical operation \citep{kritzinger2018digital}. Through this digital--physical convergence, DTs support monitoring, simulation, prediction, and decision support across the system lifecycle \citep{pires2019digital,zhang2024digital,leng2021digital,david2024infonomics}.
@@ -18,10 +17,27 @@ Systems of twinned systems (SoTS) comprise of digitally twinned systems, i.e., d
 \end{definitionframe}
 
 \paragraph{On reliability in SoTS}
-Reliability challenges in SoTS arise from disturbances affecting the behaviour of constituent systems \cite{ferreira2023towards}. Because constituents operate autonomously while participating in coordinated activities, system structure and behaviour may evolve during operation: systems may join or withdraw, and participating systems may degrade or behave unpredictably. These dynamics can disrupt the coordination mechanisms through which system-level capabilities emerge.  Observations from SoTS research suggest that such disturbances commonly manifest along two aspects of constituent behaviour: whether a system participates in the SoTS and how reliably it operates while participating. Changes in participation may remove required capabilities, while operational degradation may introduce incomplete or unreliable contributions that affect system-level reasoning. These observations motivate the need for a structured way to characterize and reason about disturbances in SoTS.
+Reliability challenges in SoTS arise from disturbances caused by changes in constituent behaviour \cite{ferreira2023towards}. Constituent systems operate autonomously, so the structure of the SoTS adjusts during operation. Systems may join or leave, and their behaviour may change over time. Disturbances arise from two main situations. First, when a system leaves while other constituents rely on its contributions. Second, when a system participates but does not behave as intended or provide the capabilities it is expected to. In both cases, these disruptions affect dependent constituents and limit the SoTS's ability to achieve its goals. This motivates the need for a structured way to model and manage disturbances in order to support reliable SoTS behaviour.
+
 
 \paragraph{Thesis focus.}
 This thesis addresses this need by characterizing SoTS through a systematic analysis of existing literature, identifying reliability as a recurring but insufficiently addressed concern. It then introduces a conceptual model of disturbances based on two observable dimensions of constituent state: belonging, representing participation, and health, representing operational condition. Building on this model, the thesis develops a state-based reliability framework in which belonging and health evolve concurrently and are represented using executable Statecharts that regulate how constituents join, participate, degrade, and withdraw. The approach is demonstrated through a proof-of-concept implementation in which lifecycle statecharts coordinate constituent behaviour within a complex event processing (CEP) \cite{cugola2015complex} architecture.
+
+
+
+\paragraph{Thesis focus.} This thesis introduces Systems of Twinned Systems (SoTS) as an emerging class of systems and identifies reliability as a key challenge through a systematic literature review. - thorugh a SLR is sligrhly abrupt /weird wording, maybe we split up the sentence and be like we introduce emergeing class of systems, and then and then we condict an SLR and identify relaibility as kjey challebnegs..a systematic literature analysis and identifies reliability as an underdeveloped concern.
+
+To address this, the thesis proposes a two dimenisional model of disturbances, or modelling disturbances , we need to explain disturbances are what effect reliabuility somewhere here, so it leads properly. From these dimenisons we we develop a lifecycle state model to represent the effects of operaitonal condition or participation in SoTS  proposing an approach where...- or something worded a bit better/clearly than this. 
+
+The approach is implemented in a proof of concepts middlware supporting reliable event processing in SoTS.
+
+
+
+It introduces a model of disturbances based on two dimensions: belonging, representing participation, and health, representing operational condition.
+
+These dimensions form a state-based reliability framework. Belonging and health evolve concurrently and are modeled using executable statecharts. These statecharts model how constituents join, participate, degrade, and withdraw from the SoTS.
+
+The approach is demonstrated through a proof-of-concept implementation using complex event processing (CEP) .
 
 
 % ====================================================
@@ -57,5 +73,13 @@ This example provides a concrete setting for demonstrating how constituent contr
 
 
 \vspace{1em}
-Together, these contributions establish a foundation for reasoning about reliability in SoTS by framing reliability challenges in terms of disturbances affecting constituent participation and operational condition, and by demonstrating how architectural coordination mechanisms manage these dynamics during operation. The remainder of the thesis builds on this foundation by first presenting relevant background and related work (\chref{ch:background}, \chref{ch:literature-review}). It then introduces the conceptual disturbance model and state-based reliability framework for SoTS (\chref{ch:reliable-sots}), followed by a realization of the approach in a CEP-based system architecture and its demonstration through a proof-of-concept implementation (\chref{ch:demonstration}). The thesis concludes with a discussion of limitations, broader implications, and directions for future research (\chref{ch:discussion}, \chref{ch:conclusion}).
+Together, these contributions establish a foundation for reasoning about reliability in SoTS by framing reliability challenges in terms of disturbances affecting constituent participation and operational condition, and by demonstrating how architectural coordination mechanisms manage these dynamics during operation. 
+
+
+These contributions provide a foundation for reasoning about reliability in SoTS. Reliability is framed in terms of disturbances affecting participation and operational condition. The proposed architecture shows how coordination mechanisms manage these dynamics at runtime.
+
+The remainder of the thesis presents background and systematical literature review , introduces the reliability model, demonstrates the architecture, and concludes with discussion and future work.
+
+
+The remainder of the thesis builds on this foundation by first presenting relevant background and related work (\chref{ch:background}, \chref{ch:literature-review}). It then introduces the conceptual disturbance model and state-based reliability framework for SoTS (\chref{ch:reliable-sots}), followed by a realization of the approach in a CEP-based system architecture and its demonstration through a proof-of-concept implementation (\chref{ch:demonstration}). The thesis concludes with a discussion of limitations, broader implications, and directions for future research (\chref{ch:discussion}, \chref{ch:conclusion}).
 
