@@ -1,7 +1,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{ifthen}
-\usepackage{hyperref}
 \usepackage[dvipsnames]{xcolor}
+\usepackage[hidelinks]{hyperref}
 
 \usepackage{soul}
 \usepackage[normalem]{ulem}
@@ -11,10 +11,8 @@
 \usepackage{varioref}
 \usepackage{fdsymbol}
 
-\usepackage[dvipsnames]{xcolor}
 
 \usepackage{enumerate}
-%\usepackage[shortlabels]{enumitem}
 \usepackage[framemethod=TikZ]{mdframed}
 
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -29,12 +27,10 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{harveyballs}
-\usepackage{makecell}
 \usepackage{wrapfig}
 \usepackage{svg}
 \usepackage{orcidlink}
 \usepackage{listings}
-\usepackage{tablefootnote}
 \usepackage[nomessages]{fp}% 
 \usepackage{subcaption}
 \usepackage{tikz}
@@ -47,8 +43,30 @@
 \usepackage{adjustbox}
 
 \usepackage[most]{tcolorbox}
-\usepackage{listings}
 \usepackage{pdflscape}
-\usepackage{svg}
 \usepackage{fontawesome}
+
+\usepackage{setspace}
+\setcounter{tocdepth}{1}
+
+\usepackage[justification=centering]{caption}
+\newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \usepackage{longtable}
+\usepackage{rotating}
+\usepackage[shortlabels]{enumitem}
+\usepackage[shortcuts]{extdash}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\numberwithin{equation}{section}
+\usepackage{makecell}
+
+\usepackage[
+    backend=biber,
+    style=ieee,
+    sorting=none,
+    defernumbers=true,
+    natbib=true,
+    mincitenames=1,
+    maxcitenames=2,
+    maxbibnames=99
+]{biblatex}

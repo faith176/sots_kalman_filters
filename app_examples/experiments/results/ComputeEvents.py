@@ -291,7 +291,6 @@ def main():
     signals = df["src"].unique()
 
     results = []
-    matrices = []
 
     for s in signals:
         df_s = df[df["src"] == s]
@@ -337,13 +336,9 @@ def main():
 
     plot_event_stream_all(df, t_start=0, t_end=500, name="full", fig_size=(12, 6))
     plot_event_stream_all(df, t_start=0, t_end=50, name="step_1_stream", fig_size=(7, 5))
-    plot_event_stream_all(df, t_start=75, t_end=125, name="step_2_stream", fig_size=(7, 5))
-    plot_event_stream_all(df, t_start=175, t_end=225, name="step_3_stream", fig_size=(7, 5))
-    plot_event_stream_all(df, t_start=175, t_end=225, name="step_3_stream", fig_size=(7, 5))
-
-    plot_event_stream_all(df, t_start=350, t_end=425, name="step_45_stream", fig_size=(7, 5))
-
-    plot_event_stream_all(df, t_start=430, t_end=464, name="step_6_stream", fig_size=(7, 5))
+    plot_event_stream_all(df, t_start=75, t_end=235, name="step_2_stream", fig_size=(7, 5))
+    plot_event_stream_all(df, t_start=350, t_end=425, name="step_3_stream", fig_size=(7, 5))
+    plot_event_stream_all(df, t_start=430, t_end=464, name="step_4_stream", fig_size=(7, 5))
 
 if __name__ == "__main__":
     main()

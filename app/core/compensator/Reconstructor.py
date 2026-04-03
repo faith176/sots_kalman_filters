@@ -110,8 +110,8 @@ class Reconstructor(EventConsumer, EventGenerator):
         if self.allow_observe:
             prediction = self.predictor.predict()
             confidence = self.predictor.confidence(observed_value=value)
-            self.conf_window.append(confidence)
-            logging.info(f"{self.source_id} Confidence: {confidence} update with observed value {value} and estimate {self.predictor.kf.x[0, 0]}")
+            # self.conf_window.append(confidence)
+            logging.debug(f"{self.source_id} Confidence: {confidence} update with observed value {value} and estimate {self.predictor.kf.x[0, 0]}")
             self.predictor.update(value)
             
             

@@ -80,7 +80,7 @@ The belonging region models the participation lifecycle of a constituent within 
 Constituents initially reside in the \textit{Disengaged} state (referred to as \textit{Ignorant} in \citet{axelsson2019refined}), where a system possesses relevant capabilities but does not meet the requirements to participate in the SoTS. When these requirements are satisfied, the system transitions to \textit{Prepared}, indicating that it is capable of participation but has not yet joined the system. From this state, the system may \emph{join} the SoTS, entering the \textit{Passive} state where it is recognized as a constituent but not yet participating in any operational constellation. When the system becomes part of a constellation contributing to a SoTS capability, it transitions to \textit{Active}. Transitions may also occur in the opposite direction when systems leave constellations, withdraw from the SoTS, or no longer satisfy participation requirements.
 
 \paragraph{Health}
-The health region models the progressive degradation of constituent behaviour. It follows the impairment abstraction proposed by \citet{parhami1994multi}, which describes how impairments evolve within a system across multiple levels, as illustrated in \figref{fig:health-states}.
+The health region models the progressive degradation of constituent behaviour. It follows the impairment abstraction proposed by \citet{parhami1994multi-level}, which describes how impairments evolve within a system across multiple levels, as illustrated in \figref{fig:health-states}.
 
 \begin{figure}[htp]
 \centering
@@ -132,7 +132,7 @@ At this level, no constraints are imposed on the relationship between belonging 
 
 \textit{Guarantees from Level~1 are preserved.} Level~2 introduces constraints that prevent clearly destabilizing configurations while preserving the baseline lifecycle behaviour. Participation in open SoS environments often involves dynamic entry and exit of constituents, which may disrupt ongoing activities \cite{axelsson2019refined,sage2007processes,fang2020architectural}. To address this, the \textit{Active} state is refined into three substates---\textit{Pending Entry}, \textit{Participating}, and \textit{Pending Exit}. Timed transitions (e.g., \textit{after}($\Delta$)) regulate entry and exit, introducing stabilization periods during which configuration changes can be coordinated.
 
-In addition, constituents in the \textit{Failed} health state are prevented from joining the SoTS, and failure during participation triggers enforced withdrawal. According to \citet{parhami1994multi}, a failed constituent can no longer deliver the required service, making participation inconsistent with this condition.
+In addition, constituents in the \textit{Failed} health state are prevented from joining the SoTS, and failure during participation triggers enforced withdrawal. According to \citet{parhami1994multi-level}, a failed constituent can no longer deliver the required service, making participation inconsistent with this condition.
 
 These refinements remove configurations in which a constituent remains in a participating state despite being unable to contribute its required capability. Disturbances are therefore mitigated by preventing failed constituents from joining and by introducing stabilization periods that allow the system to prepare for participation changes.
 % ------------------------------------------------

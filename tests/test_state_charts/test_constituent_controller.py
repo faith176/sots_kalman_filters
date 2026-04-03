@@ -1,5 +1,5 @@
 from app.core.runtime.ConstituentController import ConstituentController
-from app.state_charts.lv4 import Statechart
+from app.state_charts.lv4_adaptive import Statechart
 import time
 
 # python -m tests.test_state_charts.test_constituent_controller

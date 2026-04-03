@@ -3,7 +3,7 @@
 This appendix provides the formal definitions and CEP EPL queries supporting estimation, uncertainty quantification, and pattern detection in the demonstrated system.
 
 \section{Kalman Filter}\label{sec:kalman-formulation}
-The Kalman filter is a recursive method for estimating the state of a linear dynamical system \cite{kalman1960filtering,bishop2001introduction}. The system state at time step $k$ is represented by a state vector $\vec{x}_k$, with associated uncertainty represented by a covariance matrix $\Sigma_k$. The quantities $\vec{x}_{k|k-1}$ and $\Sigma_{k|k-1}$ represent the prior state and covariance, while $\vec{x}_{k|k}$ and $\Sigma_{k|k}$ represent the posterior state and covariance.
+The Kalman filter is a recursive method for estimating the state of a linear dynamical system \cite{kalman1960new,bishop2001introduction}. The system state at time step $k$ is represented by a state vector $\vec{x}_k$, with associated uncertainty represented by a covariance matrix $\Sigma_k$. The quantities $\vec{x}_{k|k-1}$ and $\Sigma_{k|k-1}$ represent the prior state and covariance, while $\vec{x}_{k|k}$ and $\Sigma_{k|k}$ represent the posterior state and covariance.
 
 \paragraph{System model.}
 The Kalman filter assumes a linear dynamical system:
@@ -54,7 +54,7 @@ The posterior update is:
 \section{Normalized Innovation Squared (NIS)}
 \label{sec:predictor-confidence}
 
-The Normalized Innovation Squared (NIS) is a statistical consistency measure for Kalman filters \cite{bar2001estimation,simon2006optimal}. It evaluates whether the innovation is consistent with its expected covariance.
+The Normalized Innovation Squared (NIS) is a statistical consistency measure for Kalman filters \cite{bar-shalom2001estimation,simon2006optimal}. It evaluates whether the innovation is consistent with its expected covariance.
 
 Using the innovation $\vec{y}_k$ and innovation covariance $\mathbf{S}_k$ defined above, the NIS statistic is:
 \[
