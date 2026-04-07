@@ -1,0 +1,55 @@
+\section{Key Takeaway for the Future of SoTS}\label{sec:literature-review-key-takeaways}
+This section synthesizes the literature review findings to identify key gaps limiting current SoTS research and practice.
+%------------------------------------------------------------
+
+\subsubsection{Reliability is predominantly addressed through service-level mechanisms}
+Reliability is one of the most frequently addressed non-functional properties in SoTS, appearing in over half of the sampled studies (\xofyp{41}{80}, see \tabref{tab:reliability-table}). Across the literature, reliability is predominantly addressed through service-level mechanisms, including fallback to locally hosted or lightweight DT instances during communication loss~\cite{alam2017c2ps,larsen2024towards}, asynchronous communication to tolerate intermittent updates~\cite{acharya2023twins,liu2020web-based}, and runtime fault recovery strategies~\cite{esterle2021digital,villalonga2021decision-making}.  These approaches focus on maintaining system operation at runtime but do not treat reliability as an explicitly defined system property. Despite its prevalence, reliability is rarely modeled (\xofyp{2}{80}) and only occasionally evaluated (\xofyp{3}{80}), typically through simulation or fault injection~\cite{park2020digital,saraeian2022digital}.  This indicates that reliability in current SoTS research is addressed in an ad hoc manner, without formal representations or systematic evaluation. Consequently, it is difficult to reason about reliability or compare approaches across systems.
+
+\begin{recoframe}{Recommendation 1}
+Develop formal models and evaluation approaches for reliability in SoTS to enable systematic specification, analysis, and comparison across systems.
+\end{recoframe}
+
+%------------------------------------------------------------
+\subsection{On the need for SoTS architectures}
+\input{tables/Literature Review/RQs/rq1/challenges_table.tex}
+One of the key challenges in DT engineering is the lack of established architectures~\cite{ferko2022architecting}, a limitation that carries over to SoTS. As shown in \tabref{tab:challenges-table}, both the lack of architectures and standards emerge as recurring design challenges. Given that the primary intent of SoTS is the organization of DTs into SoS (\tabref{tab:intents-table}), there is a clear need for architectures that can accommodate SoS dynamics, particularly interoperability, which is highlighted in nearly 40\% of studies (\tabref{tab:challenges-table}).
+
+The dominance of acknowledged and directed SoS types (over 70\% in \tabref{tab:sots-type-table}) suggests that current SoTS struggle to support more dynamic configurations, with collaborative and virtual SoS appearing in less than 30\% of cases. This limitation is likely tied to the absence of architectural specifications and standards. While structural modelling approaches such as SysML and UML class diagrams are frequently used (\tabref{tab:modeling-methods-structured-table}), these efforts remain insufficiently consolidated into architectural frameworks.
+
+Developing SoTS architectures should therefore be a priority, as it would improve both system and research maturity (see \tabref{tab:evaluation-structured-table} and \tabref{tab:trl-table}). Promising directions include microservice architectures~\cite{bellavista2023requirements}, co-simulation via FMI/FMU~\cite{bottjer2023review}, and DT interoperability~\cite{david2024interoperability}. Our classification framework (\secref{sec:literature-review-classification}) provides a foundation for these efforts.
+
+\begin{recoframe}{Recommendation 2}
+Develop architectural specifications and reference implementations for SoTS to ease their engineering and to allow higher levels of maturity in their research and development.
+\end{recoframe}
+
+
+\subsection{The lack of standards is a key challenge in SoTS}
+
+Standardization remains underdeveloped in SoTS. Fewer than half of the studies rely on standards (\xofyp{36}{80}{}, \tabref{tab:standards-table}), and those that do primarily adopt data exchange standards such as OPC UA, the Asset Administration Shell (IEC 63278), and RAMI 4.0~\cite{shao2024manufacturing}. These are not specifically designed for SoTS, and standards are explicitly cited as a challenge (\tabref{tab:challenges-table}), reinforcing the need identified in architectural research~\cite{ferko2022architecting}.
+
+This gap is particularly critical in domains such as automotive systems and smart cities (\tabref{tab:domains-table}), where standardization is essential for adoption. Current DT standards, such as ISO 23247, are limited in supporting dynamic systems~\cite{liu2024ai}, while SoS standardization remains immature. However, upcoming extensions to ISO 23247 (Parts 5 and 6) targeting digital threads and DT composition may address key SoTS challenges, including interoperability and synchronization~\cite{shao2024manufacturing}.
+
+\begin{recoframe}{Recommendation 3}
+Develop standards for DT and SoS, and participate in standardization efforts to improve the maturity of SoTS.
+\end{recoframe}
+
+
+\subsection{Managing emergent behaviour in SoS by DTs}
+
+Emergent behaviour is a defining characteristic of SoS, yet current SoTS approaches remain largely limited to acknowledged and directed configurations (\tabref{tab:sots-type-table}). We hypothesize that DTs can enable more advanced management of emergence due to their tight cyber-physical coupling. This aligns with the concept of active experimentation~\cite{zeigler2018theory}, recently revitalized through DTs~\cite{mittal2023towards,barat2022digital}, where system behaviour is intentionally perturbed to reveal insights. Such approaches have been explored in domains including uncrewed aerial systems~\cite{guo2023intelligent}, autonomous driving~\cite{pun2023neural}, and AI simulation~\cite{liu2024ai}.
+
+Even after purposeful experimentation, some uncertainty about the behaviour of the SoTS remains. To manage these unknown unknowns~\cite{ramasesh2014conceptual}, we recommend researching computing techniques that have the potential to react to unknown unknowns better, e.g., faster-than-real-time simulations to react to emergence faster or to anticipate it on a short time horizon; and using sound modelling techniques, such as goal modelling (e.g., via I*~\cite{goncalves2018systematic} and KAOS~\cite{goncalves2025systematic}) to codify the expected behaviour of SoTS.
+
+
+\begin{recoframe}{Recommendation 4}
+Leverage DT capabilities to understand and manage emergent behaviour in SoS, e.g., by purposeful experimentation with physical systems, or by improving run-time modelling\&simulation capabilities.
+\end{recoframe}
+
+
+\subsection{Empirical evaluations are lagging behind}
+
+While technical contributions dominate the literature (\tabref{tab:contribution-type-table}), many studies remain at moderate maturity levels. Over half exceed demo prototype TRL (\tabref{tab:trl-table}), with technical contributions clustering around TRLs 5--6 and occasional deployments at TRLs 7--8. Case studies are fewer but tend to reach higher maturity, including one at TRL 9 (\figref{fig:trl-v-cont}). This indicates strong opportunities for empirical research. We encourage reporting through case reports and exemplars~\cite{mezard2007where}, particularly in industry-focused venues. Recommended methodologies include case studies~\cite{wohlin2021case}, design science~\cite{dresch2015design}, action research~\cite{cohen2017research}, and ethnography~\cite{sharp2010using} for human-centered aspects. Such work will improve research maturity by shifting from validation-heavy approaches (currently 90\%) toward more rigorous evaluation methods (\tabref{tab:evaluation-structured-table}), in line with \textcite{petersen2015guidelines}.
+
+\begin{recoframe}{Recommendation 5}
+Conduct empirical inquiries into SoTS by using established methods, such as case studies and action research.
+\end{recoframe}

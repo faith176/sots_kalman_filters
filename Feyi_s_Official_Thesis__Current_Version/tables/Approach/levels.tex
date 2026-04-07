@@ -1,26 +1,29 @@
 \begin{table}[htp]
 \centering
-\caption{Summary of SoTS reliability levels}
+\footnotesize
+\caption{Progression of reliability levels}
 \label{tab:reliability-levels}
-\begin{tabular}{p{3.5cm} p{4.5cm} p{6.5cm}}
+\begin{tabularx}{\textwidth}{p{3.5cm} p{4cm} X}
 \toprule
-\textbf{Name} & \textbf{Disturbance \newline Handling} & \textbf{Statechart Mechanism} \\
+\textbf{Level} & \textbf{Key Idea} & \textbf{What Changes from Previous Level} \\
 \midrule
-Level 1: Reactive \newline Reliability 
-& Response to disturbances as they occur 
-& Announcements on entry and exit transitions \\
 
-Level 2: Proactive \newline Reliability 
-& Preparation before disturbances occur 
-& Temporary stabilization states with timed transitions for entry and exit \\
+Level 1: Reactive 
+& Respond to disturbances after they occur 
+& No restrictions on participation. Systems freely join or leave; changes are only observed and announced. \\
 
-Level 3: Controlled \newline Reliability 
-& Temporary prevention of disturbances 
-& Negotiation states for admission and transitions preventing uncontrolled withdrawal \\
+Level 2: Proactive 
+& Prepare for disturbances before they occur 
+& Adds a short stabilization period during entry and exit. Systems still join or leave immediately, but these changes are announced in advance so others can prepare. \\
 
-Level 4: Adaptive \newline Reliability 
-& Adaptive mitigation of disturbances 
-& Participation state triggering compensation actions under worsened health with transitions enforcing exit before failure \\
+Level 3: Controlled 
+& Prevent disturbance-causing situations 
+& Adds more control over when systems can join or leave. Systems can no longer enter or exit freely; these changes are regulated to avoid disruption. \\
+
+Level 4: Adaptive 
+& Adapt to disturbances during operation 
+& Adds adaptation based on system condition. Systems can be compensated for and continue contributing instead of immediately leaving. \\
+
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}

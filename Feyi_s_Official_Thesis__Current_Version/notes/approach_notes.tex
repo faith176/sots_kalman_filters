@@ -66,6 +66,8 @@ Optimized selection of constituent systems.
 
 
 
+\cite{axelsson2019refined}
+
 
 
 \cite{baldwin2011formation}
@@ -77,8 +79,57 @@ belonging game matrix
 
 \cite{salado2016exile}
 
-\cite{avizienis2004basic}
 
 
 % ----------------------------------------------------
+Ferreira 2021 - Reliability in software-intensive systems: challenges, solutions, and future perspectives
+Ferreira 2023 -  Towards an understanding of reliability of software-intensive systems-of-systems
+Ferreira 2024 - A framework for the design of fault-tolerant systems-of-systems
+Uday 2013 - Exploiting stand-in redundancy to improve resilience in a system-of-systems (SoS)
+Imamura 2021 - System-of-systems reliability: An exploratory study in a brazilian public organization
+Parhami 1994 - A multi-level view of dependable computing
 
+
+WHERE THE HEALTH DIMENSION COMES FROM
+\cite{ferreira2021reliability} in his SLR on relaibility in SoS he specifically mentions that factors affecting SoS relaibility are failures at the constituent level, communication problems, 
+
+\cite{ferreira2023towards} defines diturbances across two acrosses about internal or external to the system and natural or accidental to the system, all these overall can be grouped into something that effects the ability of a system to delrivery what was intended and he outlines them by the causes:
+"
+Constituent System Disturbance Something bad that may negatively affect a constituent system’s ability to deliver value. It can be
+classified along two axes; (1) internal or external to the system, or (2) natural/accidental or
+malevolent.
+
+Accidental disturbance A disturbance caused by unintentional actions (e.g., due to insufficient skills, stress, or fatigue). 
+
+External disturbance A disturbance caused by system’s external factors (e.g., hacker attacks, natural disasters).
+
+Internal disturbance A disturbance caused by system’s internal factors (e.g., components failures).
+
+Malevolent disturbance A disturbance caused by malicious actions (e.g., erroneous inputs)
+"
+
+
+again in \cite{ferreira2024framework}, he mentions "In particular, a significant gap exists regarding the SoS dynamic nature. Constituent systems can produce disturbances at the SoS level that might result from failures, implementation changes, or, under certain circumstances, deviations from their roles within the SoS due to competing objectives. - all these lead to the idea of not being able to provide capabilities to the SoS as needed
+
+
+- so this is where the idea of health originates from in the two dimensions where the idea if if unhealthy you are impedded from fulfilling the task you are meant to do. He just decribes the means this can occur in the paper
+
+he also mentions \cite{avizienis2004basic}'s means to deals with faults and errors act as countermeasures to disturbances specifically in a later paper \cite{ferreira2024framework} he focuses on fault tolerance through mission decompisision in SoS. 
+
+\cite{parhami1994multi-level} states align well with this as his progression in the reliability states is also centreded around not being able to deliver intended functionality
+
+
+
+WHY MY APPROACH IS DIFFERENT
+my approach brings the focus towards disturbances specifically 
+
+In \cite{ferreira2023towards} he mkes a conceptial model of the relationships of concepts related to SoTS reliability derived from interviews with practitioners. His focus is on creating a mental model towards understanding rewlaibility, he mentios there no unique way to ensure relaibility due to the various issues and subfactors regarding the involved constituents
+
+
+\cite{ferreira2023towards} mentions this in the discussion "This leads us to believe that understanding the impact of failures is as important as identifying their source...  In these cases, alternative actions should be taken" - I think this leads nicely to our solution in the case that were controlling eligibility, belonging, entry and exit in the SoTS rather than the constituents themselves. It provides an alternative to completely control over everything. 
+
+\cite{ferreira2021reliability} he also specifically means a means to achieve reliability in SoS can be through model based analysis and specifcially \textbf{behaviour checking}, the system adheres to specific given properties  - I think this also leads to our solution of using the state charts to ensure consittuents follow certain behaviours depending on their state to prevent
+
+
+SOTS TYPES 
+\cite{ferreira2023towards} mentions this exact same idea but applied to countermeasures/fault tolerance to help improve SoS relaibility in the text too, which mainly comes around to having a centralized entity makes things easier. "A directed SoS, which is sometimes created to fulfill a specific mission and is centrally managed and coordinated to that end, is definable and potentially quantifiable in terms of reliability; so as in acknowledged SoS, although to a slightly lesser extent. On the other hand, the collaborative SoS, which counts on voluntary agreements of constituent systems, is likely to be much more challenging to adopt specific countermeasures.

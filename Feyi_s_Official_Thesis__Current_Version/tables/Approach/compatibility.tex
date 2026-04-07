@@ -1,21 +1,53 @@
 \begin{table}[htp]
-\centering
-\caption{Compatibility of SoTS Types with Reliability Levels}
+\caption{Feasibility of enforcing the model across SoTS types}
 \label{tab:sots-reliability-compatibility}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
- & Reactive & Proactive & Controlled & Adaptive \\
+& \multicolumn{2}{c}{Reactive} 
+& Proactive 
+& Controlled 
+& Adaptive \\
+
+\cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-5} \cmidrule(lr){6-6}
+
+& \makecell{Monitor \\ Transitions} 
+& \makecell{Announce \\ Changes} 
+& \makecell{Stabilize \\ Transitions} 
+& \makecell{Control \\ Entry/Exit} 
+& \makecell{Role \\ Restriction} \\
+
 \midrule
-Directed & \harveyBallFull & \harveyBallFull & \harveyBallFull & \harveyBallFull \\
-Acknowledged & \harveyBallFull & \harveyBallFull & \harveyBallFull & \harveyBallHalf \\
-Collaborative & \harveyBallFull & \harveyBallFull & \harveyBallHalf & \harveyBallNone \\
-Virtual & \harveyBallFull & \harveyBallHalf & \harveyBallNone & \harveyBallNone \\
+
+Directed 
+& \harveyBallFull & \harveyBallFull 
+& \harveyBallFull 
+& \harveyBallFull 
+& \harveyBallFull \\
+
+Acknowledged 
+& \harveyBallFull & \harveyBallFull 
+& \harveyBallHalf 
+& \harveyBallHalf 
+& \harveyBallHalf \\
+
+Collaborative 
+& \harveyBallFull & \harveyBallFull 
+& \harveyBallHalf 
+& \harveyBallNone 
+& \harveyBallNone \\
+
+Virtual 
+& \harveyBallFull & \harveyBallHalf 
+& \harveyBallNone 
+& \harveyBallNone 
+& \harveyBallNone \\
+
 \bottomrule
 \end{tabular}
 
 \vspace{0.5em}
 \footnotesize
-\harveyBallFull[4pt] Supported \quad
-\harveyBallHalf[4pt] Partially compatible \quad
-\harveyBallNone[4pt] Generally incompatible
+\harveyBallFull[4pt] Enforceable \quad
+\harveyBallHalf[4pt] Achievable through cooperation \quad
+\harveyBallNone[4pt] Not enforceable
 \end{table}

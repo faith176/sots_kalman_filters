@@ -1,0 +1,55 @@
+% Having trouble integrating in contract based composition
+% Classical contract-based design (Benveniste et al.), addresses the composition of systems under strong assumptions about component behaviour, interfaces, and integration. - relies on fixed environments and well-defined assumptions and guarantees to ensure correctness under composition. 
+% SoTS however, do not operate under fixed environments: constituent systems may join or leave, interaction patterns evolve over time, 
+% So strong contract-based composition cannot be relied on in these environments
+% This thesis addresses the complementary problem of supporting reliable event-driven computation in systems where composition is inherently weak and dynamic.
+
+\chapter{Introduction}\label{ch:introduction}
+The growing interconnection of systems and the increasing use of automation are contributing to a sharp rise in system complexity, both across and within individual systems \citep{incose2035}. At the system level, independently developed systems are increasingly engineered to cooperate in order to achieve objectives that exceed their individual capabilities. Such arrangements are described as systems of systems (SoS): large, distributed collections of autonomous systems that collaborate toward higher-level goals while retaining independent operation \citep{maier1998architecting}. Because SoS constituents may join, leave, or reorganize in response to changing objectives, their collective behaviour evolves and gives rise to outcomes that individual systems cannot achieve alone \citep{nielsen2015systems}.
+
+Within individual systems, internal complexity is also increasing as modern software systems continuously collect and act on streams of observational data. To reason over such streams, many contemporary systems adopt event-driven semantics, in which internal state is updated and behaviour is triggered by the arrival of events associated with observations of system behaviour \citep{cugola2012processing}. Digital twins (DTs) represent a class of systems that operate according to these principles. A DT is a digital representation of a system that mirrors and actuates on its physical counterpart through ongoing bidirectional data exchange \citep{kritzinger2018digital}. These exchanges consist of observations and control updates that drive state updates and computation within the digital representation. Through these interactions, DTs enable situational awareness \citep{pires2019digital, zhang2024digital} and support predictive analysis, forecasting, and simulation-based optimization \citep{leng2021digital}.
+
+
+The convergence of system-level coordination in SoS with the real-time representations provided by digital twins gives rise to a new class of systems referred to in this thesis as \emph{systems of twinned systems (SoTS)}.
+
+\begin{definitionframe}
+A System of Twinned Systems (SoTS) comprises digitally twinned systems, i.e., digital and physical twins, organized by system of systems (SoS) principles, in which digitally twinned systems may act as autonomous constituents and collaborate to achieve complex goals.
+\end{definitionframe}
+
+SoTS extend SoS coordination into the digital domain by enabling constituent systems to interact through their digital twins while maintaining operational autonomy over their physical counterparts. Digital twins maintain and evolve their internal representations through the continuous exchange of observational data. As a result, coordination and decision-making in SoTS depend on the exchange and interpretation of event streams across multiple distributed twins. SoTS therefore operate fundamentally as event-driven systems at the computational level.
+
+\paragraph{On the reliability of SoTS.}
+Reliability, as defined by \citet{avizienis2004basic}, is the ability of a system to continuously deliver correct service. This definition emphasizes not only whether service is provided, but whether it remains correct as operation progresses. In SoTS, this requirement applies not only to physical constituents but also to digital-twin-based services such as monitoring, simulation, and analytic decision support. Such services rely on maintaining an up-to-date digital representation of the observed process through event streams. 
+
+However, missing observations can introduce gaps in event streams that disrupt ongoing computation and degrade reliable service over time. As a result, digital representations may diverge from physical reality, causing digital behaviour to evolve inconsistently with the underlying system. Such behaviour can arise in SoTS due to dynamic structural characteristics inherited from SoS. Constituent systems may reconfigure, communication paths may change, sensing quality may fluctuate, and network conditions may vary over time. These dynamics, which are inherent to SoS operation, manifest at the digital level as temporary gaps, delays, or absences in event streams.
+
+Such divergence can degrade the reliability of SoTS operation. While these conditions can arise in realistic deployments, their implications for reliable SoTS behaviour are not yet well understood or systematically addressed. Traditional approaches to reliability in distributed and cyber-physical systems typically mitigate such issues through redundancy, tighter synchronization, or explicit constraints on communication and coordination \cite{hanmer2013patterns, chavan2024fault}. In the context of SoTS, however, enforcing such guarantees is difficult without undermining constituent autonomy and dynamic reconfiguration. This motivates addressing reliability at the level of event-driven computation rather than relying solely on system-level guarantees.
+
+\paragraph{Event-driven computation and complex event processing.}
+From a computational perspective, the reliability challenges in SoTS manifest within event-driven computation, where reasoning advances only in response to incoming events. When event streams become incomplete, reasoning processes may stall or operate on outdated information, even as the physical system continues to evolve. Reliability in SoTS is therefore closely tied to how event-driven computation behaves in the presence of missing data. Improving how event-driven computation responds to such conditions can directly enhance the reliability of digital-twin-based services and, by extension, the overall reliability of SoTS.
+
+Within SoTS, event-driven computation is realized through complex event processing (CEP). CEP provides the mechanisms for interpreting and processing event streams, transforming low-level observations produced by digital twins into higher-level representations that support coordination and decision-making across systems \citep{luckham2002power}. However, conventional CEP engines implicitly assume uninterrupted event arrival and define reasoning only over events that appear in the input stream. While existing uncertainty-aware CEP approaches address noisy values or uncertain timestamps, they provide limited support for reasoning when expected observations fail to arrive \citep{alevizos2017probabilistic}. Such conditions naturally arise in SoTS due to their SoS characteristics.
+
+
+\paragraph{Thesis focus and approach.}
+This thesis characterizes SoTS as an emerging class of systems formed through the coordination of digitally twinned systems under SoS principles, and investigates the resulting reliability challenges. In SoTS, reliability limitations become particularly evident when expected observations are temporarily absent from event streams. This thesis therefore focuses on supporting reliable event-driven behaviour under partial data availability.
+
+It presents an approach that addresses this challenge by explicitly representing missing observations within the event stream. Expected observations that fail to arrive are detected and replaced with inferred event data produced through state-based prediction. These reconstructed events are annotated with confidence values that quantify the uncertainty introduced by inference, enabling downstream event processing to continue while making the correctness of derived results explicit and assessable.
+
+\section*{Research Contributions}
+This thesis advances the understanding and reliable operation of SoTS through the following contributions:
+
+\textbf{Contribution 1 – Characterizing Systems of Twinned Systems and Their Reliability Gaps (\chref{ch:literature-review})} \\
+Presents a systematic analysis of existing research to characterize systems of twinned systems as a distinct class of systems emerging from the integration of digital twins and system-of-systems principles. The analysis identifies recurring structural, architectural, and behavioural properties of SoTS and highlights a fundamental gap in existing work: while reliability is frequently recognized as an important concern, explicit mechanisms to address it are largely absent.
+
+
+\textbf{Contribution 2 – A Formal Event Model and Architecture for Reliable Event-Driven Operation under Missing Observations (Chapters~\ref{ch:model} and~\ref{ch:architecture})} \\
+Develops a formal model of event-driven computation that explicitly characterizes events, expected observations, and the absence of observations in event streams. Building on this model, the thesis introduces an architectural approach that detects missing observations, augments event streams with inferred events produced through state-based prediction, and propagates quantified uncertainty via confidence annotations.
+
+\textbf{Contribution 3 – Implementation and Evaluation of Architecture (Chapters~\ref{ch:implementation} and~\ref{ch:results})} \\
+Implements the proposed model and architecture within a CEP-based processing pipeline and evaluates its behaviour under simulated data disruptions. The evaluation examines reconstruction accuracy, confidence evolution, and the impact of inferred events on higher-level pattern detection, demonstrating the feasibility and practical implications of the proposed approach for reliable event-driven processing.
+
+
+\vspace{1em}
+Together, these contributions establish a foundation for reliable reasoning in systems of twinned systems and demonstrate how architectural support for partial data availability can preserve correctness over time. The chapters that follow develop this foundation by first grounding the work in relevant background and existing research (\chref{ch:background}, \chref{ch:literature-review}), then introducing a formal model and architecture for reliable event-driven operation (\chref{ch:model}, \chref{ch:architecture}). The feasibility and impact of the proposed approach are then demonstrated through implementation and evaluation (\chref{ch:implementation}, \chref{ch:results}), followed by a reflection on limitations, implications, and directions for future research (\chref{ch:discussion}, \chref{ch:conclusion}).
+
