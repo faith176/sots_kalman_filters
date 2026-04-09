@@ -1,0 +1,12 @@
+# Started Thu Apr  9 08:22:59 2026
+type,ts,constituent_id,from_state,target_state,transition,result,final_state,health,goal_match,trigger_event
+lifecycle_decision,1775737379.864676,speed-1,disengaged/disengaged,participating,raise_prepare_for_so_s,made,prepared/prepared,ideal,False,raise_prepare_for_so_s
+lifecycle_decision,1775737379.864676,speed-1,prepared/prepared,participating,raise_join_so_s,made,passive/available,ideal,False,raise_join_so_s
+lifecycle_decision,1775737379.8657992,speed-1,passive/available,participating,raise_join_invitation,made,passive/negotiating,ideal,False,raise_join_invitation
+lifecycle_decision,1775737379.8657992,speed-1,passive/negotiating,participating,raise_join_constellation,made,active/pending_entry,ideal,False,raise_join_constellation
+lifecycle_decision,1775737379.8657992,speed-1,active/pending_entry,participating,raise_constellation_stable,made,active/full_role,ideal,False,raise_constellation_stable
+lifecycle_decision,1775737379.8657992,engine-temp-1,disengaged/disengaged,participating,raise_prepare_for_so_s,made,prepared/prepared,ideal,False,raise_prepare_for_so_s
+lifecycle_decision,1775737379.8657992,engine-temp-1,prepared/prepared,participating,raise_join_so_s,made,passive/available,ideal,False,raise_join_so_s
+lifecycle_decision,1775737379.8657992,engine-temp-1,passive/available,participating,raise_join_invitation,made,passive/negotiating,ideal,False,raise_join_invitation
+lifecycle_decision,1775737379.8657992,engine-temp-1,passive/negotiating,participating,raise_join_constellation,made,active/pending_entry,ideal,False,raise_join_constellation
+lifecycle_decision,1775737379.8657992,engine-temp-1,active/pending_entry,participating,raise_constellation_stable,made,active/full_role,ideal,False,raise_constellation_stable

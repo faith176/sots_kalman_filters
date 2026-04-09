@@ -8,7 +8,6 @@ PATTERN_LOG = os.path.join(LOG_DIR, "patterns.csv")
 PATTERNS = [
     "CrossSignalAgreement",
     "CrossSignalDivergence",
-    "CrossSignalTrendConsistency",
     "CrossSignalRelativeStable"
 ]
 

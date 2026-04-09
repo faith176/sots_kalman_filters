@@ -165,7 +165,6 @@ class ConstituentController:
     def exit_denied(self, goal=None): self._raise("raise_exit_denied", goal=goal)
     def join_constellation(self, goal=None): self._raise("raise_join_constellation", goal=goal)
     def constellation_stable(self, goal=None): self._raise("raise_constellation_stable", goal=goal)
-    def leave_request(self, goal=None): self._raise("raise_leave_request", goal=goal)
     def leave_constellation(self, goal=None): self._raise("raise_leave_constellation", goal=goal)
 
     def uncertainty_threshold_exceeded(self):
@@ -226,9 +225,9 @@ class ConstituentController:
             "available": "leave_sos",
             "negotiating": "leave_sos",
 
-            "pending_entry": "leave_request",
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "pending_entry": "leave_constellation",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": "leave_constellation",
         },
         "prepared": {
@@ -238,9 +237,9 @@ class ConstituentController:
             "available": "leave_sos",
             "negotiating": "leave_sos",
 
-            "pending_entry": "leave_request",
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "pending_entry": "leave_constellation",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": "leave_constellation",
         },
         "available": {
@@ -250,9 +249,9 @@ class ConstituentController:
             "available": None,
             "negotiating": "admission_rejected",
 
-            "pending_entry": "leave_request",
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "pending_entry": "leave_constellation",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": "leave_constellation",
         },
         "negotiating": {
@@ -262,9 +261,9 @@ class ConstituentController:
             "available": "join_invitation",
             "negotiating": None,
 
-            "pending_entry": "leave_request",
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "pending_entry": "leave_constellation",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": "leave_constellation",
         },
         "pending_entry": {
@@ -275,8 +274,8 @@ class ConstituentController:
             "negotiating": "join_constellation",
 
             "pending_entry": None,
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": "leave_constellation",
         },
         "participating": {
@@ -328,9 +327,9 @@ class ConstituentController:
             "available": "join_invitation",
             "negotiating": "join_constellation",
 
-            "pending_entry": "leave_request",
-            "full_role": "leave_request",
-            "restricted_role": "leave_request",
+            "pending_entry": "leave_constellation",
+            "full_role": "leave_constellation",
+            "restricted_role": "leave_constellation",
             "pending_exit": None,
         },
     }
