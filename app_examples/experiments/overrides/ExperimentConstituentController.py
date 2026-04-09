@@ -242,7 +242,7 @@ class ExperimentConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": "constellation_stable",
         },
         "prepared": {
             "disengaged": "prepare",
@@ -254,7 +254,7 @@ class ExperimentConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": "constellation_stable",
         },
         "available": {
             "prepared": "join_sos",
@@ -266,7 +266,7 @@ class ExperimentConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": "constellation_stable",
         },
         "negotiating": {
             "prepared": "join_sos",
@@ -278,7 +278,7 @@ class ExperimentConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": "constellation_stable",
         },
         "pending_entry": {
             "prepared": "join_sos",
@@ -290,7 +290,7 @@ class ExperimentConstituentController:
             "pending_entry": None,
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": "constellation_stable",
         },
         "participating": {
             "prepared": "join_sos",

@@ -4,7 +4,7 @@ import time
 
 # python -m tests.test_state_charts.test_constituent_controller
 
-STEP_DELAY = 0.1
+STEP_DELAY = 0.01
 
 
 class ConstituentControllerTester:
@@ -12,19 +12,12 @@ class ConstituentControllerTester:
     def __init__(self):
         self.setup()
 
-    # --------------------------------------------------
-    # SETUP
-    # --------------------------------------------------
-
     def setup(self):
         self.runtime = ConstituentController(Statechart, "DT1")
 
     def wait(self):
         time.sleep(STEP_DELAY)
 
-    # --------------------------------------------------
-    # HELPERS
-    # --------------------------------------------------
 
     def print_state(self, label):
         s = self.runtime.state_snapshot()
@@ -44,9 +37,7 @@ class ConstituentControllerTester:
         actual = self.runtime.health_name()
         assert actual == expected, f"Expected {expected}, got {actual}"
 
-    # --------------------------------------------------
-    # BASIC ENSURE TESTS
-    # --------------------------------------------------
+
     def test_ensure_available(self):
         self.setup()
 
@@ -65,15 +56,6 @@ class ConstituentControllerTester:
         self.assert_sub("negotiating")
         self.print_state("Negotiating")
 
-    def test_ensure_pending_entry(self):
-        self.setup()
-
-        self.runtime.ensure_pending_entry()
-        self.wait()
-
-        self.assert_sub("pending_entry")
-        self.print_state("Pending Entry")
-
     def test_ensure_participating(self):
         self.setup()
 
@@ -82,15 +64,6 @@ class ConstituentControllerTester:
 
         self.assert_participating()
         self.print_state("Participating")
-
-    def test_ensure_pending_exit(self):
-        self.setup()
-
-        self.runtime.ensure_pending_exit()
-        self.wait()
-
-        self.assert_sub("pending_exit")
-        self.print_state("Pending Exit")
 
     def test_ensure_prepared(self):
         self.setup()
@@ -110,10 +83,6 @@ class ConstituentControllerTester:
         self.assert_sub("disengaged")
         self.print_state("Disengaged")
 
-    # --------------------------------------------------
-    # TRANSITION PATH TEST
-    # --------------------------------------------------
-
     def test_full_path_to_participating(self):
         self.setup()
 
@@ -125,42 +94,37 @@ class ConstituentControllerTester:
         self.assert_participating()
         self.print_state("Reached Participating")
 
-    # --------------------------------------------------
-    # POLICY COVERAGE TEST
-    # --------------------------------------------------
 
     def test_policy_completeness(self):
-
         states = set(self.runtime.BELONGING_STATE_MAP.values())
 
         for goal, mapping in self.runtime.BELONGING_POLICY.items():
             missing = states - set(mapping.keys())
             assert not missing, f"{goal} missing: {missing}"
 
-        print("\n Policy completeness check passed")
 
-    # --------------------------------------------------
-    # FULL REACHABILITY TEST
-    # --------------------------------------------------
 
     def test_all_goal_reachability(self):
 
         states = (
             set(self.runtime.BELONGING_STATE_MAP.values())
-            - {"restricted_role", "full_role"}
+            - {"restricted_role", "full_role", "pending_entry", "pending_exit"}
         ) | {"participating"}
 
         for start in states:
             for goal in states:
+                print(f"{start} -> {goal}")
 
                 self.setup()
 
                 # move to start
                 self.runtime.ensure_belonging(start)
+                time.sleep(self.runtime.sm.DELTA +0.05)
 
                 # try to reach goal
                 success = self.runtime.ensure_belonging(goal)
                 assert success is True, f"{start} → {goal} failed"
+                self.wait()
 
                 # validate result
                 if goal == "participating":
@@ -171,9 +135,6 @@ class ConstituentControllerTester:
         print("\n Reachability test passed")
 
 
-    # --------------------------------------------------
-    # HEALTH TEST BASIC
-    # --------------------------------------------------
     def test_health_degradation_path(self):
         self.setup()
 
@@ -280,9 +241,7 @@ class ConstituentControllerTester:
         self.assert_health("failed")
 
 
-    # --------------------------------------------------
-    # TEST ORTHOGONAL
-    # --------------------------------------------------
+
     def test_passive_failed_forces_prepared(self):
         self.setup()
 
@@ -375,23 +334,16 @@ class ConstituentControllerTester:
     def test_degraded_triggers_pending_exit(self):
         self.setup()
 
-        print("\n===== DEGRADED → PENDING EXIT =====")
-
-        self.runtime.ensure_health("faulty")
+        print("\n===== DEGRADED → AVAILABLE =====")
         self.runtime.ensure_participating()
         self.wait()
 
         self.runtime.ensure_health("degraded")
-        self.wait()
+        time.sleep(self.runtime.sm.DELTA +0.05)
 
-        self.assert_sub("pending_exit")
-        self.print_state("Pending Exit Triggered")
+        self.assert_sub("available")
+        self.print_state("Pending Exit Triggered to Available")
 
-
-
-    # --------------------------------------------------
-    # RUN ALL TESTS
-    # --------------------------------------------------
 
     def run_all_tests(self):
 
@@ -405,9 +357,7 @@ class ConstituentControllerTester:
 
         self.test_ensure_available()
         self.test_ensure_negotiating()
-        self.test_ensure_pending_entry()
         self.test_ensure_participating()
-        self.test_ensure_pending_exit()
         self.test_ensure_prepared()
         self.test_ensure_disengaged()
 
@@ -423,11 +373,6 @@ class ConstituentControllerTester:
         self.test_degraded_triggers_pending_exit()
 
         print("\n ALL TESTS PASSED\n")
-
-
-# --------------------------------------------------
-# MAIN
-# --------------------------------------------------
 
 def main():
     tester = ConstituentControllerTester()

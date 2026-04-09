@@ -164,7 +164,6 @@ class ConstituentController:
     def admission_rejected(self, goal=None): self._raise("raise_admission_rejected", goal=goal)
     def exit_denied(self, goal=None): self._raise("raise_exit_denied", goal=goal)
     def join_constellation(self, goal=None): self._raise("raise_join_constellation", goal=goal)
-    def constellation_stable(self, goal=None): self._raise("raise_constellation_stable", goal=goal)
     def leave_constellation(self, goal=None): self._raise("raise_leave_constellation", goal=goal)
 
     def uncertainty_threshold_exceeded(self):
@@ -228,7 +227,7 @@ class ConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": None,
         },
         "prepared": {
             "disengaged": "prepare",
@@ -240,7 +239,7 @@ class ConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": None
         },
         "available": {
             "prepared": "join_sos",
@@ -252,7 +251,7 @@ class ConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": None,
         },
         "negotiating": {
             "prepared": "join_sos",
@@ -264,7 +263,7 @@ class ConstituentController:
             "pending_entry": "leave_constellation",
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": None,
         },
         "pending_entry": {
             "prepared": "join_sos",
@@ -276,7 +275,7 @@ class ConstituentController:
             "pending_entry": None,
             "full_role": "leave_constellation",
             "restricted_role": "leave_constellation",
-            "pending_exit": "leave_constellation",
+            "pending_exit": None,
         },
         "participating": {
             "prepared": "join_sos",
@@ -285,7 +284,7 @@ class ConstituentController:
             "available": "join_invitation",
             "negotiating": "join_constellation",
 
-            "pending_entry": "constellation_stable",
+            "pending_entry": None,
 
             "restricted_role": None,
             "pending_exit": "exit_denied",
@@ -299,7 +298,7 @@ class ConstituentController:
             "available": "join_invitation",
             "negotiating": "join_constellation",
 
-            "pending_entry": "constellation_stable",
+            "pending_entry": None,
 
             "restricted_role": None,
             "pending_exit": "exit_denied",
@@ -313,7 +312,7 @@ class ConstituentController:
             "available": "join_invitation",
             "negotiating": "join_constellation",
 
-            "pending_entry": "constellation_stable",
+            "pending_entry": None,
 
             "restricted_role": None,
             "pending_exit": "exit_denied",
@@ -333,6 +332,17 @@ class ConstituentController:
             "pending_exit": None,
         },
     }
+
+    TRANSIENT_STATES = {"pending_entry", "pending_exit"}
+
+    def _wait_if_transient(self):
+        current = self.belonging_substate()
+
+        if current in self.TRANSIENT_STATES:
+            delta = getattr(self.sm, "DELTA", 0)
+            if delta > 0:
+                time.sleep(delta + 0.05)
+            self.update_snapshot()
 
 
     def ensure_belonging(self, goal, max_steps=15):
@@ -361,17 +371,22 @@ class ConstituentController:
                 )
 
             if action is None:
-                return True
+                self.update_snapshot()
+                current = self.belonging_substate()
+
+                if goal == "participating":
+                    return current in {"full_role", "restricted_role"}
+                else:
+                    return current == goal
 
             before = current
 
             getattr(self, action)(goal=goal)
+            self._wait_if_transient()
 
             after = self.belonging_substate()
-
             if after == before:
                 return False   # blocked by guard / constraint
-
         return False  # couldn't reach after max steps
     
 
@@ -390,10 +405,17 @@ class ConstituentController:
             return False
 
         if action is None:
-            return True
+            self.update_snapshot()
+            current = self.belonging_substate()
+
+            if goal == "participating":
+                return current in {"full_role", "restricted_role"}
+            else:
+                return current == goal
 
         before = current
         getattr(self, action)(goal=goal)
+        self._wait_if_transient()
         after = self.belonging_substate()
         if after == before:
             return False
