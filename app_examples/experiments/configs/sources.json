@@ -7,7 +7,6 @@
     "params": {
       "start_value": 49.5,
       "noise": 0.02,
-      "drift": 0.05,
       "seed":1
     },
     "predictor_template": "kf_signal"
@@ -21,7 +20,6 @@
     "params": {
       "start_value": 50.0,
       "noise": 0.03,
-      "drift": 0.02,
       "seed":2
     },
     "predictor_template": "kf_signal"
@@ -35,7 +33,6 @@
     "params": {
       "start_value": 50.5,
       "noise": 0.03,
-      "drift": -0.03,
       "seed":3
     },
     "predictor_template": "kf_signal"

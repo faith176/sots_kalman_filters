@@ -19,7 +19,7 @@ from app.core.compensator.Reconstructor import Reconstructor
 from app.core.compensator.PredictorRegistry import get_predictor_class
 from app.core.runtime.ExpectedSchedule import ExpectedSchedule
 
-from app.core.runtime.ConstituentController import ConstituentController
+from app.core.runtime.ModelAdaptor import ModelAdaptor
 from app.core.utils.UtilsFuncs import load_plugins_from_package
 from app.state_charts.lv4_adaptive import Statechart
 
@@ -205,7 +205,7 @@ class Orchestrator:
             predictors_cfg = json.load(f)
 
         for source_id, cfg in sources_cfg.items():
-            runtime = ConstituentController(Statechart, source_id, self.lifecycle.lifecycle_logger)
+            runtime = ModelAdaptor(Statechart, source_id, self.lifecycle.lifecycle_logger)
 
             # ----------------------------
             # Schedule

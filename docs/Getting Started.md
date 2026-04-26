@@ -144,7 +144,7 @@ Example (abridged):
 
 ## 5. Defining Event Sources
 
-Event sources are defined in a separate JSON file to encourage reuse across experiments.
+Event sources are defined in a separate JSON file. 
 
 Example `sources.json`:
 ```json

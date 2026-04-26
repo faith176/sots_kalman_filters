@@ -140,7 +140,7 @@ class ExperimentOrchestrator:
         for source_id, cfg in sources_cfg.items():
 
             # ----------------------------
-            # Schedule (EXPERIMENTAL)
+            # Schedule
             schedule = ExperimentalExpectedSchedule(
                 interval=cfg.get("interval", 1.0),
                 clock=self.clock,

@@ -1,19 +1,19 @@
-from app.core.runtime.ConstituentController import ConstituentController
+from app.core.runtime.ModelAdaptor import ModelAdaptor
 from app.state_charts.lv4_adaptive import Statechart
 import time
 
-# python -m tests.test_state_charts.test_constituent_controller
+# python -m tests.test_state_charts.test_model_adaptor
 
 STEP_DELAY = 0.01
 
 
-class ConstituentControllerTester:
+class ModelAdaptorTester:
 
     def __init__(self):
         self.setup()
 
     def setup(self):
-        self.runtime = ConstituentController(Statechart, "DT1")
+        self.runtime = ModelAdaptor(Statechart, "DT1")
 
     def wait(self):
         time.sleep(STEP_DELAY)
@@ -375,7 +375,7 @@ class ConstituentControllerTester:
         print("\n ALL TESTS PASSED\n")
 
 def main():
-    tester = ConstituentControllerTester()
+    tester = ModelAdaptorTester()
     tester.run_all_tests()
 
 
