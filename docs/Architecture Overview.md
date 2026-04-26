@@ -103,8 +103,8 @@ This section describes the core architectural layers, the main classes within ea
 
 ---
 
-## Reconstruction Layer
-### `app/core/reconstruction/`
+## Compensation Layer
+### `app/core/compensation/`
 
 #### Reconstructor
 - **Purpose**: Detect and reconstruct missing events in the event stream.

@@ -1,0 +1,16 @@
+# Started Sun Apr 26 11:02:06 2026
+type,ts,constituent_id,from_state,target_state,transition,result,final_state,health,goal_match,trigger_event
+lifecycle_decision,1777215726.162501,speed-1,disengaged/disengaged,participating,raise_prepare_for_so_s,made,prepared/prepared,ideal,False,raise_prepare_for_so_s
+lifecycle_decision,1777215726.162501,speed-1,prepared/prepared,participating,raise_join_so_s,made,passive/available,ideal,False,raise_join_so_s
+lifecycle_decision,1777215726.162501,speed-1,passive/available,participating,raise_join_invitation,made,passive/negotiating,ideal,False,raise_join_invitation
+lifecycle_decision,1777215726.164499,speed-1,passive/negotiating,participating,raise_join_constellation,made,active/pending_entry,ideal,False,raise_join_constellation
+lifecycle_decision,1777215727.2286358,speed-1,active/full_role,erroneous,raise_degrade,no_change,active/full_role,defective,False,raise_degrade
+lifecycle_decision,1777215727.2301483,speed-1,active/full_role,erroneous,raise_degrade,no_change,active/full_role,faulty,False,raise_degrade
+lifecycle_decision,1777215727.2301483,speed-1,active/full_role,erroneous,raise_degrade,made,active/restricted_role,erroneous,False,raise_degrade
+lifecycle_decision,1777215727.2301483,engine-temp-1,disengaged/disengaged,participating,raise_prepare_for_so_s,made,prepared/prepared,ideal,False,raise_prepare_for_so_s
+lifecycle_decision,1777215727.2311592,engine-temp-1,prepared/prepared,participating,raise_join_so_s,made,passive/available,ideal,False,raise_join_so_s
+lifecycle_decision,1777215727.2311592,engine-temp-1,passive/available,participating,raise_join_invitation,made,passive/negotiating,ideal,False,raise_join_invitation
+lifecycle_decision,1777215727.2321591,engine-temp-1,passive/negotiating,participating,raise_join_constellation,made,active/pending_entry,ideal,False,raise_join_constellation
+lifecycle_decision,1777215728.285058,engine-temp-1,active/full_role,erroneous,raise_degrade,no_change,active/full_role,defective,False,raise_degrade
+lifecycle_decision,1777215728.2860644,engine-temp-1,active/full_role,erroneous,raise_degrade,no_change,active/full_role,faulty,False,raise_degrade
+lifecycle_decision,1777215728.2860644,engine-temp-1,active/full_role,erroneous,raise_degrade,made,active/restricted_role,erroneous,False,raise_degrade

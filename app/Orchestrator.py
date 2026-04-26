@@ -81,8 +81,8 @@ class Orchestrator:
         # --------------------------------------------------
         # Activate all constituents AFTER registration
         # --------------------------------------------------
-
-        self.lifecycle.activate_all()
+        sources_cfg = self._load_sources()
+        self.lifecycle.apply_initial_lifecycle(sources_cfg)
 
         LOG.info("[ORCH] Pipeline started")
 

@@ -9,6 +9,10 @@
       "noise": 0.02,
       "seed":1
     },
+    "default_lifecycle_state": {
+      "initial_belonging": "disengaged",
+      "initial_health": "ideal"
+    },
     "predictor_template": "kf_signal"
   },
 
@@ -22,6 +26,10 @@
       "noise": 0.03,
       "seed":2
     },
+    "default_lifecycle_state": {
+      "initial_belonging": "disengaged",
+      "initial_health": "ideal"
+    },
     "predictor_template": "kf_signal"
   },
 
@@ -34,6 +42,10 @@
       "start_value": 50.5,
       "noise": 0.03,
       "seed":3
+    },
+    "default_lifecycle_state": {
+      "initial_belonging": "disengaged",
+      "initial_health": "ideal"
     },
     "predictor_template": "kf_signal"
   }

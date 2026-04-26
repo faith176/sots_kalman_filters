@@ -239,8 +239,8 @@ class ExperimentOrchestrator:
         self._start_lifecycle()
         self._start_constituents()
 
-        self.lifecycle.activate_all()
-
+        sources_cfg = self._load_sources()
+        self.lifecycle.apply_initial_lifecycle(sources_cfg)
 
         # Simulation loop
         for _ in range(T):

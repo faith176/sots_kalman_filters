@@ -10,6 +10,10 @@
       "noise": 0.5,
       "drop_chance": 0
     },
+    "default_lifecycle_state": {
+      "initial_belonging": "participating",
+      "initial_health": "erroneous"
+    },
     "predictor_template": "kf_1"
   },
 
@@ -23,6 +27,10 @@
       "max_value": 120.0,
       "noise": 0.8,
       "drop_chance": 0
+    },
+    "default_lifecycle_state": {
+      "initial_belonging": "participating",
+      "initial_health": "erroneous"
     },
     "predictor_template": "kf_2"
   }
