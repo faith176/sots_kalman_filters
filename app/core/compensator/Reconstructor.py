@@ -38,8 +38,8 @@ class Reconstructor(EventConsumer, EventGenerator):
 
         self.stream.subscribe(self, "observed.*", self.source_id)
 
-        self.confidence_threshold = 0.30
-        self.conf_window = deque(maxlen=10)
+        self.confidence_threshold = 0.45
+        self.conf_window = deque(maxlen=5)
 
     
     def connect(self):

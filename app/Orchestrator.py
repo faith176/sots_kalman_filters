@@ -64,8 +64,6 @@ class Orchestrator:
 
     # --------------------------------------------------
     # Startup
-    # --------------------------------------------------
-
     def start(self):
 
         LOG.info("[ORCH] Starting pipeline")
@@ -78,9 +76,6 @@ class Orchestrator:
         self._start_lifecycle()
         self._start_constituents()
 
-        # --------------------------------------------------
-        # Activate all constituents AFTER registration
-        # --------------------------------------------------
         sources_cfg = self._load_sources()
         self.lifecycle.apply_initial_lifecycle(sources_cfg)
 
